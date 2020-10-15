@@ -28,6 +28,10 @@ See [composer.json](./composer.json) for details
 
 See [_config/config.yml](./_config/config.yml)
 
+Note that this module provides the ability to configure the MFA secret key via per-project YAML rather than in .env
+
+More: [Multi Factor Authentication](./docs/003_mfa.md)
+
 ## License
 
 [BSD-3-Clause](./LICENSE.md)

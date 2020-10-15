@@ -66,8 +66,8 @@ See `_config/config.yml` for more
 
 ## Multi-Factor authentication
 
-+ [Multi Factor Authentication](./mfa.md)
++ [Multi Factor Authentication](./003_mfa.md)
 
 ## Compromised passwords
 
-+ [Compromised Passwords](./compromised_passwords.md)
++ [Compromised Passwords](./002_compromised_passwords.md)
