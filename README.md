@@ -16,7 +16,13 @@ This module provides a standard set of rules for defining access to Silverstripe
 
 ## Requirements
 
-See [composer.json](./composer.json)
++ silverstripe/totp-authenticator - for MFA via a Time-based One-time Password
++ nswdpc/silverstripe-pwnage-hinter -  provides pwned password/breached account assistance
++ silverstripe/security-extensions - provides features including sudo mode, password change on next sign in
++ silverstripe/securityreport - "Users, Groups and Permissions" report in the administration area for Administrators
++ spomky-labs/otphp - TOTP base library
+
+See [composer.json](./composer.json) for details
 
 ## Configuration
 
