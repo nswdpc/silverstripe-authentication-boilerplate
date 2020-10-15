@@ -1,0 +1,31 @@
+en:
+  NSWDPC\Authentication:
+    PENDING_YES: 'Yes'
+    PENDING_NO: 'No'
+    FIELD_CHANGED: '''%s'' was updated on your profile'
+  NSWDPC\Passwords:
+    PASSWORD_STRENGTH_FAIL: 'The password provided contains disallowed words, please try a different password'
+    DICTIONARY_WORD_FAIL: 'Dictionary words are not allowed in the password, please try a different password'
+    REPETITIVE_CHARACTER_FAIL: 'Repetitive characters are not allowed in the password'
+    SEQUENTIAL_CHARACTER_FAIL: 'The sequential characters ''%s'' are not allowed in the password'
+  NSWDPC\Passwords\Password:
+    LOWERCASE_REQUIRED: 'Lowercase characters are required'
+    UPPERCASE_REQUIRED: 'Uppercase characters are required'
+    PUNCTUATION_REQUIRED: 'Punctuation characters are required'
+    DIGIT_REQUIRED: 'Number characters are required'
+    # default fallback
+    CHARACTER_RANGE_REQUIRED: 'Characters in the following range are required: %s'
+    MIN_TEST_SCORE: 'Your password must pass %d  of the following test(s)'
+    MIN_LENGTH: 'The password must have a minimum length of %d characters'
+    MAX_LENGTH: 'The password must have a maximum length of %d characters'
+    HISTORIC_COUNT: 'The password cannot have been used in the past'
+    PWNAGE_CHECK: 'Your password must not have appeared in a known data breach (we will let you know if it has)'
+    PASSWORD_TITLE: 'The best passwords are a combination of words or characters that are memorable only to you. To help you choose the password we use the following rules.'
+  NSWDPC\Passwords\SequentialCharacterRule:
+    SEQUENTIAL_CHARACTER_RULE: 'Your password cannot contain sequential characters e.g abc'
+  NSWDPC\Passwords\RepetitiveCharacterRule:
+    REPETITIVE_CHARACTER_RULE: 'Your password cannot contain repetitive characters (e.g aaa, 999)'
+  NSWDPC\Passwords\DictionaryWordRule:
+    REPETITIVE_CHARACTER_RULE: 'Your password cannot be a dictionary word'
+  NSWDPC\Passwords\ContextualWordRule:
+    REPETITIVE_CHARACTER_RULE: 'Your password cannot contain a word related to this service'

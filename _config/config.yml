@@ -1,0 +1,15 @@
+---
+Name: nswdpc-authentication-boilerplate
+---
+SilverStripe\Security\Security:
+  # allow 'remember me' session handling
+  autologin_enabled: true
+  # remember username handling
+  remember_username: false
+SilverStripe\Security\Member:
+  # limit to 3 attempts before locking
+  lock_out_after_incorrect_logins: 3
+  # lock out delay
+  lock_out_delay_mins: 10
+  # auto login lifetime - 60 mins
+  auto_login_token_lifetime: 3600

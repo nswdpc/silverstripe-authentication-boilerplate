@@ -1,0 +1,38 @@
+{
+    "name": "nswdpc/silverstripe-authentication-boilerplate",
+    "description": "Boilerplate default access rules for Silverstripe websites",
+    "type": "silverstripe-vendormodule",
+    "license": "BSD-3-Clause",
+    "keywords": [
+      "silverstripe",
+      "members",
+      "password",
+      "pwnage",
+      "pwned",
+      "mfa",
+      "nswdpc",
+      "2-factor",
+      "2fa",
+      "authentication",
+      "security"
+    ],
+    "require": {
+        "silverstripe/totp-authenticator": "^4",
+        "nswdpc/silverstripe-pwnage-hinter": "dev-master",
+        "silverstripe/security-extensions": "^4",
+        "silverstripe/securityreport" : "^2.2",
+        "spomky-labs/otphp": "^9.1"
+    },
+    "authors": [
+        {
+            "name": "James Ellis",
+            "homepage": "https://dpc.nsw.gov.au",
+            "role": "Developer"
+        },
+        {
+            "name": "Mark Taylor",
+            "homepage": "https://dpc.nsw.gov.au",
+            "role": "Developer"
+        }
+    ]
+}

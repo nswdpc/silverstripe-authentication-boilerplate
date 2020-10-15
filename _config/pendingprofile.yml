@@ -1,0 +1,7 @@
+---
+Name: nswdpc-authentication-boilerplate-pendingprofile
+---
+NSWDPC\Authentication\PendingProfile:
+  require_admin_approval: true
+  require_self_verification: true
+  code_lifetime: 86400

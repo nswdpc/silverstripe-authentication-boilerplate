@@ -1,0 +1,9 @@
+---
+Name: nswdpc-authentication-boilerplate-routes
+After:
+  - '#rootroutes'
+  - '#coreroutes'
+---
+SilverStripe\Control\Director:
+  rules:
+    'mfa_help': NSWDPC\MFA\AuthenticationHelpController

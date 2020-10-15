@@ -1,0 +1,9 @@
+---
+Name: nswdpc-authentication-boilerplate-extensions
+---
+SilverStripe\Security\PasswordValidator:
+  extensions:
+    - NSWDPC\Passwords\PasswordVerifier
+SilverStripe\Security\Member:
+  extensions:
+    - NSWDPC\Authentication\ProfileExtension
