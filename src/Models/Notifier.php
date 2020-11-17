@@ -89,6 +89,9 @@ class Notifier {
      * @param Controller $controller a controller that can provide a link to a URL where  the user can enter the code
      */
     public function sendSelfRegistrationToken(Member $member, $initial = false, Controller $controller) {
+        if(!$controller->hasMethod('RegisterPendingLink')) {
+            throw new \Exception("Failed: the controller does not provide RegisterPendingLink");
+        }
         // current site config
         $config = SiteConfig::current_site_config();
         // link to registration completion
