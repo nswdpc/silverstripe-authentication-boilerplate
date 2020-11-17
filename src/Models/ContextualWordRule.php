@@ -17,7 +17,7 @@ class ContextualWordRule extends AbstractPasswordRule {
 
     private static $context_strings = [];
 
-    private static $min_length = 3;
+    private static $min_length = 4;
 
     private static $template_var = "CONTEXTUAL_WORD_RULE";
 
@@ -36,34 +36,26 @@ class ContextualWordRule extends AbstractPasswordRule {
             $member->Surname
         ];
 
+        $configured_context_strings = $this->config()->get('context_strings');
+
         // array of strings that are contextual
+        $site_strings = array_merge($site_strings, $configured_context_strings);
         $context_strings = [];
+
+        $min_length = $this->config()->get('min_length');
 
         // split strings into chunks that only contain alphanumeric chrs
         foreach($site_strings as $string) {
             $parts = preg_split("/[^a-zA-Z0-9]/", $string);
-            array_filter(
+            $parts = array_filter(
                 $parts,
-                function($value) {
+                function($value) use ($min_length) {
                     // filter out items that are not > min_length length
-                    return strlen($value) > $this->config()->get('min_length');
+                    return strlen($value) >= $min_length;
                 }
             );
+            // add filtered parts to context strings
             $context_strings = array_merge($context_strings, $parts);
-        }
-
-        // sites can provide their own context words
-        $configured_context_strings = $this->config()->get('context_strings');
-        if(is_array($configured_context_strings)) {
-            array_filter(
-                $configured_context_strings,
-                function($value) {
-                    // filter out items that are not > min_length length
-                    return strlen($value) > $this->config()->get('min_length');
-                }
-            );
-            // merge them in, ensure site config strings are retained
-            $context_strings = array_merge($configured_context_strings, $context_strings);
         }
 
         // return a unique array of values

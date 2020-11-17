@@ -21,7 +21,9 @@ class PasswordStrengthTest extends SapphireTest
     {
         $strings = [
             'website',
+            '',
             'contextword',
+            'with spaces',
             'computer',
             'c0mputer',
             'dept'
@@ -49,6 +51,7 @@ class PasswordStrengthTest extends SapphireTest
         ];
 
         Config::inst()->update(ContextualWordRule::class, 'context_strings', $strings);
+        Config::inst()->update(ContextualWordRule::class, 'min_length', 3);
 
         $rule = Injector::inst()->create( ContextualWordRule::class );
         $strings = $rule->getContextStrings($member);
