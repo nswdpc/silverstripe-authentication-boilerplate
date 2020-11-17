@@ -39,7 +39,7 @@ class ContextualWordRule extends AbstractPasswordRule {
         // array of strings that are contextual
         $context_strings = [];
 
-        // with each site string, remove parts that should be in there
+        // split strings into chunks that only contain alphanumeric chrs
         foreach($site_strings as $string) {
             $parts = preg_split("/[^a-zA-Z0-9]/", $string);
             array_filter(
@@ -83,6 +83,11 @@ class ContextualWordRule extends AbstractPasswordRule {
         $words = $this->getContextStrings($member);
         $valid = true;
         foreach($words as $word) {
+            /**
+             * needle = word
+             * haystack = password
+             * Test whether the word appears in the password
+             */
             if(strpos( strtolower($password), strtolower($word) ) !== false) {
                 $valid = false;
                 break;
