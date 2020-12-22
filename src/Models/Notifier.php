@@ -126,6 +126,84 @@ class Notifier {
         );
     }
 
+    public function sendAdministrationApprovalRequired(PendingProfile $profile) {
+
+        $notifications = 0;
+
+        // current site config
+        $config = SiteConfig::current_site_config();
+
+        // member
+        $member = $profile->Member();
+
+        // approvers - based on permission
+        $approvers = PendingProfile::getApprovers();
+        foreach($approvers as $approver) {
+
+            // template data
+            $content = ArrayData::create([
+                'Approver' => $approver,
+                'Member' => $member,
+                'SiteConfig' => $config,
+                'ApprovePendingProfileLink' => $profile->CMSEditLink()
+            ])->renderWith('NSWDPC/Authentication/Email/NotifyApprovers');
+
+            $data = [];
+            $data['Content'] = $content;
+
+            // TO: the approver
+            $to = [];
+            $to[ $approver->Email ] = $approver->getName();
+            $subject = sprintf( _t(Configuration::class . ".APPROVAL_OF_ACCOUNT", "An account requires approval on %s"), $config->Title );
+
+            $notification = $this->sendEmail(
+                $to,
+                $this->getDefaultFrom(),
+                $subject,
+                $data
+            );
+            $notifications++;
+
+        }
+        return $notifications;
+
+    }
+
+    /**
+     * Notify a profile that they were approved
+     */
+    public function sendProfileApproved(PendingProfile $profile) {
+
+        // current site config
+        $config = SiteConfig::current_site_config();
+
+        // member
+        $member = $profile->Member();
+
+        // template data
+        $content = ArrayData::create([
+            'Member' => $member,
+            'SiteConfig' => $config,
+            'SignInLink' => false
+        ])->renderWith('NSWDPC/Authentication/Email/ApprovedByAdministrator');
+
+        $data = [];
+        $data['Content'] = $content;
+
+        // TO: the approver
+        $to = [];
+        $to[ $member->Email ] = $member->getName();
+        $subject = sprintf( _t(Configuration::class . ".ACCOUNT_APPROVED_SUBJECT", "Your account on %s was approved"), $config->Title );
+
+        return $this->sendEmail(
+            $to,
+            $this->getDefaultFrom(),
+            $subject,
+            $data
+        );
+
+    }
+
     /**
      * Sends the email
      * @returns boolean

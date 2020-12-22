@@ -46,6 +46,16 @@ class ProfileExtension extends DataExtension {
                 || $profile->requiresPromptForAdministrationApproval());
     }
 
+    public function getProfileRequiresSelfVerification() {
+        $profile = PendingProfile::forMember($this->owner);
+        return $profile && $profile->requiresPromptForSelfVerification();
+    }
+
+    public function getProfileRequiresAdministrationApproval() {
+        $profile = PendingProfile::forMember($this->owner);
+        return $profile && $profile->requiresPromptForAdministrationApproval();
+    }
+
     /**
      * For use in fields
      */

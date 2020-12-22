@@ -5,6 +5,9 @@ namespace NSWDPC\Authentication;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\HeaderField;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\CompositeField;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
@@ -13,6 +16,8 @@ use SilverStripe\Security\Security;
 use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Permission;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\SS_List;
 use SilverStripe\ORM\ValidationException;
 use OTPHP\TOTP;
 use ParagonIE\ConstantTime\Base32;
@@ -74,6 +79,17 @@ class PendingProfile extends DataObject implements PermissionProvider
         'IsSelfVerified' => 0
     ];
 
+    /*
+     * Returns link to edit this dataobject in the CMS
+     * Refer: https://github.com/dnadesign/silverstripe-elemental/issues/718
+     */
+    public function CMSEditLink()
+    {
+        $model_admin = PendingProfileAdmin::singleton();
+        $class = str_replace('\\', '-', self::class);
+        return $model_admin->Link("/{$class}/EditForm/field/{$class}/item/{$this->ID}/edit");
+    }
+
     public function getTitle() {
         $title = "Pending profile";
         if($member = $this->Member()) {
@@ -82,6 +98,15 @@ class PendingProfile extends DataObject implements PermissionProvider
             $title .= "#{$this->ID}";
         }
         return $title;
+    }
+
+    /**
+     * Returns members who can approve profiles
+     * @return DataList
+     */
+    public static function getApprovers() : SS_List {
+        $members = Permission::get_members_by_permission('PENDINGPROFILE_EDIT');
+        return $members;
     }
 
     /**
@@ -127,7 +152,7 @@ class PendingProfile extends DataObject implements PermissionProvider
 
     public function canEdit($member = null)
     {
-        return Permission::check('PENDINGPROFILE_EDIT');
+        return Permission::checkMember($member, 'PENDINGPROFILE_EDIT');
     }
 
     public function canView($member = null)
@@ -212,10 +237,10 @@ class PendingProfile extends DataObject implements PermissionProvider
     }
 
     /**
-     * Find or create a pending profile for the Member
+     * Create a pending profile for the Member, this is actioned by the profile owner upon registration
      * @return self
      */
-    public static function createForMember(Member $member)
+    private static function createForMember(Member $member)
     {
         $profile = PendingProfile::create();
         $profile->IsAdminApproved = 0;
@@ -225,6 +250,19 @@ class PendingProfile extends DataObject implements PermissionProvider
         $profile->RequireSelfVerification = Config::inst()->get(PendingProfile::class, 'require_self_verification');
         $profile->MemberID = $member->ID;
         $profile->write();
+
+        try {
+            // handle approval required notifications
+            // TODO maybe avoid
+            if($profile->RequireAdminApproval == 1
+                && !$profile->IsAdminApproved) {
+                $notifier = Injector::inst()->create(Notifier::class);
+                $notifier->sendAdministrationApprovalRequired($profile);
+            }
+        } catch (\Exception $e) {
+            // TODO log something about not being able to send notification
+        }
+
         return $profile;
     }
 
@@ -269,7 +307,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     }
 
     /**
-     * Ensure member record is correctly updated based on profile settings
+     * Actions to run after record is written
      */
     public function onAfterWrite()
     {
@@ -279,10 +317,11 @@ class PendingProfile extends DataObject implements PermissionProvider
             && $member->IsPending == 0
             && ($this->requiresPromptForSelfVerification()
                 || $this->requiresPromptForAdministrationApproval())) {
-            // ensure member is marked as pending
+            // Ensure member record is correctly updated based on profile settings
             $member->IsPending = 1;
             $member->write();
         }
+
     }
 
     /**
@@ -440,6 +479,48 @@ class PendingProfile extends DataObject implements PermissionProvider
             $fields->addFieldsToTab(
                 'Root.Main',
                 [
+                    LiteralField::create(
+                        'ApprovalNotice',
+                        '<p class="message notice">'
+                        . ($this->IsAdminApproved == 0 ?
+                            "Please review this profile prior to approving it." :
+                            "Please review this profile prior to unapproving it.")
+                        . '</p>'
+                    ),
+
+                    CompositeField::create(
+                        HeaderField::create(
+                            'AdminApprovalHeader',
+                            'Administrator approval'
+                        ),
+                        CheckboxField::create(
+                            'IsAdminApproved',
+                            'Approved'
+                        )->performReadonlyTransformation(),
+
+                        CheckboxField::create(
+                            'RequireAdminApproval',
+                            'Require administration approval'
+                        )
+                    ),
+
+                    CompositeField::create(
+                        HeaderField::create(
+                            'SelfApprovalHeader',
+                            'Self verification'
+                        ),
+                        CheckboxField::create(
+                            'IsSelfVerified',
+                            'User has self-verified'
+                        )->setDescription('Unchecking this box will require the owner to self-verify, provide \'Require self-verification is checked\'.'),
+
+                        CheckboxField::create(
+                            'RequireSelfVerification',
+                            'Require self verification',
+                            $this->RequireSelfVerification == 1 ? "yes" : "no"
+                        )
+                    ),
+
                     ReadonlyField::create(
                         'MemberValue',
                         'User',
@@ -452,23 +533,6 @@ class PendingProfile extends DataObject implements PermissionProvider
                     ReadonlyField::create(
                         'LastEdited',
                         'Profile last edited'
-                    ),
-                    CheckboxField::create(
-                        'RequireAdminApproval',
-                        'Require administration approval'
-                    ),
-                    CheckboxField::create(
-                        'RequireSelfVerification',
-                        'Require self verification',
-                        $this->RequireSelfVerification == 1 ? "yes" : "no"
-                    ),
-                    CheckboxField::create(
-                        'IsAdminApproved',
-                        'Approved'
-                    )->setDescription('Approve this profile'),
-                    CheckboxField::create(
-                        'IsSelfVerified',
-                        'User has self verified'
                     )
                 ]
             );
@@ -493,4 +557,5 @@ class PendingProfile extends DataObject implements PermissionProvider
 
         return $fields;
     }
+
 }
