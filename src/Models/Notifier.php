@@ -214,7 +214,7 @@ class Notifier {
      * @param array $headers extra Email headers e.g Cc, Bcc, X-Some-Header
      * @param string $template template to use
      */
-    private function sendEmail($to, $from, $subject, $data = [], $headers = [], $template = "NSWDPC/Authentication/Email") {
+    protected function sendEmail($to, $from, $subject, $data = [], $headers = [], $template = "NSWDPC/Authentication/Email") {
         $email = Email::create()
                     ->setFrom( $from )
                     ->setTo( $to )
