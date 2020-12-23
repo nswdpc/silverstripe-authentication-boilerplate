@@ -33,6 +33,10 @@
 <% else %>
 
     <%-- requires neither a code nor approval (i.e no verification at all is set in config) --%>
-    <p><%t NSWDPC\\Members\\Configuration.YOUR_PROFILE_IS_ENABLED 'Your profile is active, simply sign in to access your profile' %></p>
+    <p>
+        <% if $MemberProfileSignInLink %><a href="{$MemberProfileSignInLink.XML}"><% end_if %>
+        <%t NSWDPC\\Members\\Configuration.YOUR_PROFILE_IS_ENABLED 'Your profile is active, sign in to access your profile' %>
+        <% if $MemberProfileSignInLink %></a><% end_if %>
+    </p>
 
 <% end_if %>
