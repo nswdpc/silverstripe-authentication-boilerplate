@@ -183,8 +183,7 @@ class Notifier {
         // template data
         $content = ArrayData::create([
             'Member' => $member,
-            'SiteConfig' => $config,
-            'SignInLink' => false
+            'SiteConfig' => $config
         ])->renderWith('NSWDPC/Authentication/Email/ApprovedByAdministrator');
 
         $data = [];
