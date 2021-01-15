@@ -40,3 +40,7 @@
     </p>
 
 <% end_if %>
+
+<% if $ProfileContactLink %>
+<p><a href="{$ProfileContactLink.XML}"><%t NSWDPC\\Members\\Configuration.NOTIFY_PROFILE_CONTACT 'Contact us if you need assistance' %></a></p>
+<% end_if %>
