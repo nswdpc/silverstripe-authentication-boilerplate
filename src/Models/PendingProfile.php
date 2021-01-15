@@ -512,7 +512,7 @@ class PendingProfile extends DataObject implements PermissionProvider
                         CheckboxField::create(
                             'IsSelfVerified',
                             'User has self-verified'
-                        )->setDescription('Unchecking this box will require the owner to self-verify, provide \'Require self-verification is checked\'.'),
+                        )->setDescription('Unchecking this box will require the owner to self-verify, provided \'Require self-verification is checked\'.'),
 
                         CheckboxField::create(
                             'RequireSelfVerification',
