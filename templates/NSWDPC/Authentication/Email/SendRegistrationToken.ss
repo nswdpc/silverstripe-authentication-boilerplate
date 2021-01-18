@@ -13,12 +13,17 @@
 
 <% if $Code %>
 
-    <%-- requires a self verification code --%>
-    <p><%t NSWDPC\\Members\\Configuration.WE_HAVE_RECEIVED 'We have received a request to send you a registration code. If this was not initiated by you, please ignore this email or contact your website administrator' %></p>
+    <p><%t NSWDPC\\Members\\Configuration.WE_HAVE_RECEIVED_SHORT 'We have received a request to send you a registration code' %>.</p>
 
-    <p><%t NSWDPC\\Members\\Configuration.ENTER_THE_FOLLOWING_CODE 'Enter the following code at the' %> <a href="$RegistrationCompletionLink"><%t NSWDPC\\Members\\Configuration.COMPLETE_REGISTRATION_PAGE 'Complete Registration Page' %></a></p>
+    <p><%t NSWDPC\\Members\\Configuration.ENTER_THE_FOLLOWING_CODE 'Enter the following code at the' %> <a href="$RegistrationCompletionLink"><%t NSWDPC\\Members\\Configuration.COMPLETE_REGISTRATION_PAGE 'Complete Registration Page' %></a>.</p>
 
     <p style="font-size:xxx-large;text-align: center;">{$Code.XML}</p>
+
+    <% if $ProfileContactLink %>
+        <%t NSWDPC\\Members\\Configuration.IF_NOT_INITIATED 'If this was not initiated by you, please ignore this email' %> <a href="$ProfileContactLink"><%t NSWDPC\\Members\\Configuration.OR_CONTACT_US 'or contact us for assistance' %></a>.</p>
+    <% else %>
+        <p><%t NSWDPC\\Members\\Configuration.GENERAL_UNEXPECTED_CODE_CTA 'If this was not initiated by you, please ignore this email or contact your website administrator' %></p>
+    <% end_if %>
 
     <% if $RequireAdminApproval %>
         <%-- requires a code and admin approval --%>
