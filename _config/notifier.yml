@@ -2,5 +2,4 @@
 Name: nswdpc-authentication-boilerplate-notifier
 ---
 NSWDPC\Authentication\Notifier:
-  default_email_from:
-    'nobody@localhost': 'nobody'
+  default_email_from: []
