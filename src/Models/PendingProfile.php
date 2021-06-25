@@ -189,6 +189,14 @@ class PendingProfile extends DataObject implements PermissionProvider
             && $this->RequireSelfVerification == 0) {
             // neither required
             return true;
+
+        } else if(
+            ($this->RequireAdminApproval == 1 && $this->IsAdminApproved == 0)
+            ||
+            ($this->RequireSelfVerification == 1 && $this->IsSelfVerified == 0)
+            ) {
+            // one of the verifications is missing
+            return false;
         } elseif ($this->RequireAdminApproval == 1
             && $this->RequireSelfVerification == 1
             && $this->IsAdminApproved == 1
