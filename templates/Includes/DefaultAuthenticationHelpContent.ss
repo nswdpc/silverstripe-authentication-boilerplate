@@ -33,7 +33,7 @@
     the most popular:
 </p>
 
-<table class="table">
+<table<% if $TableClass %> class="{$TableClass.XML}"<% end_if %>>
     <thead>
         <tr>
             <th>Application</th>
@@ -54,6 +54,15 @@
                 <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">for Android</a>
                 <br>
                 <a href="https://apps.apple.com/app/google-authenticator/id388497605">for iPhone and iPad</a>
+            </td>
+        </tr>
+        <tr>
+            <td>Okta Verify</td>
+            <td>Android, iOS</td>
+            <td>
+                <a href="https://play.google.com/store/apps/details?id=com.okta.android.auth">for Android</a>
+                <br>
+                <a href="https://apps.apple.com/us/app/okta-verify/id490179405">for iPhone and iPad</a>
             </td>
         </tr>
         <tr>
