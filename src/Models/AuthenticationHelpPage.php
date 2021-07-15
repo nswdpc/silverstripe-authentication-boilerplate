@@ -35,6 +35,14 @@ class AuthenticationHelpPage extends Page {
     ];
 
     /**
+     * Defaults
+     * @var array
+     */
+    private static $defaults = [
+        'AuthenticationHelpShowAbove' => 1
+    ];
+
+    /**
      * Singular name for CMS
      * @var string
      */
