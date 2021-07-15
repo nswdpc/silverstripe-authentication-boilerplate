@@ -368,7 +368,8 @@ class PendingProfile extends DataObject implements PermissionProvider
     {
         $key = $this->getEncryptionKey();
         if (empty($key)) {
-            throw new ValidationException('No encryption key defined');
+            Logger::log("Someone tried to create an approval code during registration via TOTP but the system has no MFA encryption key defined", "ERROR");
+            throw new ValidationException( _t('auth.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.') );
         }
 
         $period = $this->config()->get('code_lifetime');
@@ -406,6 +407,10 @@ class PendingProfile extends DataObject implements PermissionProvider
     {
         $key = $this->getEncryptionKey();
         if (empty($key)) {
+
+            Logger::log("Someone tried to verify an approval code via TOTP but the system has no MFA encryption key defined", "ERROR");
+            throw new ValidationException( _t('auth.CANNOT_VERIFY_CODE', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.') );
+
             throw new ValidationException('No encryption key defined');
         }
 
