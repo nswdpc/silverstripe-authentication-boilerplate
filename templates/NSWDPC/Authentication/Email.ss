@@ -1,3 +1,3 @@
-<% include AuthenticationEmailHeader %>
+<% include NSWDPC/Authentication/EmailHeader %>
 	$Content
-<% include AuthenticationEmailFooter %>
+<% include NSWDPC/Authentication/EmailFooter %>

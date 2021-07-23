@@ -8,7 +8,7 @@ SilverStripe\Security\Security:
   remember_username: false
 SilverStripe\Security\Member:
   # limit to 3 attempts before locking
-  # rer: https://github.com/silverstripe/silverstripe-mfa/issues/421
+  # ref: https://github.com/silverstripe/silverstripe-mfa/issues/421
   lock_out_after_incorrect_logins: 6
   # lock out delay
   lock_out_delay_mins: 10
