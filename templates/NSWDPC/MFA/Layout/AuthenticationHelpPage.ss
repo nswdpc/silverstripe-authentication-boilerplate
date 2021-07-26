@@ -1,7 +1,9 @@
 <% if $AuthenticationHelpShowAbove %>
-    <% include AuthenticationHelpContent %>
+    <% include NSWDPC/MFA/HelpContent %>
 <% end_if %>
-    $Content
-<% if not $AuthenticationHelpShowAbove %>
-    <% include AuthenticationHelpContent %>
+
+<% if $supportsElemental && $ElementalArea && $ElementalArea.Elements.count > 0 %>
+    {$ElementalArea}
+<% else %>
+    {$Content}
 <% end_if %>

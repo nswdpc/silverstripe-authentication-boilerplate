@@ -1,1 +1,1 @@
-<% include DefaultAuthenticationHelpContent %>
+<% include NSWDPC/MFA/DefaultAuthenticationHelpContent %>
