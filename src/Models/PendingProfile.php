@@ -50,6 +50,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     private static $db = [
         'ProvisioningData' => 'Text',
         'RequireAdminApproval' => 'Boolean',
+        'NotifiedRequireAdminApproval' => 'Boolean',
         'IsAdminApproved' => 'Boolean',
         'RequireSelfVerification' => 'Boolean',
         'IsSelfVerified' => 'Boolean',
@@ -74,6 +75,7 @@ class PendingProfile extends DataObject implements PermissionProvider
 
     private static $defaults = [
         'RequireAdminApproval' => 0,
+        'NotifiedRequireAdminApproval' => 0,
         'RequireSelfVerification' => 0,
         'IsAdminApproved' => 0,
         'IsSelfVerified' => 0
@@ -259,19 +261,30 @@ class PendingProfile extends DataObject implements PermissionProvider
         $profile->MemberID = $member->ID;
         $profile->write();
 
-        try {
-            // handle approval required notifications
-            // TODO maybe avoid
-            if($profile->RequireAdminApproval == 1
-                && !$profile->IsAdminApproved) {
-                $notifier = Injector::inst()->create(Notifier::class);
-                $notifier->sendAdministrationApprovalRequired($profile);
-            }
-        } catch (\Exception $e) {
-            // TODO log something about not being able to send notification
-        }
+        self::sendAdministrationApprovalRequiredEmail($profile);
 
         return $profile;
+    }
+
+    /**
+     * @returns mixed
+     */
+    private static function sendAdministrationApprovalRequiredEmail(PendingProfile $profile) {
+        try {
+            if($profile->RequireAdminApproval == 1
+                && !$profile->NotifiedRequireAdminApproval // and not previously notified
+                && !$profile->IsAdminApproved) {
+                $notifier = Injector::inst()->create(Notifier::class);
+                $result = $notifier->sendAdministrationApprovalRequired($profile);
+                if($result) {
+                    $profile->NotifiedRequireAdminApproval = 1;
+                    $profile->write();
+                }
+            }
+        } catch (\Exception $e) {
+            Logger::log("Failed to send pending profile 'approval required' notifications: " . $e->getMessage(), "WARNING");
+        }
+        return false;
     }
 
     /**
@@ -286,6 +299,8 @@ class PendingProfile extends DataObject implements PermissionProvider
             // when a profile is created, the member becomes pending
             $member->IsPending = 1;
             $member->write();
+        } else {
+            self::sendAdministrationApprovalRequiredEmail($profile);
         }
         return $profile;
     }
@@ -476,6 +491,7 @@ class PendingProfile extends DataObject implements PermissionProvider
 
             $fields->removeByName([
                 'IsAdminApproved',
+                'NotifiedRequireAdminApproval',
                 'IsSelfVerified'
             ]);
 
@@ -484,6 +500,7 @@ class PendingProfile extends DataObject implements PermissionProvider
             $fields->removeByName([
                 'RequireAdminApproval',
                 'IsAdminApproved',
+                'NotifiedRequireAdminApproval',
                 'MemberID',
                 'RequireSelfVerification',
                 'IsSelfVerified'
@@ -514,7 +531,12 @@ class PendingProfile extends DataObject implements PermissionProvider
                         CheckboxField::create(
                             'RequireAdminApproval',
                             'Require administration approval'
-                        )
+                        ),
+
+                        CheckboxField::create(
+                            'NotifiedRequireAdminApproval',
+                            'Notification to approvers was sent'
+                        )->performReadonlyTransformation(),
                     ),
 
                     CompositeField::create(
