@@ -98,7 +98,7 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest {
         return $this->edit(Controller::curr()->getRequest());
     }
 
-    public function doNotifyApprovers() {
+    public function doNotifyApprovers($data, $form) {
         $admin = Permission::check('ADMIN');
         if(!$admin) {
             return $this->edit(Controller::curr()->getRequest());
