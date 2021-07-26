@@ -138,6 +138,11 @@ class Notifier {
 
         // approvers - based on permission
         $approvers = PendingProfile::getApprovers();
+        if(!$approvers || $approvers->count() == 0) {
+            Logger::log("Cannot sendAdministrationApprovalRequired as there are no approvers. Please create some with the 'Edit Pending Profile' permission.", "NOTICE");
+            return false;
+        }
+
         foreach($approvers as $approver) {
 
             // template data
