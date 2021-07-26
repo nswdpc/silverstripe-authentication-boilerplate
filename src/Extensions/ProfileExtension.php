@@ -181,6 +181,19 @@ class ProfileExtension extends DataExtension {
             ];
         }
 
+        // Ignore 'Password' if the notify_password_change notification is active
+        if($this->owner->config()->get('notify_password_change')) {
+            $key = array_search('Password', $params['restrictFields']);
+            if($key !== false) {
+                unset($params['restrictFields'][$key]);
+            }
+        }
+
+        // no fields were marked as changed
+        if(empty($params['restrictFields'])) {
+            return;
+        }
+
         $fields = $this->owner->getFrontEndFields($params);
         $what = new ArrayList();
         foreach($fields as $field) {
