@@ -32,6 +32,17 @@ Note that this module provides the ability to configure the MFA secret key via p
 
 More: [Multi Factor Authentication](./docs/003_mfa.md)
 
+## Good-to-know
+
+### Password validator
+
+If you are setting a PasswordValidator in project configuration like so:
+```php
+$validator = \SilverStripe\Security\PasswordValidator::create();
+\SilverStripe\Security\Member::set_password_validator($validator);
+```
+This will replace the password validator provided in this module.
+
 ## License
 
 [BSD-3-Clause](./LICENSE.md)

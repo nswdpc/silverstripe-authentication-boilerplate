@@ -6,10 +6,11 @@ The following validation and verification checks and configuration settings are 
 
 ### Validation
 
-Sets the ```PasswordValidator``` configuration based on [NIST Special Publication 800-63B / 5.1.1.1 Memorized Secret Authenticators](https://pages.nist.gov/800-63-3/sp800-63b.html#5111-memorized-secret-authenticators)
+The module provides a ```PasswordValidator``` using [NIST Special Publication 800-63B / 5.1.1.1 Memorized Secret Authenticators](https://pages.nist.gov/800-63-3/sp800-63b.html#5111-memorized-secret-authenticators)
 
 + The subscriber can choose a memorised secret of 8 characters minimum length
 + No other complexity requirements are imposed
++ No historical count of password use is imposed
 + No password hints are required
 
 ### Verification
