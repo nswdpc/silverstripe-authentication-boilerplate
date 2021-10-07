@@ -9,7 +9,7 @@ SilverStripe\Security\Security:
 SilverStripe\Security\Member:
   # limit to 3 attempts before locking
   # ref: https://github.com/silverstripe/silverstripe-mfa/issues/421
-  lock_out_after_incorrect_logins: 6
+  lock_out_after_incorrect_logins: 20
   # lock out delay
   lock_out_delay_mins: 10
   # auto login lifetime - 60 mins
