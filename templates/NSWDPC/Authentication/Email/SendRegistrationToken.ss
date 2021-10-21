@@ -19,6 +19,8 @@
 
     <p style="font-size:xxx-large;text-align: center;"><span class="code">{$Code.XML}</span></p>
 
+    <p><%t NSWDPC\\Members\\Configuration.OPTIONAL_MFA 'Before entering your code, you can optionally configure multi factor authentication (MFA) for your account.' %>.</p>
+
     <% if $ProfileContactLink %>
         <%t NSWDPC\\Members\\Configuration.IF_NOT_INITIATED 'If this was not initiated by you, please ignore this email' %> <a href="$ProfileContactLink"><%t NSWDPC\\Members\\Configuration.OR_CONTACT_US 'or contact us for assistance' %></a>.</p>
     <% else %>
