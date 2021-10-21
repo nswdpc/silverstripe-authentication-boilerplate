@@ -16,7 +16,7 @@ use SilverStripe\Security\PasswordValidator;
  * with other verifiers and authentication processes, namely:
  *
  * - check password against breached password corpuses
- * - rule checks, such as dicitionary word, repetitive characters, variations on the site name
+ * - rule checks, such as dictionary word, repetitive characters, variations on the site name
  * - use MFA
  *
  * As these extra checks are provided by other modules,
