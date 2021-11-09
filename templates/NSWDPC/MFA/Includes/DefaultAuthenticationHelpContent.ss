@@ -102,7 +102,7 @@
     provides backups.
 </p>
 
-<h2 id="regain_access"><%t AuthBoilerplate.REGAIN_ACCESS %>Regain access</h2>
+<h2 id="regain_access"><%t AuthBoilerplate.REGAIN_ACCESS 'Regain access' %></h2>
 
 <p>
     If you are locked out of your account due to the incorrect code or password being entered, you will need to
