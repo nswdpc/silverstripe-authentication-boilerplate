@@ -42,7 +42,7 @@ class PendingProfileAdmin extends ModelAdmin
     /**
      * @var string
      */
-    private static $menu_title = 'Pending Profiles';
+    private static $menu_title = 'Profiles';
 
     public function getEditForm($id = null, $fields = null) {
         $form = parent::getEditForm($id, $fields);
