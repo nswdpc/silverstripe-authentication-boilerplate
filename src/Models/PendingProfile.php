@@ -58,6 +58,8 @@ class PendingProfile extends DataObject implements PermissionProvider
 
     private static $table_name = 'PendingProfile';
 
+    private static $default_sort = 'Created DESC';
+
     private static $has_one = [
         'Member' => Member::class
     ];
