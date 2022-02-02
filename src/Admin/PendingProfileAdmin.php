@@ -55,4 +55,16 @@ class PendingProfileAdmin extends ModelAdmin
         }
         return $form;
     }
+
+    /**
+     * Provide ability to add models to this ModelAdmin
+     * @inheritdoc
+     */
+    public function getManagedModels()
+    {
+        $models = parent::getManagedModels();
+        $this->extend('updateProfileModels', $models);
+        return $models;
+    }
+
 }
