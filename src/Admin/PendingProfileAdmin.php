@@ -22,12 +22,26 @@ use SilverStripe\Admin\ModelAdmin;
 class PendingProfileAdmin extends ModelAdmin
 {
 
+    /**
+     * @var array
+     */
     private static $managed_models = [
         PendingProfile::class
     ];
 
+    /**
+     * @var string
+     */
     private static $menu_icon_class = 'font-icon-torsos-all';
+
+    /**
+     * @var string
+     */
     private static $url_segment = 'pending-profiles';
+
+    /**
+     * @var string
+     */
     private static $menu_title = 'Pending Profiles';
 
     public function getEditForm($id = null, $fields = null) {
