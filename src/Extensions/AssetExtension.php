@@ -3,6 +3,7 @@
 namespace NSWDPC\Authentication;
 
 use SilverStripe\Assets\File;
+use SilverStripe\Assets\Folder;
 use SilverStripe\Core\Extension;
 
 /**
@@ -12,10 +13,14 @@ use SilverStripe\Core\Extension;
 class AssetExtension extends Extension {
 
     /**
-     * Pending members cannot view files
-     * @param Member $member
+     * Handle pending members accessing files
+     * @param Member|null $member
+     * @return mixed
      */
     public function canView($member) {
+        if($this->owner instanceof Folder) {
+            return null;
+        }
         if($member && $member->getIsPending()) {
             return false;
         }
