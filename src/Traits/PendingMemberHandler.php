@@ -16,6 +16,9 @@ use SilverStripe\Security\Member;
 trait PendingMemberHandler {
 
     /**
+     * Handle redirect for pending members. If turned off in configuration,
+     * no redirect will occur
+     *
      * @return mixed
      */
     protected function handlePromptForVerificationCode(Controller $controller) {
@@ -24,9 +27,10 @@ trait PendingMemberHandler {
         }
         $member = Security::getCurrentUser();
         if($member && $member->getIsPending() ) {
-            $member->extend('promptForVerificationCodeLink', $link);
-            if(is_string($link) && $link) {
-                return $controller->redirect( $link );
+            $links = $member->extend('promptForVerificationCodeLink');
+            if(is_array($links)) {
+                $redirectLink = array_pop($links);
+                return $controller->redirect( $redirectLink );
             }
         }
         return null;
