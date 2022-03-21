@@ -22,7 +22,7 @@ class SiteTreeExtension extends Extension {
     }
 
     /**
-     * Determine whether a Member who is pending can view the SiteTree record
+     * Handle pending members accessing SiteTree records
      * @return mixed
      * @param Member $member
      */
