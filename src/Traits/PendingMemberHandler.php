@@ -30,7 +30,9 @@ trait PendingMemberHandler {
             $links = $member->extend('promptForVerificationCodeLink');
             if(is_array($links)) {
                 $redirectLink = array_pop($links);
-                return $controller->redirect( $redirectLink );
+                if($redirectLink) {
+                    return $controller->redirect( $redirectLink );
+                }
             }
         }
         return null;
