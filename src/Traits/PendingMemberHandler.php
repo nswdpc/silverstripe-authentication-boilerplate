@@ -21,12 +21,12 @@ trait PendingMemberHandler {
      *
      * @return mixed
      */
-    protected function handlePromptForVerificationCode(Controller $controller) {
+    protected function handlePromptForVerificationCode(Controller $controller, DataObject $record) {
         if(!PendingProfile::config()->get('redirect_when_pending')) {
             return null;
         }
         $member = Security::getCurrentUser();
-        if($member && $member->getIsPending() ) {
+        if($member && $member->getIsPending() && !$this->hasAnyoneViewPermission($record)) {
             $links = $member->extend('promptForVerificationCodeLink');
             if(is_array($links)) {
                 $redirectLink = array_pop($links);
