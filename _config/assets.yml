@@ -1,0 +1,6 @@
+---
+Name: nswdpc-authentication-assets
+---
+SilverStripe\Assets\File:
+  extensions:
+    - 'NSWDPC\Authentication\AssetExtension'

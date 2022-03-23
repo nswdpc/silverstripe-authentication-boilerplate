@@ -42,6 +42,7 @@ class PendingProfile extends DataObject implements PermissionProvider
 
     private static $require_admin_approval = true;
     private static $require_self_verification = false;
+    private static $redirect_when_pending = false;
     private static $code_lifetime = 86400;
     private static $digest = 'sha256';
     private static $digits = 6;
@@ -54,6 +55,14 @@ class PendingProfile extends DataObject implements PermissionProvider
         'IsAdminApproved' => 'Boolean',
         'RequireSelfVerification' => 'Boolean',
         'IsSelfVerified' => 'Boolean',
+    ];
+
+    private static $indexes = [
+        'RequireAdminApproval' => true,
+        'NotifiedRequireAdminApproval' => true,
+        'IsAdminApproved' => true,
+        'RequireSelfVerification' => true,
+        'IsSelfVerified' => true,
     ];
 
     private static $table_name = 'PendingProfile';
@@ -91,7 +100,11 @@ class PendingProfile extends DataObject implements PermissionProvider
     {
         $model_admin = PendingProfileAdmin::singleton();
         $class = str_replace('\\', '-', self::class);
-        return $model_admin->Link("/{$class}/EditForm/field/{$class}/item/{$this->ID}/edit");
+        if($this->exists()) {
+            return $model_admin->Link("/{$class}/EditForm/field/{$class}/item/{$this->ID}/edit");
+        } else {
+            return $model_admin->Link("/{$class}/EditForm/field/{$class}/item/new");
+        }
     }
 
     public function getTitle() {
@@ -242,18 +255,19 @@ class PendingProfile extends DataObject implements PermissionProvider
      * Find or create a pending profile for the Member
      * @return self
      */
-    public static function forMember(Member $member)
+    public static function forMember(Member $member) : ?PendingProfile
     {
         $profile = PendingProfile::get()->filter(['MemberID'=>$member->ID])->first();
-        return $profile;
+        return ($profile && $profile->exists() ? $profile : null);
     }
 
     /**
      * Create a pending profile for the Member, this is actioned by the profile owner upon registration
      * @return self
      */
-    private static function createForMember(Member $member)
+    public static function createForMember(Member $member) : PendingProfile
     {
+        Logger::log("createForMember #{$member->ID} - $member->Email");
         $profile = PendingProfile::create();
         $profile->IsAdminApproved = 0;
         $profile->IsSelfVerified = 0;
@@ -291,16 +305,15 @@ class PendingProfile extends DataObject implements PermissionProvider
 
     /**
      * Find or create a pending profile for the Member
+     * When created, it is created with the default rules
+     * If the profile exists, an admin approval email *may* be sent if required
      * @return self
      */
-    public static function findOrMake(Member $member)
+    public static function findOrMake(Member $member) : self
     {
         $profile = self::forMember($member);
         if (!$profile) {
             $profile = self::createForMember($member);
-            // when a profile is created, the member becomes pending
-            $member->IsPending = 1;
-            $member->write();
         } else {
             self::sendAdministrationApprovalRequiredEmail($profile);
         }
@@ -327,24 +340,6 @@ class PendingProfile extends DataObject implements PermissionProvider
                     throw new ValidationException("The user selected already has a pending profile, please edit that profile or select a different user");
                 }
             }
-        }
-
-    }
-
-    /**
-     * Actions to run after record is written
-     */
-    public function onAfterWrite()
-    {
-        parent::onAfterWrite();
-        $member = $this->Member();
-        if ($member
-            && $member->IsPending == 0
-            && ($this->requiresPromptForSelfVerification()
-                || $this->requiresPromptForAdministrationApproval())) {
-            // Ensure member record is correctly updated based on profile settings
-            $member->IsPending = 1;
-            $member->write();
         }
 
     }

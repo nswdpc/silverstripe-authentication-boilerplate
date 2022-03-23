@@ -2,35 +2,44 @@
 
 namespace NSWDPC\Authentication;
 
-use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\CompositeField;
+use SilverStripe\Forms\LabelField;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataExtension;
-use SilverStripe\Forms\ReadonlyField;
-use SilverStripe\Forms\FieldList;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 use Silverstripe\Control\Controller;
 
 class ProfileExtension extends DataExtension {
 
+    /**
+     * @var array
+     */
     private $changed_fields = [];
 
-    private static $db = [
-        'IsPending' => 'Boolean',
-    ];
-
+    /**
+     * @var array
+     */
     private static $belongs_to = [
         'PendingProfile' => PendingProfile::class
     ];
 
     /**
-     * Handle calls to IsPending
+     * Determine if Member is considered pending
+     * In that a PendingProfile exists and it requires approval of some sort
      * @return boolean
      */
-    public function getIsPending() {
-        return $this->IsProfilePending();
+    public function getIsPending() : bool {
+        $profile = PendingProfile::forMember($this->owner);
+        return $profile
+            && $profile->exists()
+            && ($profile->requiresPromptForSelfVerification()
+                || $profile->requiresPromptForAdministrationApproval());
     }
-
-    //TODO whenever IsPending is set to 1, create a Pending Profile with default values
 
     /**
      * Returns whether the profile is pending or not based on IsPending value
@@ -38,12 +47,7 @@ class ProfileExtension extends DataExtension {
      * @return boolean
      */
     public function IsProfilePending() {
-        $profile = PendingProfile::forMember($this->owner);
-        return $this->owner->getField('IsPending') == 1
-            && $profile
-            && $profile->exists()
-            && ($profile->requiresPromptForSelfVerification()
-                || $profile->requiresPromptForAdministrationApproval());
+        return $this->getIsPending();
     }
 
     public function getProfileRequiresSelfVerification() {
@@ -79,15 +83,36 @@ class ProfileExtension extends DataExtension {
      */
     public function updateCMSFields(FieldList $fields)
     {
-        $fields->removeByName('IsPending');
-        $fields->addFieldToTab(
-            "Root.Profile",
-            ReadonlyField::create(
-                'IsPending',
-                _t('NSWDPC\Authentication.PENDING_QUESTION', "Pending?"),
-                $this->IsProfilePendingNice()
-            )->setDescription( _t('NSWDPC\Authentication.VIEW_PENDING_PROFILES_ADMIN', "View the 'Pending Profiles' area to create and manage pending profiles") )
-        );
+
+        if(
+            ($pendingProfile = $this->owner->PendingProfile())
+            && $pendingProfile->exists()
+        ) {
+
+            $link = $pendingProfile->CMSEditLink();
+            $value = _t(
+                PendingProfile::class . ".MEMBER_HAS_PENDING_PROFILE",
+                "View this member's pending profile."
+            );
+            $title = _t(
+                PendingProfile::class . ".PENDING",
+                "Pending profile"
+            );
+
+            $fields->addFieldToTab(
+                "Root.Profile",
+                CompositeField::create(
+                    LiteralField::create(
+                        "HasPendingProfile",
+                        DBField::create_field(
+                            DBHTMLVarchar::class,
+                            "<p class=\"message warning\"><a href=\"{$link}\">{$value}</a></p>"
+                        )
+                    )
+                )->setTitle($title)
+            );
+
+        }
     }
 
     /**
@@ -104,8 +129,7 @@ class ProfileExtension extends DataExtension {
      */
     public function onBeforeDelete() {
         parent::onBeforeDelete();
-        $profile = PendingProfile::forMember($this->owner);
-        if($profile) {
+        if($profile = PendingProfile::forMember($this->owner)) {
             $profile->delete();
         }
     }
@@ -118,27 +142,25 @@ class ProfileExtension extends DataExtension {
         $this->changed_fields = $fields;
     }
 
-
     /**
      * Mark a user as pending
-     * This creates a PendingProfile record
+     * This can create a PendingProfile record based on configuration
      * @return PendingProfile
      */
-    public function makePending($initial = false) {
-        $profile = PendingProfile::findOrMake($this->owner);
-        return $profile;
+    public function makePending($initial = false) : ?PendingProfile {
+        return PendingProfile::findOrMake($this->owner);
     }
 
     /**
-     * Remove pending flags and profile from a Member
+     * Remove a linked PendingProfile from the member
      */
-    public function removePending() {
-        $profile = PendingProfile::forMember($this->owner);
-        if($profile) {
+    public function removePending() : bool {
+        if($profile = PendingProfile::forMember($this->owner)) {
             $profile->delete();
+            return true;
+        } else {
+            return false;
         }
-        $this->owner->IsPending = 0;
-        $this->owner->write();
     }
 
     /**
