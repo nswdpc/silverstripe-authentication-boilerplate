@@ -18,3 +18,7 @@ SilverStripe\MFA\BackupCode\RegisterHandler:
 # MFA setup
 NSWDPC\MFA\ConfigurationService:
   ss_mfa_secret_key: ''
+# Reset account notification
+SilverStripe\MFA\Extension\AccountReset\SecurityExtension:
+  extensions:
+    mfaResetAccountExtension: 'NSWDPC\Authentication\ResetAccountExtension'

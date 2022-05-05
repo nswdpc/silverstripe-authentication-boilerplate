@@ -6,12 +6,16 @@ use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Group;
+use SilverStripe\Security\Permission;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\View\ArrayData;
 use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBVarchar;
 use SilverStripe\Control\Email\Email;
 use Silverstripe\Control\Controller;
+use SilverStripe\MFA\Extension\MemberExtension as MFAMemberExtension;
 
 /**
  * Notification model for nswpdc/silverstripe-members
@@ -244,5 +248,111 @@ class Notifier {
         }
         return $email->send();
     }
+
+    /**
+     * Notify MFA administrators that a member reset their account via the reset account process
+     * See {@link NSWDPC\Authentication\ResetAccountExtension}
+     * Note: this requires a group with the relevant permission to be created, and members assigned
+     * @param Member the member that reset their account
+     * @param string $state started or completed
+     */
+    public function sendMfaAccountResetNotification(Member $resettingMember, string $state = 'completed') : bool {
+
+        $permissionCode = MFAMemberExtension::MFA_ADMINISTER_REGISTERED_METHODS;
+
+        $recipients = Permission::get_members_by_permission($permissionCode );
+        if(!$recipients || $recipients->count() == 0) {
+            Logger::log("sendMfaAccountResetNotification failed - no members can be notified", "NOTICE");
+            return false;
+        }
+
+        // current site config
+        $config = SiteConfig::current_site_config();
+
+        // environment
+        $browser = "";
+        if(!empty($_SERVER['HTTP_USER_AGENT'])) {
+            $browser = DBField::create_field(
+                DBVarchar::class,
+                $_SERVER['HTTP_USER_AGENT']
+            );
+        }
+
+        $request = null;
+        $requestIP = '';
+        $controller = (Controller::has_curr() ? Controller::curr() : null);
+        if($controller) {
+            $request = $controller->getRequest();
+            $requestIP = DBField::create_field(
+                DBVarchar::class,
+                $request->getIP()
+            );
+        }
+
+        if($state == 'started') {
+            $subject = _t(
+                Configuration::class . ".ACCOUNT_RESET_MFA_STARTED",
+                "An account reset was started on {siteTitle}",
+                [
+                    'siteTitle' => $config->Title
+                ]
+            );
+        } else {
+            // default completed
+            $subject = _t(
+                Configuration::class . ".ACCOUNT_WAS_RESET_MFA",
+                "An account reset was completed on {siteTitle}",
+                [
+                    'siteTitle' => $config->Title
+                ]
+            );
+        }
+
+        $sends = 0;
+        foreach($recipients as $recipient) {
+
+            // template data
+            $content = ArrayData::create([
+                'RequestState' => $state,
+                'Recipient' => $recipient,
+                'ResettingMember' => $resettingMember,
+                'Browser' => $browser,
+                'RequestIP' => $requestIP,
+                'SiteConfig' => $config
+            ])->renderWith('NSWDPC/MFA/Email/MemberResetAccountNotification');
+
+            $data = [];
+            $data['Content'] = $content;
+
+            try {
+                $to = [];
+                $to[ $recipient->Email ] = $recipient->getName();
+                if($this->sendEmail(
+                    $to,
+                    $this->getDefaultFrom(),
+                    $subject,
+                    $data
+                )) {
+                    $sends++;
+                }
+            } catch (\Exception $e) {
+                // failed to notify
+                Logger::log("sendMfaAccountResetNotification failed for member #{$recipient->ID}", "NOTICE");
+            }
+        }
+        return $sends > 0;
+    }
+
+    /**
+     * Notify MFA administrators that a member account reset process was requested
+     * via the token being accepted
+     * See {@link NSWDPC\Authentication\ResetAccountExtension}
+     * Note: this requires a group with the relevant permission to be created, and members assigned
+     * @param Member the member that reset their account
+     */
+    public function sendMfaAccountResetStarted(Member $resettingMember) : bool {
+        return $this->sendMfaAccountResetNotification($resettingMember, 'started');
+    }
+
 
 }
