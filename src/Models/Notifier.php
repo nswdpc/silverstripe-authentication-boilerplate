@@ -117,11 +117,13 @@ class Notifier {
         $data['Content'] = $content;
         $to = [];
         $to[ $member->Email ] = $member->getName();
-        if($initial) {
-            $subject = sprintf( _t(Configuration::class . ".REGISTRATION_ACTION_REQUIRED", "Please complete your %s registration"), $config->Title );
-        } else {
-            $subject = sprintf( _t(Configuration::class . ".ACCOUNT_ACTIVATION_REQUIRED", "Account activation required for %s"), $config->Title );
-        }
+        $subject =  _t(
+            Configuration::class . ".REGISTRATION_ACTION_REQUIRED",
+            "Please verify your registration at {siteName}",
+            [
+                'siteName' => $config->Title
+            ]
+        );
         return $this->sendEmail(
             $to,
             $this->getDefaultFrom(),
