@@ -45,7 +45,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     private static $redirect_when_pending = false;
     private static $code_lifetime = 86400;
     private static $digest = 'sha256';
-    private static $digits = 6;
+    private static $digits = 4;
     private static $epoch = 0;
 
     private static $db = [
