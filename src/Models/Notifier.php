@@ -16,6 +16,7 @@ use SilverStripe\ORM\FieldType\DBVarchar;
 use SilverStripe\Control\Email\Email;
 use Silverstripe\Control\Controller;
 use SilverStripe\MFA\Extension\MemberExtension as MFAMemberExtension;
+use SilverStripe\Security\Security;
 
 /**
  * Notification model for nswpdc/silverstripe-members
@@ -194,6 +195,7 @@ class Notifier {
         // template data
         $content = ArrayData::create([
             'Member' => $member,
+            'MemberProfileSignInLink' => Security::login_url(),
             'SiteConfig' => $config
         ])->renderWith('NSWDPC/Authentication/Email/ApprovedByAdministrator');
 
