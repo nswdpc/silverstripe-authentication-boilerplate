@@ -1,6 +1,8 @@
 ---
 Name: nswdpc-authentication-boilerplate-mfa
 ---
+SilverStripe\MFA\Authenticator\LoginHandler:
+  user_help_link: '/mfa_help'
 # Generic configuration for setting up MFA on Silverstripe applications
 SilverStripe\TOTP\RegisterHandler:
   # This is the code that is displayed to users when they register to use TOTP,
