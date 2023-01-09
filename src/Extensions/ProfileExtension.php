@@ -168,7 +168,7 @@ class ProfileExtension extends DataExtension {
      * @return boolean
      */
     public function rePromptForActivationCode(Controller $controller) {
-        return $this->owner->sendRegistrationApprovalEmail(false, $controller);
+        return $this->owner->sendRegistrationApprovalEmail($controller, false);
     }
 
     /**
@@ -176,7 +176,7 @@ class ProfileExtension extends DataExtension {
      * @param boolean $initial whether this is the initial prompt
      * @return void
      */
-    public function sendRegistrationApprovalEmail($initial = false, Controller $controller) {
+    public function sendRegistrationApprovalEmail(Controller $controller, $initial = false) {
         $notifier = Notifier::create();
         return $notifier->sendSelfRegistrationToken( $this->owner, $initial, $controller );
     }
