@@ -176,7 +176,7 @@ class ProfileExtension extends DataExtension {
      * @param boolean $initial whether this is the initial prompt
      * @return void
      */
-    public function sendRegistrationApprovalEmail($initial = false, Controller $controller) {
+    public function sendRegistrationApprovalEmail($initial, Controller $controller) {
         $notifier = Notifier::create();
         return $notifier->sendSelfRegistrationToken( $this->owner, $initial, $controller );
     }
