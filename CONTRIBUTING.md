@@ -1,13 +1,19 @@
 # Contributing
 
-The authors strongly believe that an open source project is improved both by the quality of code and the community involved in it. We welcome all pull requests, feature requests and bug reports.
+For simplicity, our contribution process follows the relevant Silverstripe documents.
 
-You can participate by sharing code, ideas, or simply helping others. No matter what your skill level is, every contribution counts.
+## Guidelines
 
-To make things easy we follow the [Silverstripe contribution guidelines](https://docs.silverstripe.org/en/4/contributing/)
+- Maintenance on this module is a shared effort of those who use it
+- To contribute improvements to the code, ensure you raise a pull request and discuss with the module maintainers
+- Please follow the Silverstripe [code contribution guidelines](https://docs.silverstripe.org/en/contributing/code/) and [Module Standard](https://docs.silverstripe.org/en/developer_guides/extending/modules/#module-standard)
+- Supply documentation that follows the [GitHub Flavored Markdown](https://help.github.com/articles/markdown-basics/) conventions
+- When having discussions about this module in issues or pull request please adhere to the [Silverstripe Community Code of Conduct](https://docs.silverstripe.org/en/contributing/code_of_conduct/)
 
-## Copyright
+## Contributor license agreement
 
-**IMPORTANT: By supplying code to this project in any way, you agree to assign copyright of that code to the New South Wales Department of Premier & Cabinet (NSWDPC), on the condition that NSWDPC releases that code under the BSD license.**
+By supplying code to this module in patches, tickets and pull requests, you agree to assign copyright  of that code to New South Wales Department of Premier & Cabinet, on the condition that these code changes are released under the same BSD license as the original module.
 
-We ask for this so that the ownership in the license is clear and unambiguous, and so that community involvement doesn't stop us from being able to continue supporting these projects. By releasing this code under a permissive license, this copyright assignment won't prevent you from using the code in any way you see fit.
+We ask for this so that the ownership in the license is clear and unambiguous.
+
+By releasing this code under a permissive license such as BSD, this copyright assignment won't prevent you from using the code in any way you see fit.
