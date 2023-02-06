@@ -15,12 +15,24 @@ class ContextualWordRule extends AbstractPasswordRule {
 
     use Configurable;
 
+    /**
+     * @config
+     */
     private static $context_strings = [];
 
+    /**
+     * @config
+     */
     private static $min_length = 4;
 
+    /**
+     * @config
+     */
     private static $template_var = "CONTEXTUAL_WORD_RULE";
 
+    /**
+     * @config
+     */
     private static $template_value = "Your password cannot contain a word related to this service";
 
     /**

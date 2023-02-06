@@ -11,6 +11,10 @@ use SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest;
 
 class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest {
 
+    /**
+     * @var array
+     * @config
+     */
     private static $allowed_actions = array(
         'edit',
         'view',

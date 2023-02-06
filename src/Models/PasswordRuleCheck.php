@@ -14,6 +14,10 @@ class PasswordRuleCheck {
     use Configurable;
     use Injectable;
 
+    /**
+     * @var array
+     * @config
+     */
     private static $checks = [
         'NSWDPC\\Passwords\\DictionaryWordRule',
         'NSWDPC\\Passwords\\SequentialCharacterRule',

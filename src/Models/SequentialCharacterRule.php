@@ -16,19 +16,27 @@ class SequentialCharacterRule extends AbstractPasswordRule {
     /**
      * Alphabets to chunk up and check
      * Add other alphabets in configuration
+     * @config
      */
     private static $alphabets = [
         '0123456789',
         'abcdefghijklmnopqrstuvwxyz'
     ];
 
+    /**
+     * @config
+     */
     private static $template_var = "SEQUENTIAL_CHARACTER_RULE";
 
+    /**
+     * @config
+     */
     private static $template_value = "Your password cannot contain sequential characters e.g abcd";
 
     /**
      * e.g abcd, 1234
      * Set to 3 to match abc, tuv, 345 and the like with a higher probability of false positives
+     * @config
      */
     private static $length = 4;
 

@@ -3,6 +3,7 @@
 namespace NSWDPC\Passwords;
 
 use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Security\Member;
 use SilverStripe\Security\PasswordValidator;
 
 /**
@@ -35,24 +36,28 @@ class NISTPasswordValidator extends PasswordValidator {
     /**
      * Composition rules, this must be null to override array
      * @inheritdoc
+     * @config
      */
     private static $character_strength_tests = null;
 
     /**
      * Memorised secrets should be at least 8 characters
      * @inheritdoc
+     * @config
      */
     private static $min_length = 8;
 
     /**
      * Composition rules
      * @inheritdoc
+     * @config
      */
     private static $min_test_score = 0;
 
     /**
      * Historical password count
      * @inheritdoc
+     * @config
      */
     private static $historic_count = 0;
 

@@ -13,10 +13,19 @@ class DictionaryWordRule extends AbstractPasswordRule {
 
     use Configurable;
 
+    /**
+     * @config
+     */
     private static $locale = "en_AU";
 
+    /**
+     * @config
+     */
     private static $template_var = "DICTIONARY_WORD_RULE";
 
+    /**
+     * @config
+     */
     private static $template_value = "Your password cannot be a dictionary word";
 
     /**
@@ -40,6 +49,7 @@ class DictionaryWordRule extends AbstractPasswordRule {
             throw new \Exception( _t("NSWDPC\\Passwords.GENERAL_EXCEPTION", "The password cannot be validated") );
         } else {
             $dictionary = enchant_broker_request_dict($broker, $locale);
+            $suggestions = null;
             $check = enchant_dict_quick_check($dictionary, $password, $suggestions );
             if($check) {
                 throw new PasswordVerificationException( _t("NSWDPC\\Passwords.DICTIONARY_WORD_FAIL", "Dictionary words are not allowed in the password") );

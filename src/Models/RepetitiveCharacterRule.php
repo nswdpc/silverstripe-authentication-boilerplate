@@ -13,10 +13,19 @@ class RepetitiveCharacterRule extends AbstractPasswordRule {
 
     use Configurable;
 
+    /**
+     * @config
+     */
     private static $length = 3;//e.g aaa
 
+    /**
+     * @config
+     */
     private static $template_var = "REPETITIVE_CHARACTER_RULE";
 
+    /**
+     * @config
+     */
     private static $template_value = "Your password cannot contain repetitive characters (e.g aaa, 999)";
 
     /**
