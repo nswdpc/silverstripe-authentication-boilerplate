@@ -21,7 +21,7 @@
         "nswdpc/silverstripe-pwnage-hinter": "^0.2",
         "silverstripe/security-extensions": "^4",
         "silverstripe/securityreport" : "^2.2",
-        "spomky-labs/otphp": "^10.0"
+        "spomky-labs/otphp": "^10"
     },
     "authors": [
         {
