@@ -12,7 +12,7 @@ class PasswordStrengthTest extends SapphireTest
 
     protected $usesDatabase = true;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
     }
