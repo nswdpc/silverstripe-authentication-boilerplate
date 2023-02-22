@@ -93,7 +93,7 @@ class Notifier {
      * @param Controller $controller a controller that can provide a link to a URL where  the user can enter the code
      * @param boolean $initial if false, this is a re-notification of registration approval (e.g a reprompt)
      */
-    public function sendSelfRegistrationToken(Member $member, Controller $controller, $initial = false) {
+    public function sendSelfRegistrationToken(Member $member, $initial, Controller $controller) {
         if(!$controller->hasMethod('RegisterPendingLink')) {
             throw new \Exception("Failed: the controller does not provide RegisterPendingLink");
         }
