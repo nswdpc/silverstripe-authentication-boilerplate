@@ -321,7 +321,6 @@ class PendingProfile extends DataObject implements PermissionProvider
      */
     public static function createForMember(Member $member) : PendingProfile
     {
-        Logger::log("createForMember #{$member->ID} - $member->Email");
         $profile = PendingProfile::create();
         $profile->IsAdminApproved = 0;
         $profile->IsSelfVerified = 0;
