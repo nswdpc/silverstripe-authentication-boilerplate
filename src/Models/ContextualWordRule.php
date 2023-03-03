@@ -58,6 +58,9 @@ class ContextualWordRule extends AbstractPasswordRule {
 
         // split strings into chunks that only contain alphanumeric chrs
         foreach($site_strings as $string) {
+            if(!is_string($string)) {
+                $string = "";
+            }
             $parts = preg_split("/[^a-zA-Z0-9]/", $string);
             $parts = array_filter(
                 $parts,
