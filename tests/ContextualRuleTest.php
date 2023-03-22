@@ -36,8 +36,8 @@ class ContextualRuleTest extends SapphireTest
         $member->write();
 
         // configured strings
-        Config::inst()->update(ContextualWordRule::class, 'context_strings', $strings);
-        Config::inst()->update(ContextualWordRule::class, 'min_length', 4);
+        Config::modify()->set(ContextualWordRule::class, 'context_strings', $strings);
+        Config::modify()->set(ContextualWordRule::class, 'min_length', 4);
 
         $rule = Injector::inst()->create( ContextualWordRule::class );
         $strings = $rule->getContextStrings($member);
