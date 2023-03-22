@@ -12,11 +12,6 @@ class PasswordStrengthTest extends SapphireTest
 
     protected $usesDatabase = true;
 
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testContextualWords()
     {
         $strings = [
