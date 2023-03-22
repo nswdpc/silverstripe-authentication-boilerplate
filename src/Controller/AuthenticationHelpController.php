@@ -6,7 +6,7 @@ use SilverStripe\View\ArrayData;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
-use Silverstripe\SiteConfig\SiteConfig;
+use SilverStripe\SiteConfig\SiteConfig;
 
 /**
  * This controller exists to handle requests to the configured {@link SilverStripe\TOTP\RegisterHandler} user_help_link value
@@ -15,6 +15,10 @@ use Silverstripe\SiteConfig\SiteConfig;
  */
 class AuthenticationHelpController extends Controller {
 
+    /**
+     * @var array
+     * @config
+     */
     private static $allowed_actions = [
         'index'
     ];

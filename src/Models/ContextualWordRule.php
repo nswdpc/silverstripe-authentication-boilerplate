@@ -15,12 +15,24 @@ class ContextualWordRule extends AbstractPasswordRule {
 
     use Configurable;
 
+    /**
+     * @config
+     */
     private static $context_strings = [];
 
+    /**
+     * @config
+     */
     private static $min_length = 4;
 
+    /**
+     * @config
+     */
     private static $template_var = "CONTEXTUAL_WORD_RULE";
 
+    /**
+     * @config
+     */
     private static $template_value = "Your password cannot contain a word related to this service";
 
     /**
@@ -46,6 +58,9 @@ class ContextualWordRule extends AbstractPasswordRule {
 
         // split strings into chunks that only contain alphanumeric chrs
         foreach($site_strings as $string) {
+            if(!is_string($string)) {
+                $string = "";
+            }
             $parts = preg_split("/[^a-zA-Z0-9]/", $string);
             $parts = array_filter(
                 $parts,

@@ -2,7 +2,9 @@
 
 namespace NSWDPC\Authentication;
 
+use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\Core\Extension;
+use SilverStripe\Security\Member;
 
 /**
  * Extension for SiteTree handling when silverstripe/cms is installed

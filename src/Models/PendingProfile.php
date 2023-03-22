@@ -40,14 +40,45 @@ class PendingProfile extends DataObject implements PermissionProvider
     use TOTPAware;
     use Configurable;
 
+    /**
+     * @config
+     */
     private static $require_admin_approval = true;
+
+    /**
+     * @config
+     */
     private static $require_self_verification = false;
+
+    /**
+     * @config
+     */
     private static $redirect_when_pending = false;
+
+    /**
+     * @config
+     */
     private static $code_lifetime = 86400;
+
+    /**
+     * @config
+     */
     private static $digest = 'sha256';
+
+    /**
+     * @config
+     */
     private static $digits = 4;
+
+    /**
+     * @config
+     */
     private static $epoch = 0;
 
+    /**
+     * @config
+     * @var array
+     */
     private static $db = [
         'ProvisioningData' => 'Text',
         'RequireAdminApproval' => 'Boolean',
@@ -57,6 +88,10 @@ class PendingProfile extends DataObject implements PermissionProvider
         'IsSelfVerified' => 'Boolean',
     ];
 
+    /**
+     * @config
+     * @var array
+     */
     private static $indexes = [
         'RequireAdminApproval' => true,
         'NotifiedRequireAdminApproval' => true,
@@ -65,14 +100,30 @@ class PendingProfile extends DataObject implements PermissionProvider
         'IsSelfVerified' => true,
     ];
 
+    /**
+     * @config
+     * @var string
+     */
     private static $table_name = 'PendingProfile';
 
+    /**
+     * @config
+     * @var string
+     */
     private static $default_sort = 'Created DESC';
 
+    /**
+     * @config
+     * @var array
+     */
     private static $has_one = [
         'Member' => Member::class
     ];
 
+    /**
+     * @config
+     * @var array
+     */
     private static $summary_fields = [
         'Member.Created' => 'Created',
         'Member.LastEdited' => 'Edited',
@@ -84,6 +135,10 @@ class PendingProfile extends DataObject implements PermissionProvider
         'IsSelfVerified.Nice' => 'Self-verified'
     ];
 
+    /**
+     * @config
+     * @var array
+     */
     private static $defaults = [
         'RequireAdminApproval' => 0,
         'NotifiedRequireAdminApproval' => 0,
@@ -119,7 +174,6 @@ class PendingProfile extends DataObject implements PermissionProvider
 
     /**
      * Returns members who can approve profiles
-     * @return DataList
      */
     public static function getApprovers() : SS_List {
         $members = Permission::get_members_by_permission('PENDINGPROFILE_EDIT');
@@ -267,7 +321,6 @@ class PendingProfile extends DataObject implements PermissionProvider
      */
     public static function createForMember(Member $member) : PendingProfile
     {
-        Logger::log("createForMember #{$member->ID} - $member->Email");
         $profile = PendingProfile::create();
         $profile->IsAdminApproved = 0;
         $profile->IsSelfVerified = 0;
@@ -374,7 +427,7 @@ class PendingProfile extends DataObject implements PermissionProvider
      * Create an approval code using the TOTP module, store the provisioning URI
      * The code is provided to the user who verifies it within an allowed window
      * If they fail they can request a new code
-     * @return int
+     * @return string
      */
     public function createApprovalCode()
     {
@@ -422,8 +475,6 @@ class PendingProfile extends DataObject implements PermissionProvider
 
             Logger::log("Someone tried to verify an approval code via TOTP but the system has no MFA encryption key defined", "ERROR");
             throw new ValidationException( _t('auth.CANNOT_VERIFY_CODE', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.') );
-
-            throw new ValidationException('No encryption key defined');
         }
 
         if(!$this->ProvisioningData) {

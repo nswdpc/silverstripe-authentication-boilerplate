@@ -6,7 +6,7 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Core\Manifest\ModuleLoader;
 use SilverStripe\View\ArrayData;
 use SilverStripe\Core\Extension;
-use Silverstripe\SiteConfig\SiteConfig;
+use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use Page;
@@ -21,12 +21,14 @@ class AuthenticationHelpPage extends Page {
     /**
      * Defines the database table name
      * @var string
+     * @config
      */
     private static $table_name = 'AuthenticationHelpPage';
 
     /**
      * Database fields
      * @var array
+     * @config
      */
     private static $db = [
         'AuthenticationHelpHeading' => 'Varchar(255)',
@@ -37,6 +39,7 @@ class AuthenticationHelpPage extends Page {
     /**
      * Defaults
      * @var array
+     * @config
      */
     private static $defaults = [
         'AuthenticationHelpShowAbove' => 1
@@ -45,11 +48,13 @@ class AuthenticationHelpPage extends Page {
     /**
      * Singular name for CMS
      * @var string
+     * @config
      */
     private static $singular_name = 'Authentication Help Page';
     /**
      * Plural name for CMS
      * @var string
+     * @config
      */
     private static $plural_name = 'Authentication Help Pages';
 
@@ -77,8 +82,7 @@ class AuthenticationHelpPage extends Page {
     }
 
     /**
-     * Settings Tab Fields
-     * @return FieldList
+     * CMS Fields
      */
     public function getCMSFields()
     {

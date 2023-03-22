@@ -9,6 +9,10 @@ class UpgradeTasks extends BuildTask {
 
     protected $title = 'Auth Upgrade Tasks';
     protected $description = 'Handle upgrade changes to support deprecations / new features';
+
+    /**
+     * @config
+     */
     private static $segment = 'AuthUpgradeTasks';
 
     private $commit = false;

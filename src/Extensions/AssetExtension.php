@@ -5,6 +5,7 @@ namespace NSWDPC\Authentication;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Core\Extension;
+use SilverStripe\Security\Member;
 
 /**
  * File handling

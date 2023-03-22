@@ -14,7 +14,7 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBVarchar;
 use SilverStripe\Control\Email\Email;
-use Silverstripe\Control\Controller;
+use SilverStripe\Control\Controller;
 use SilverStripe\MFA\Extension\MemberExtension as MFAMemberExtension;
 use SilverStripe\Security\Security;
 
@@ -27,6 +27,9 @@ class Notifier {
     use Configurable;
     use Injectable;
 
+    /**
+     * @config
+     */
     private static $default_email_from = "";
 
     /**
@@ -44,7 +47,7 @@ class Notifier {
     /**
      * Sends profile update notification to a given account or accounts
      * @param Member $member the member that was updated
-     * @param array $what an array of what has updated, each value is a human readable sentence
+     * @param ArrayList $what an array of what has updated, each value is a human readable sentence
      * @param Member $to_member the member to notify (could be $member)
      * @param Group $to_group the group to notify
      */
@@ -72,7 +75,7 @@ class Notifier {
         // and are not visible to the to_member
         $headers = [];
         if($to_group) {
-            $members = $group->Members();
+            $group_members = $to_group->Members();
             foreach($group_members as $group_member) {
                     $headers['Bcc'][ $group_member->Email ] = $group_member->getName();
             }
@@ -81,7 +84,7 @@ class Notifier {
         return $this->sendEmail(
             $to,
             $this->getDefaultFrom(),
-            _t(Configuration::class . ".PROFILE_CHANGED", "Your profile was updated" ),
+            _t(self::class . ".PROFILE_CHANGED", "Your profile was updated" ),
             $data,
             $headers
         );
@@ -93,7 +96,7 @@ class Notifier {
      * @param boolean $initial if false, this is a re-notification of registration approval (e.g a reprompt)
      * @param Controller $controller a controller that can provide a link to a URL where  the user can enter the code
      */
-    public function sendSelfRegistrationToken(Member $member, $initial = false, Controller $controller) {
+    public function sendSelfRegistrationToken(Member $member, $initial, Controller $controller) {
         if(!$controller->hasMethod('RegisterPendingLink')) {
             throw new \Exception("Failed: the controller does not provide RegisterPendingLink");
         }
@@ -119,7 +122,7 @@ class Notifier {
         $to = [];
         $to[ $member->Email ] = $member->getName();
         $subject =  _t(
-            Configuration::class . ".REGISTRATION_ACTION_REQUIRED",
+            self::class . ".REGISTRATION_ACTION_REQUIRED",
             "Please verify your registration at {siteName}",
             [
                 'siteName' => $config->Title
@@ -166,7 +169,7 @@ class Notifier {
             // TO: the approver
             $to = [];
             $to[ $approver->Email ] = $approver->getName();
-            $subject = sprintf( _t(Configuration::class . ".APPROVAL_OF_ACCOUNT", "An account requires approval on %s"), $config->Title );
+            $subject = sprintf( _t(self::class . ".APPROVAL_OF_ACCOUNT", "An account requires approval on %s"), $config->Title );
 
             $notification = $this->sendEmail(
                 $to,
@@ -205,7 +208,7 @@ class Notifier {
         // TO: the approver
         $to = [];
         $to[ $member->Email ] = $member->getName();
-        $subject = sprintf( _t(Configuration::class . ".ACCOUNT_APPROVED_SUBJECT", "Your account on %s was approved"), $config->Title );
+        $subject = sprintf( _t(self::class . ".ACCOUNT_APPROVED_SUBJECT", "Your account on %s was approved"), $config->Title );
 
         return $this->sendEmail(
             $to,
@@ -257,7 +260,7 @@ class Notifier {
      * Notify MFA administrators that a member reset their account via the reset account process
      * See {@link NSWDPC\Authentication\ResetAccountExtension}
      * Note: this requires a group with the relevant permission to be created, and members assigned
-     * @param Member the member that reset their account
+     * @param Member $resettingMember the member that reset their account
      * @param string $state started or completed
      */
     public function sendMfaAccountResetNotification(Member $resettingMember, string $state = 'completed') : bool {
@@ -295,7 +298,7 @@ class Notifier {
 
         if($state == 'started') {
             $subject = _t(
-                Configuration::class . ".ACCOUNT_RESET_MFA_STARTED",
+                self::class . ".ACCOUNT_RESET_MFA_STARTED",
                 "An account reset was started on {siteTitle}",
                 [
                     'siteTitle' => $config->Title
@@ -304,7 +307,7 @@ class Notifier {
         } else {
             // default completed
             $subject = _t(
-                Configuration::class . ".ACCOUNT_WAS_RESET_MFA",
+                self::class . ".ACCOUNT_WAS_RESET_MFA",
                 "An account reset was completed on {siteTitle}",
                 [
                     'siteTitle' => $config->Title
@@ -352,7 +355,7 @@ class Notifier {
      * via the token being accepted
      * See {@link NSWDPC\Authentication\ResetAccountExtension}
      * Note: this requires a group with the relevant permission to be created, and members assigned
-     * @param Member the member that reset their account
+     * @param Member $resettingMember the member that reset their account
      */
     public function sendMfaAccountResetStarted(Member $resettingMember) : bool {
         return $this->sendMfaAccountResetNotification($resettingMember, 'started');

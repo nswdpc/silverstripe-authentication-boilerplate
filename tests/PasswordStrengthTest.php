@@ -12,11 +12,6 @@ class PasswordStrengthTest extends SapphireTest
 
     protected $usesDatabase = true;
 
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testContextualWords()
     {
         $strings = [
@@ -50,8 +45,8 @@ class PasswordStrengthTest extends SapphireTest
             'deptpassw0rd1' => false
         ];
 
-        Config::inst()->update(ContextualWordRule::class, 'context_strings', $strings);
-        Config::inst()->update(ContextualWordRule::class, 'min_length', 3);
+        Config::modify()->set(ContextualWordRule::class, 'context_strings', $strings);
+        Config::modify()->set(ContextualWordRule::class, 'min_length', 3);
 
         $rule = Injector::inst()->create( ContextualWordRule::class );
         $strings = $rule->getContextStrings($member);
@@ -127,7 +122,7 @@ class PasswordStrengthTest extends SapphireTest
 
         $member = null;
 
-        Config::inst()->set(SequentialCharacterRule::class, 'length', 3);
+        Config::modify()->set(SequentialCharacterRule::class, 'length', 3);
 
         $rule = Injector::inst()->create( SequentialCharacterRule::class );
 
@@ -162,7 +157,7 @@ class PasswordStrengthTest extends SapphireTest
 
         $member = null;
 
-        Config::inst()->set(RepetitiveCharacterRule::class, 'length', 3);
+        Config::modify()->set(RepetitiveCharacterRule::class, 'length', 3);
 
         $rule = Injector::inst()->create( RepetitiveCharacterRule::class );
 

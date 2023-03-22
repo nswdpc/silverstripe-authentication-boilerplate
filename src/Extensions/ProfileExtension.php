@@ -12,7 +12,7 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
-use Silverstripe\Control\Controller;
+use SilverStripe\Control\Controller;
 
 class ProfileExtension extends DataExtension {
 
@@ -23,6 +23,7 @@ class ProfileExtension extends DataExtension {
 
     /**
      * @var array
+     * @config
      */
     private static $belongs_to = [
         'PendingProfile' => PendingProfile::class
@@ -174,9 +175,8 @@ class ProfileExtension extends DataExtension {
     /**
      * Send the registration approval email for this member
      * @param boolean $initial whether this is the initial prompt
-     * @return void
      */
-    public function sendRegistrationApprovalEmail($initial = false, Controller $controller) {
+    public function sendRegistrationApprovalEmail($initial, Controller $controller) {
         $notifier = Notifier::create();
         return $notifier->sendSelfRegistrationToken( $this->owner, $initial, $controller );
     }
@@ -184,13 +184,13 @@ class ProfileExtension extends DataExtension {
     /**
      * Notify the current member of changes to their profile
      * @param array $changes - if empty the changed fields stored in {@link self::onBeforeWrite()} are used
-     * @return boolean
+     * @return boolean|null
      */
     public function notifyProfileChange($changes = []) {
         if(empty($changes)) {
             // Automated changes
             if(empty($this->changed_fields) || !is_array($this->changed_fields)) {
-                return;
+                return null;
             }
             $params = [
                 'restrictFields' => array_keys($this->changed_fields)
@@ -213,7 +213,7 @@ class ProfileExtension extends DataExtension {
 
         // no fields were marked as changed
         if(empty($params['restrictFields'])) {
-            return;
+            return null;
         }
 
         $fields = $this->owner->getFrontEndFields($params);
