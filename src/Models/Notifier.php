@@ -45,6 +45,13 @@ class Notifier {
     }
 
     /**
+     * Return profile change link for inclusion in emails
+     */
+    public function getProfileChangeAlertLink() {
+        return $this->config()->get('profile_change_link');
+    }
+
+    /**
      * Sends profile update notification to a given account or accounts
      * @param Member $member the member that was updated
      * @param ArrayList $what an array of what has updated, each value is a human readable sentence
@@ -54,7 +61,7 @@ class Notifier {
     public function sendChangeNotification(Member $member, ArrayList $what, Member $to_member = null, Group $to_group = null)
     {
         $config = SiteConfig::current_site_config();
-        $link = "";
+        $link = $this->getProfileChangeAlertLink();
         $content = ArrayData::create([
             'Member' => $member,
             'SiteConfig' => $config,
@@ -85,6 +92,53 @@ class Notifier {
             $to,
             $this->getDefaultFrom(),
             _t(self::class . ".PROFILE_CHANGED", "Your profile was updated" ),
+            $data,
+            $headers
+        );
+    }
+
+    /**
+     * Sends email change notification
+     */
+    public function sendChangeEmailNotification(
+        Member $member,// member related to change
+        bool $sendToPrevious, // when  true, toEmail is the previous email, otherEmail is the current
+        string $toEmail, // recipient of this change
+        string $otherEmail // the other email related to this change
+    ) {
+
+        if(!Email::is_valid_address($toEmail)) {
+            throw new \InvalidArgumentException("The email address provided is not valid");
+        }
+
+        $config = SiteConfig::current_site_config();
+        $link = $this->getProfileChangeAlertLink();
+        $content = ArrayData::create([
+            'Member' => $member,
+            'Email' => $toEmail,
+            'OtherEmail' => $otherEmail,
+            'SendToPrevious' => $sendToPrevious,
+            'SiteConfig' => $config,
+            'ProfileChangeAlertLink' => $link
+        ])->renderWith('NSWDPC/Authentication/Email/EmailChangeNotification');
+
+        $data = [];
+        $data['Content'] = $content;
+
+        // get the recipient
+        $to = [];
+        if($toEmail) {
+            $to[ $toEmail ] = $member->getName();
+        }
+
+        // email headers
+        $headers = [];
+
+        // send the notification
+        return $this->sendEmail(
+            $to,
+            $this->getDefaultFrom(),
+            _t(self::class . ".PROFILE_CHANGED", "Your email address was changed" ),
             $data,
             $headers
         );

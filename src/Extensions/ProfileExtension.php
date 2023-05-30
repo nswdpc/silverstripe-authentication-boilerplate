@@ -13,7 +13,12 @@ use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 use SilverStripe\Control\Controller;
+use SilverStripe\Core\Config\Config;
 
+
+/**
+ * Provides profile handling extension methods and fields
+ */
 class ProfileExtension extends DataExtension {
 
     /**
@@ -187,6 +192,7 @@ class ProfileExtension extends DataExtension {
      * @return boolean|null
      */
     public function notifyProfileChange($changes = []) {
+
         if(empty($changes)) {
             // Automated changes
             if(empty($this->changed_fields) || !is_array($this->changed_fields)) {
@@ -201,6 +207,51 @@ class ProfileExtension extends DataExtension {
                 // restrict on changes
                 'restrictFields' => $changes
             ];
+        }
+
+        $notifier = Notifier::create();
+
+        // Handle email notification change
+        if( Config::inst()->get( Notifier::class, 'notify_email_change') ) {
+
+            // unset from later profile notification
+            $emailKey = array_search('Email', $params['restrictFields']);
+            if($emailKey !== false) {
+                unset($params['restrictFields'][$emailKey]);
+            }
+
+            // Check email change
+            if(!empty($this->changed_fields['Email'])
+                && isset($this->changed_fields['Email']['before'])
+                && isset($this->changed_fields['Email']['after']) ) {
+
+                try {
+                    // Send to previous
+                    $notifier->sendChangeEmailNotification(
+                        $this->owner,
+                        true, // this email is going to previous address
+                        $this->changed_fields['Email']['before'],// send to this email
+                        $this->changed_fields['Email']['after']
+                    );
+                } catch(\Exception $e) {
+                    // Log
+                    Logger::log("Failed to send change email notification to before email:" . $e->getMessage(), "WARNING");
+                }
+
+                try {
+                    // Send to new
+                    $notifier->sendChangeEmailNotification(
+                        $this->owner,
+                        false, // this email is going to new address
+                        $this->changed_fields['Email']['after'],// send to this email
+                        $this->changed_fields['Email']['before']
+                    );
+                } catch(\Exception $e) {
+                    // Log
+                    Logger::log("Failed to send change email notification to after email:" . $e->getMessage(), "WARNING");
+                }
+            }
+
         }
 
         // Ignore 'Password' if the notify_password_change notification is active
@@ -224,7 +275,7 @@ class ProfileExtension extends DataExtension {
                 'Value' => sprintf( _t('NSWDPC\Authentication.FIELD_CHANGED', '\'%s\' was updated on your profile'), $title )
             ]);
         }
-        $notifier = Notifier::create();
+
         return $notifier->sendChangeNotification(
             $this->owner, // about this member
             $what,// what has changed
