@@ -138,7 +138,7 @@ class Notifier {
         return $this->sendEmail(
             $to,
             $this->getDefaultFrom(),
-            _t(self::class . ".PROFILE_CHANGED", "Your email address was changed" ),
+            _t(self::class . ".PROFILE_CHANGED_EMAIL", "Your email address was changed" ),
             $data,
             $headers
         );
