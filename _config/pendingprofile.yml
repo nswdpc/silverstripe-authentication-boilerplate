@@ -6,3 +6,4 @@ NSWDPC\Authentication\PendingProfile:
   require_self_verification: true
   redirect_when_pending: false
   code_lifetime: 86400
+  digits: 6

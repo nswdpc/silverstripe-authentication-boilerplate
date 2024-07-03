@@ -5,7 +5,6 @@ namespace NSWDPC\Authentication;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\CheckboxField;
-use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Core\Config\Configurable;
@@ -68,12 +67,17 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * @config
      */
-    private static $digits = 4;
+    private static $digits = 6;
 
     /**
      * @config
      */
     private static $epoch = 0;
+
+    /**
+     * @config
+     */
+    private static $verification_limit = 3;
 
     /**
      * @config
@@ -86,6 +90,8 @@ class PendingProfile extends DataObject implements PermissionProvider
         'IsAdminApproved' => 'Boolean',
         'RequireSelfVerification' => 'Boolean',
         'IsSelfVerified' => 'Boolean',
+        'VerificationsAttempted' => 'Int',
+        'VerificationsFailed' => 'Int'
     ];
 
     /**
@@ -132,7 +138,9 @@ class PendingProfile extends DataObject implements PermissionProvider
         'RequireAdminApproval.Nice' => 'Requires approval',
         'IsAdminApproved.Nice' => 'Approved',
         'RequireSelfVerification.Nice' => 'Requires self-verification',
-        'IsSelfVerified.Nice' => 'Self-verified'
+        'IsSelfVerified.Nice' => 'Self-verified',
+        'VerificationsAttempted' => 'Verifications attempted',
+        'VerificationsFailed' => 'Verifications failed'
     ];
 
     /**
@@ -144,7 +152,9 @@ class PendingProfile extends DataObject implements PermissionProvider
         'NotifiedRequireAdminApproval' => 0,
         'RequireSelfVerification' => 0,
         'IsAdminApproved' => 0,
-        'IsSelfVerified' => 0
+        'IsSelfVerified' => 0,
+        'VerificationsAttempted' => 0,
+        'VerificationsFailed' => 0
     ];
 
     /*
@@ -299,9 +309,13 @@ class PendingProfile extends DataObject implements PermissionProvider
                 && $this->IsAdminApproved == 0;
     }
 
+    /**
+     * Flag this profile as self-completed
+     */
     public function completeSelfVerification()
     {
         $this->IsSelfVerified = 1;
+        $this->ProvisioningData = null;
         $this->write();
     }
 
@@ -434,7 +448,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         $key = $this->getEncryptionKey();
         if (empty($key)) {
             Logger::log("Someone tried to create an approval code during registration via TOTP but the system has no MFA encryption key defined", "ERROR");
-            throw new ValidationException( _t('auth.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.') );
+            throw new VerificationFailureException( _t('auth.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.') );
         }
 
         $period = $this->config()->get('code_lifetime');
@@ -455,7 +469,10 @@ class PendingProfile extends DataObject implements PermissionProvider
             $key
         );
 
+        // Initial provision/verification state
         $this->ProvisioningData = $data;
+        $this->VerificationsAttempted = 0;
+        $this->VerificationsFailed = 0;
         $this->write();
 
         return $otp->now();
@@ -466,39 +483,87 @@ class PendingProfile extends DataObject implements PermissionProvider
      * Given a code, verify it against the provisioning URI stored
      * This is called when a user wants to verify with their code
      * @param string $code
-     * @return boolean
+     * @return bool
+     * @throws VerificationFailureException
      */
-    public function verifySelfApprovalCode(string $code)
+    public function verifySelfApprovalCode(string $code) : bool
     {
-        $key = $this->getEncryptionKey();
-        if (empty($key)) {
+        try {
+            $verified = false;
 
-            Logger::log("Someone tried to verify an approval code via TOTP but the system has no MFA encryption key defined", "ERROR");
-            throw new ValidationException( _t('auth.CANNOT_VERIFY_CODE', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.') );
-        }
-
-        if(!$this->ProvisioningData) {
-            // oops
-            throw new ValidationException('Cannot verify you at this time');
-        }
-
-        // get the provisioning uri from the profile's data
-        $provisioning_uri = Injector::inst()->get(EncryptionAdapterInterface::class)->decrypt(
-            $this->ProvisioningData,
-            $key
-        );
-        $verified = false;
-        if ($provisioning_uri) {
-            $window = 1;//TODO configurable
-            $otp = TOTPFactory::loadFromProvisioningUri($provisioning_uri);
-            $verified = $otp->verify($code, time(), $window);
-            if ($verified) {
-                // if they are verified, the data is no longer needed
-                $this->ProvisioningData = null;
-                $this->write();
+            // Check if max attempts reached
+            if($this->hasMaxVerificationAttempts()) {
+                throw new VerificationFailureException(
+                    _t(
+                        'auth.CANNOT_VERIFY_REACHED_LIMIT',
+                        'Sorry, your account cannot be verified. You will need to request a new verification code and try again.'
+                    )
+                );
             }
+
+            // increment an attempt
+            $this->VerificationsAttempted += 1;
+
+            $key = $this->getEncryptionKey();
+            if (empty($key)) {
+                Logger::log("Profile {#$this->ID} tried to verify an approval code via TOTP but the system has no MFA encryption key defined", "ERROR");
+                throw new VerificationFailureException(
+                    _t(
+                        'auth.CANNOT_VERIFY_CODE',
+                        'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.'
+                    )
+                );
+            }
+
+            if(!$this->ProvisioningData) {
+                // oops
+                Logger::log("Profile {#$this->ID} tried to verify an approval code but they have no verification data", "NOTICE");
+                throw new VerificationFailureException(
+                    _t(
+                        'auth.CANNOT_VERIFY_CODE_NO_PROVISIONING_DATA',
+                        'Sorry, your account cannot be verified at the current time. Please try again later.'
+                    )
+                );
+            }
+
+            // get the provisioning uri from the profile's data
+            $provisioning_uri = Injector::inst()->get(EncryptionAdapterInterface::class)->decrypt(
+                $this->ProvisioningData,
+                $key
+            );
+            $verified = false;
+            if ($provisioning_uri) {
+                $window = 1;//TODO configurable
+                $otp = TOTPFactory::loadFromProvisioningUri($provisioning_uri);
+                $verified = $otp->verify($code, time(), $window);
+            }
+            if(!$verified) {
+                $this->VerificationsFailed += 1;
+            }
+            return $verified;
+        } catch (VerificationFailureException $e) {
+            // rethrow these exceptions
+            throw new VerificationFailureException($e->getMessage());
+        } catch (\Exception $e) {
+            // general exception
+            Logger::log("Profile {#$this->ID} verifySelfApprovalCode error=" . $e->getMessage(), "NOTICE");
+            throw new VerificationFailureException(
+                _t(
+                    'auth.CANNOT_VERIFY_CODE_GENERAL_EXCEPTION',
+                    'Sorry, your account cannot be verified at the current time. Please try again later.'
+                )
+            );
+        } finally {
+            // update this profile record regardless of result
+            $this->write();
         }
-        return $verified;
+    }
+
+    /**
+     * Return whether the maximum allowed attempts has been reached
+     */
+    public function hasMaxVerificationAttempts() : bool {
+        return $this->VerificationsAttempted >= static::config()->get('verification_limit');
     }
 
     /**
@@ -540,10 +605,17 @@ class PendingProfile extends DataObject implements PermissionProvider
             $fields->removeByName([
                 'IsAdminApproved',
                 'NotifiedRequireAdminApproval',
-                'IsSelfVerified'
+                'IsSelfVerified',
+                'VerificationsAttempted',
+                'VerificationsFailed'
             ]);
 
         } elseif ($member->exists()) {
+
+            $memberValue = $member->getTitle();
+            if($memberEmail = $member->Email) {
+                $memberValue .= " ({$memberEmail})";
+            }
 
             $fields->removeByName([
                 'RequireAdminApproval',
@@ -551,7 +623,11 @@ class PendingProfile extends DataObject implements PermissionProvider
                 'NotifiedRequireAdminApproval',
                 'MemberID',
                 'RequireSelfVerification',
-                'IsSelfVerified'
+                'IsSelfVerified',
+                'VerificationsAttempted',
+                'VerificationsFailed',
+                'Created',
+                'LastEdited'
             ]);
 
             $fields->addFieldsToTab(
@@ -567,10 +643,6 @@ class PendingProfile extends DataObject implements PermissionProvider
                     ),
 
                     CompositeField::create(
-                        HeaderField::create(
-                            'AdminApprovalHeader',
-                            'Administrator approval'
-                        ),
                         CheckboxField::create(
                             'IsAdminApproved',
                             'Approved'
@@ -584,14 +656,11 @@ class PendingProfile extends DataObject implements PermissionProvider
                         CheckboxField::create(
                             'NotifiedRequireAdminApproval',
                             'Notification to approvers was sent'
-                        )->performReadonlyTransformation(),
-                    ),
+                        )->performReadonlyTransformation()
+                    )->setTitle('Administrator approval'),
 
                     CompositeField::create(
-                        HeaderField::create(
-                            'SelfApprovalHeader',
-                            'Self verification'
-                        ),
+
                         CheckboxField::create(
                             'IsSelfVerified',
                             'User has self-verified'
@@ -599,24 +668,36 @@ class PendingProfile extends DataObject implements PermissionProvider
 
                         CheckboxField::create(
                             'RequireSelfVerification',
-                            'Require self verification',
+                            'Require self-verification',
                             $this->RequireSelfVerification == 1 ? "yes" : "no"
-                        )
-                    ),
+                        ),
 
-                    ReadonlyField::create(
-                        'MemberValue',
-                        'User',
-                        $member->getTitle() . " " . $member->Email
-                    ),
-                    ReadonlyField::create(
-                        'Created',
-                        'Profile created'
-                    ),
-                    ReadonlyField::create(
-                        'LastEdited',
-                        'Profile last edited'
-                    )
+                        ReadonlyField::create(
+                            'VerificationsAttempted',
+                            'Verifications attempted'
+                        ),
+
+                        ReadonlyField::create(
+                            'VerificationsFailed',
+                            'Verifications failed'
+                        )
+                    )->setTitle('Self verification'),
+
+                    CompositeField::create(
+                        ReadonlyField::create(
+                            'MemberValue',
+                            'User',
+                            $memberValue
+                        ),
+                        ReadonlyField::create(
+                            'Created',
+                            'Profile created'
+                        ),
+                        ReadonlyField::create(
+                            'LastEdited',
+                            'Profile last edited'
+                        )
+                    )->setTitle('Details')
                 ]
             );
         } else {
