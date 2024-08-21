@@ -6,7 +6,6 @@ This module provides a standard set of rules for defining access to Silverstripe
 - password handling and management
 - password checking via pwnedpasswords API
 - multi-factor authentication setup (MFA)
-- security extensions
 - security reports
 - pending profiles
 
@@ -18,7 +17,6 @@ This module provides a standard set of rules for defining access to Silverstripe
 
 + silverstripe/totp-authenticator - for MFA via a Time-based One-time Password
 + nswdpc/silverstripe-pwnage-hinter -  provides pwned password/breached account assistance
-+ silverstripe/security-extensions - provides features including sudo mode, password change on next sign in
 + silverstripe/securityreport - "Users, Groups and Permissions" report in the administration area for Administrators
 + spomky-labs/otphp - TOTP base library
 
