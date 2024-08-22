@@ -67,7 +67,7 @@ class ContextualWordRule extends AbstractPasswordRule
             $parts = preg_split("/[^a-zA-Z0-9]/", $string);
             $parts = array_filter(
                 $parts,
-                fn($value): bool =>
+                fn ($value): bool =>
                     // filter out items that are not > min_length length
                     strlen((string) $value) >= $min_length
             );
