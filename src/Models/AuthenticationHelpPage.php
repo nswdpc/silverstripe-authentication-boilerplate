@@ -20,21 +20,19 @@ class AuthenticationHelpPage extends \Page
     /**
      * @inheritdoc
      */
-    private static $controller_name = AuthenticationHelpPageController::class;
+    private static string $controller_name = AuthenticationHelpPageController::class;
 
     /**
      * Defines the database table name
-     * @var string
      * @config
      */
-    private static $table_name = 'AuthenticationHelpPage';
+    private static string $table_name = 'AuthenticationHelpPage';
 
     /**
      * Database fields
-     * @var array
      * @config
      */
-    private static $db = [
+    private static array $db = [
         'AuthenticationHelpHeading' => 'Varchar(255)',
         'AuthenticationHelpContent' => 'HTMLText',
         'AuthenticationHelpShowAbove' => 'Boolean'
@@ -42,25 +40,23 @@ class AuthenticationHelpPage extends \Page
 
     /**
      * Defaults
-     * @var array
      * @config
      */
-    private static $defaults = [
+    private static array $defaults = [
         'AuthenticationHelpShowAbove' => 1
     ];
 
     /**
      * Singular name for CMS
-     * @var string
      * @config
      */
-    private static $singular_name = 'Authentication Help Page';
+    private static string $singular_name = 'Authentication Help Page';
+
     /**
      * Plural name for CMS
-     * @var string
      * @config
      */
-    private static $plural_name = 'Authentication Help Pages';
+    private static string $plural_name = 'Authentication Help Pages';
 
     public function requireDefaultRecords()
     {
@@ -72,7 +68,7 @@ class AuthenticationHelpPage extends \Page
         }
 
         // grab some content for writing
-        $data = new ArrayData([
+        $data = \SilverStripe\View\ArrayData::create([
             'MFARequired' => $this->MFARequired(),
             'MFAGracePeriodExpires' => $this->MFAGracePeriodExpires(),
         ]);

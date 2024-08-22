@@ -38,28 +38,28 @@ class NISTPasswordValidator extends PasswordValidator
      * @inheritdoc
      * @config
      */
-    private static $character_strength_tests = null;
+    private static $character_strength_tests;
 
     /**
      * Memorised secrets should be at least 8 characters
      * @inheritdoc
      * @config
      */
-    private static $min_length = 8;
+    private static int $min_length = 8;
 
     /**
      * Composition rules
      * @inheritdoc
      * @config
      */
-    private static $min_test_score = 0;
+    private static int $min_test_score = 0;
 
     /**
      * Historical password count
      * @inheritdoc
      * @config
      */
-    private static $historic_count = 0;
+    private static int $historic_count = 0;
 
     /**
      * @inheritdoc
@@ -115,14 +115,12 @@ class NISTPasswordValidator extends PasswordValidator
      */
     public function getMinLength()
     {
-        if ($this->minLength !== null) {
-            $minLength = $this->minLength;
-        } else {
-            $minLength = $this->config()->get('min_length');
-        }
+        $minLength = $this->minLength ?? $this->config()->get('min_length');
+
         if($minLength < self::PASSWORD_MINIMUM_LENGTH) {
             $minLength = self::PASSWORD_MINIMUM_LENGTH;
         }
+
         return $minLength;
     }
 
@@ -134,6 +132,7 @@ class NISTPasswordValidator extends PasswordValidator
         if($minLength < self::PASSWORD_MINIMUM_LENGTH) {
             $minLength = self::PASSWORD_MINIMUM_LENGTH;
         }
+
         return parent::setMinLength($minLength);
     }
 
@@ -171,6 +170,7 @@ class NISTPasswordValidator extends PasswordValidator
 
             $valid->addError($error, 'bad', 'TOO_SHORT');
         }
+
         $this->extend('updateValidatePassword', $password, $member, $valid, $this);
         return $valid;
     }

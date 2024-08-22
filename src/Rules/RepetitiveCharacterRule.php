@@ -17,17 +17,17 @@ class RepetitiveCharacterRule extends AbstractPasswordRule
     /**
      * @config
      */
-    private static $length = 3;//e.g aaa
+    private static int $length = 3;//e.g aaa
 
     /**
      * @config
      */
-    private static $template_var = "REPETITIVE_CHARACTER_RULE";
+    private static string $template_var = "REPETITIVE_CHARACTER_RULE";
 
     /**
      * @config
      */
-    private static $template_value = "Your password cannot contain repetitive characters (e.g aaa, 999)";
+    private static string $template_value = "Your password cannot contain repetitive characters (e.g aaa, 999)";
 
     /**
      * Perform password check
@@ -39,9 +39,10 @@ class RepetitiveCharacterRule extends AbstractPasswordRule
         $pattern = '/(.)\1{2,}/';
         $result = preg_match($pattern, $password, $matches);
         if($result > 0) {
-            $match = isset($matches[0]) ? $matches[0] : "";
+            $match = $matches[0] ?? "";
             throw new PasswordVerificationException(_t("NSWDPC\\Passwords.REPETITIVE_CHARACTER_FAIL", "Repetitive characters are not allowed in the password"));
         }
+
         return true;
     }
 }

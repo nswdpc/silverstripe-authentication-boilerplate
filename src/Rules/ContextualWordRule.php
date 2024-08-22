@@ -18,27 +18,28 @@ class ContextualWordRule extends AbstractPasswordRule
     /**
      * @config
      */
-    private static $context_strings = [];
+    private static array $context_strings = [];
 
     /**
      * @config
      */
-    private static $min_length = 4;
+    private static int $min_length = 4;
 
     /**
      * @config
      */
-    private static $template_var = "CONTEXTUAL_WORD_RULE";
+    private static string $template_var = "CONTEXTUAL_WORD_RULE";
 
     /**
      * @config
      */
-    private static $template_value = "Your password cannot contain a word related to this service";
+    private static string $template_value = "Your password cannot contain a word related to this service";
 
     /**
      * Allow classes extending this rule to use base level strings along with their own
+     * @return mixed[]
      */
-    public function getContextStrings(Member $member)
+    public function getContextStrings(Member $member): array
     {
         $config = SiteConfig::current_site_config();
         $site_strings = [
@@ -62,13 +63,13 @@ class ContextualWordRule extends AbstractPasswordRule
             if(!is_string($string)) {
                 $string = "";
             }
+
             $parts = preg_split("/[^a-zA-Z0-9]/", $string);
             $parts = array_filter(
                 $parts,
-                function ($value) use ($min_length) {
+                fn($value): bool =>
                     // filter out items that are not > min_length length
-                    return strlen($value) >= $min_length;
-                }
+                    strlen((string) $value) >= $min_length
             );
             // add filtered parts to context strings
             $context_strings = array_merge($context_strings, $parts);
@@ -83,8 +84,6 @@ class ContextualWordRule extends AbstractPasswordRule
     /**
      * Perform password check agsinst contextual words
      * @throws PasswordVerificationException
-     * @param string $password
-     * @param Member $member
      * @returns boolean
      */
     public function check(string $password, Member $member = null): bool
@@ -97,11 +96,12 @@ class ContextualWordRule extends AbstractPasswordRule
              * haystack = password
              * Test whether the word appears in the password
              */
-            if(strpos(strtolower($password), strtolower($word)) !== false) {
+            if(str_contains(strtolower($password), strtolower((string) $word))) {
                 $valid = false;
                 break;
             }
         }
+
         if(!$valid) {
             // at least one banned word detected
             throw new PasswordVerificationException(

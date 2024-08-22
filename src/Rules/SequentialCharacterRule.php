@@ -19,7 +19,7 @@ class SequentialCharacterRule extends AbstractPasswordRule
      * Add other alphabets in configuration
      * @config
      */
-    private static $alphabets = [
+    private static array $alphabets = [
         '0123456789',
         'abcdefghijklmnopqrstuvwxyz'
     ];
@@ -27,19 +27,19 @@ class SequentialCharacterRule extends AbstractPasswordRule
     /**
      * @config
      */
-    private static $template_var = "SEQUENTIAL_CHARACTER_RULE";
+    private static string $template_var = "SEQUENTIAL_CHARACTER_RULE";
 
     /**
      * @config
      */
-    private static $template_value = "Your password cannot contain sequential characters e.g abcd";
+    private static string $template_value = "Your password cannot contain sequential characters e.g abcd";
 
     /**
      * e.g abcd, 1234
      * Set to 3 to match abc, tuv, 345 and the like with a higher probability of false positives
      * @config
      */
-    private static $length = 4;
+    private static int $length = 4;
 
     /**
      * Perform password check
@@ -53,7 +53,7 @@ class SequentialCharacterRule extends AbstractPasswordRule
         if(!empty($alphabets) && is_array($alphabets)) {
             foreach($alphabets as $alphabet) {
                 // split each alphabet
-                $chunks = mb_str_split($alphabet, 1);
+                $chunks = mb_str_split((string) $alphabet, 1);
                 foreach($chunks as $k => $character) {
                     $pattern = $character;
                     for($c = 1;$c < $length; $c++) {
@@ -80,6 +80,7 @@ class SequentialCharacterRule extends AbstractPasswordRule
                 }
             }
         }
+
         return true;
     }
 

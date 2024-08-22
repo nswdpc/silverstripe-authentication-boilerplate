@@ -11,9 +11,6 @@ use SilverStripe\Security\Member;
  */
 class ResetAccountExtension extends Extension
 {
-    /**
-     * @param Member $member
-     */
     public function handleAccountReset(Member $member)
     {
         try {
@@ -22,7 +19,7 @@ class ResetAccountExtension extends Extension
             $notifier = Notifier::create();
             return $notifier->sendMfaAccountResetNotification($member, 'completed');
 
-        } catch (\Exception $e) {
+        } catch (\Exception) {
 
         }
 

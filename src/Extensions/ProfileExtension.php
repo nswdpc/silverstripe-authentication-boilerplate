@@ -23,23 +23,18 @@ use SilverStripe\Core\Config\Config;
  */
 class ProfileExtension extends DataExtension
 {
-    /**
-     * @var array
-     */
-    private $changed_fields = [];
+    private array $changed_fields = [];
 
     /**
-     * @var array
      * @config
      */
-    private static $belongs_to = [
+    private static array $belongs_to = [
         'PendingProfile' => PendingProfile::class
     ];
 
     /**
      * Determine if Member is considered pending
      * In that a PendingProfile exists and it requires approval of some sort
-     * @return boolean
      */
     public function getIsPending(): bool
     {
@@ -55,20 +50,19 @@ class ProfileExtension extends DataExtension
     /**
      * Returns whether the profile is pending or not based on IsPending value
      * and existence of profile with specific values
-     * @return boolean
      */
-    public function IsProfilePending()
+    public function IsProfilePending(): bool
     {
         return $this->getIsPending();
     }
 
-    public function getProfileRequiresSelfVerification()
+    public function getProfileRequiresSelfVerification(): bool
     {
         $profile = PendingProfile::forMember($this->getOwner());
         return $profile && $profile->requiresPromptForSelfVerification();
     }
 
-    public function getProfileRequiresAdministrationApproval()
+    public function getProfileRequiresAdministrationApproval(): bool
     {
         $profile = PendingProfile::forMember($this->getOwner());
         return $profile && $profile->requiresPromptForAdministrationApproval();
@@ -146,7 +140,7 @@ class ProfileExtension extends DataExtension
     public function onBeforeDelete()
     {
         parent::onBeforeDelete();
-        if($profile = PendingProfile::forMember($this->getOwner())) {
+        if(($profile = PendingProfile::forMember($this->getOwner())) instanceof \NSWDPC\Authentication\Models\PendingProfile) {
             $profile->delete();
         }
     }
@@ -175,7 +169,7 @@ class ProfileExtension extends DataExtension
      */
     public function removePending(): bool
     {
-        if($profile = PendingProfile::forMember($this->getOwner())) {
+        if(($profile = PendingProfile::forMember($this->getOwner())) instanceof \NSWDPC\Authentication\Models\PendingProfile) {
             $profile->delete();
             return true;
         } else {
@@ -212,9 +206,10 @@ class ProfileExtension extends DataExtension
 
         if(empty($changes)) {
             // Automated changes
-            if(empty($this->changed_fields) || !is_array($this->changed_fields)) {
+            if($this->changed_fields === [] || !is_array($this->changed_fields)) {
                 return null;
             }
+
             $params = [
                 'restrictFields' => array_keys($this->changed_fields)
             ];
@@ -232,7 +227,7 @@ class ProfileExtension extends DataExtension
         if(Config::inst()->get(Notifier::class, 'notify_email_change')) {
 
             // unset from later profile notification
-            $emailKey = array_search('Email', $params['restrictFields']);
+            $emailKey = array_search('Email', $params['restrictFields'], true);
             if($emailKey !== false) {
                 unset($params['restrictFields'][$emailKey]);
             }
@@ -273,7 +268,7 @@ class ProfileExtension extends DataExtension
 
         // Ignore 'Password' if the notify_password_change notification is active
         if($this->getOwner()->config()->get('notify_password_change')) {
-            $key = array_search('Password', $params['restrictFields']);
+            $key = array_search('Password', $params['restrictFields'], true);
             if($key !== false) {
                 unset($params['restrictFields'][$key]);
             }
@@ -285,11 +280,11 @@ class ProfileExtension extends DataExtension
         }
 
         $fields = $this->getOwner()->getFrontEndFields($params);
-        $what = new ArrayList();
+        $what = \SilverStripe\ORM\ArrayList::create();
         foreach($fields as $field) {
             $title = $field->Title();
             $what->push([
-                'Value' => sprintf(_t('NSWDPC\Authentication.FIELD_CHANGED', '\'%s\' was updated on your profile'), $title)
+                'Value' => sprintf(_t('NSWDPC\Authentication.FIELD_CHANGED', "'%s' was updated on your profile"), $title)
             ]);
         }
 

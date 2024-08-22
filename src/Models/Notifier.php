@@ -30,7 +30,7 @@ class Notifier
     /**
      * @config
      */
-    private static $default_email_from = "";
+    private static string $default_email_from = "";
 
     /**
      * Returns the default email from to be used in email sends
@@ -42,6 +42,7 @@ class Notifier
         if(!$default_email_from) {
             $default_email_from = Config::inst()->get(Email::class, 'admin_email');
         }
+
         return $default_email_from;
     }
 
@@ -76,19 +77,20 @@ class Notifier
 
         // get the recipient
         $to = [];
-        if($to_member) {
+        if($to_member instanceof \SilverStripe\Security\Member) {
             $to[ $to_member->Email ] = $to_member->getName();
         }
 
         // send out group emails in a Bcc to stop emails being seen within the group
         // and are not visible to the to_member
         $headers = [];
-        if($to_group) {
+        if($to_group instanceof \SilverStripe\Security\Group) {
             $group_members = $to_group->Members();
             foreach($group_members as $group_member) {
                 $headers['Bcc'][ $group_member->Email ] = $group_member->getName();
             }
         }
+
         // send the notification
         return $this->sendEmail(
             $to,
@@ -148,7 +150,6 @@ class Notifier
 
     /**
      * Send an email containing a message and a link to complete the registration
-     * @param Member $member
      * @param boolean $initial if false, this is a re-notification of registration approval (e.g a reprompt)
      * @param Controller $controller a controller that can provide a link to a URL where  the user can enter the code
      */
@@ -157,6 +158,7 @@ class Notifier
         if(!$controller->hasMethod('RegisterPendingLink')) {
             throw new \Exception("Failed: the controller does not provide RegisterPendingLink");
         }
+
         // current site config
         $config = SiteConfig::current_site_config();
         // link to registration completion
@@ -193,7 +195,7 @@ class Notifier
         );
     }
 
-    public function sendAdministrationApprovalRequired(PendingProfile $profile)
+    public function sendAdministrationApprovalRequired(PendingProfile $profile): false|int
     {
 
         $notifications = 0;
@@ -238,6 +240,7 @@ class Notifier
             $notifications++;
 
         }
+
         return $notifications;
 
     }
@@ -283,12 +286,11 @@ class Notifier
      * @returns boolean
      * @param mixed $to either a string or array
      * @param mixed $from either a string or array
-     * @param string $subject
      * @param array $data
      * @param array $headers extra Email headers e.g Cc, Bcc, X-Some-Header
      * @param string $template template to use
      */
-    protected function sendEmail($to, $from, $subject, $data = [], $headers = [], $template = "NSWDPC/Authentication/Email")
+    protected function sendEmail(string|array $to, string|array $from, string $subject, $data = [], $headers = [], string $template = "NSWDPC/Authentication/Email")
     {
         $email = Email::create()
                     ->setFrom($from)
@@ -300,19 +302,23 @@ class Notifier
             $email->setCc($headers['Cc']);
             unset($headers['Cc']);
         }
+
         if(!empty($headers['Bcc'])) {
             $email->setCc($headers['Bcc']);
             unset($headers['Bcc']);
         }
+
         if(!empty($headers['Reply-To'])) {
             $email->setReplyTo($headers['Reply-To']);
             unset($headers['Reply-To']);
         }
+
         if(!empty($headers)) {
             foreach($headers as $header => $value) {
                 $email->getSwiftMessage()->getHeaders()->addTextHeader($header, $value);
             }
         }
+
         return $email->send();
     }
 
@@ -357,7 +363,7 @@ class Notifier
             );
         }
 
-        if($state == 'started') {
+        if($state === 'started') {
             $subject = _t(
                 self::class . ".ACCOUNT_RESET_MFA_STARTED",
                 "An account reset was started on {siteTitle}",
@@ -403,11 +409,12 @@ class Notifier
                 )) {
                     $sends++;
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 // failed to notify
                 Logger::log("sendMfaAccountResetNotification failed for member #{$recipient->ID}", "NOTICE");
             }
         }
+
         return $sends > 0;
     }
 

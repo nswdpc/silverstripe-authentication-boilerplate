@@ -18,6 +18,6 @@ class ConfigurationService
     /**
      * @config
      */
-    private static $ss_mfa_secret_key = '';
+    private static string $ss_mfa_secret_key = '';
 
 }

@@ -44,34 +44,23 @@ class Password
             if(!empty($testNames)  && is_array($testNames)) {
 
                 foreach($testNames as $name) {
-                    switch($name) {
-                        case "lowercase":
-                            $data['CharacterStrengthTests']->push([
-                                'Description' => _t(self::class . '.LOWERCASE_REQUIRED', 'Lowercase characters are required')
-                            ]);
-                            break;
-                        case "uppercase":
-                            $data['CharacterStrengthTests']->push([
-                                'Description' => _t(self::class . '.UPPERCASECASE_REQUIRED', 'Uppercase characters are required')
-                            ]);
-                            break;
-                        case "digits":
-                            $data['CharacterStrengthTests']->push([
-                                'Description' => _t(self::class . '.DIGITS_REQUIRED', 'Number characters are required')
-                            ]);
-                            break;
-                        case "punctuation":
-                            $data['CharacterStrengthTests']->push([
-                                'Description' => _t(self::class . '.PUNCTUATION_REQUIRED', 'Punctuation characters are required')
-                            ]);
-                            break;
-                            // for defaults
-                        default:
-                            $data['CharacterStrengthTests']->push([
-                                'Description' => sprintf(_t(self::class . '.CHARACTER_RANGE_REQUIRED', 'Characters in the following range are required: %s'), $name)
-                            ]);
-                            break;
-                    }
+                    match ($name) {
+                        "lowercase" => $data['CharacterStrengthTests']->push([
+                            'Description' => _t(self::class . '.LOWERCASE_REQUIRED', 'Lowercase characters are required')
+                        ]),
+                        "uppercase" => $data['CharacterStrengthTests']->push([
+                            'Description' => _t(self::class . '.UPPERCASECASE_REQUIRED', 'Uppercase characters are required')
+                        ]),
+                        "digits" => $data['CharacterStrengthTests']->push([
+                            'Description' => _t(self::class . '.DIGITS_REQUIRED', 'Number characters are required')
+                        ]),
+                        "punctuation" => $data['CharacterStrengthTests']->push([
+                            'Description' => _t(self::class . '.PUNCTUATION_REQUIRED', 'Punctuation characters are required')
+                        ]),
+                        default => $data['CharacterStrengthTests']->push([
+                            'Description' => sprintf(_t(self::class . '.CHARACTER_RANGE_REQUIRED', 'Characters in the following range are required: %s'), $name)
+                        ]),
+                    };
                 }
             }
         }
@@ -97,6 +86,7 @@ class Password
                 if(!$inst instanceof AbstractPasswordRule || !$inst->canRun()) {
                     continue;
                 }
+
                 $template_var = $inst->config()->get('template_var');
                 // default
                 $template_value = $inst->config()->get('template_value');

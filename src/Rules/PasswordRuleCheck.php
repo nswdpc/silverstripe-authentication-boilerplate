@@ -17,10 +17,9 @@ class PasswordRuleCheck
     use Injectable;
 
     /**
-     * @var array
      * @config
      */
-    private static $checks = [
+    private static array $checks = [
         DictionaryWordRule::class,
         SequentialCharacterRule::class,
         RepetitiveCharacterRule::class,
@@ -43,12 +42,13 @@ class PasswordRuleCheck
                 // ignore
                 continue;
             }
+
             try {
                 $result = $inst->check($password, $member);
             } catch (PasswordVerificationException $exception) {
                 // throws a PasswordVerificationException if check fails
                 $validation_result->addError($exception->getMessage(), ValidationResult::TYPE_ERROR, 'PASSWORD_VERIFICATION_FAILED');
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
                 $validation_result->addError('The password could not be verified at the current time', ValidationResult::TYPE_ERROR, 'PASSWORD_VERIFICATION_FAILED_GENERIC');
             }
         }

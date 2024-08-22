@@ -20,38 +20,36 @@ class SiteTreeExtension extends Extension
 {
     /**
      * Handle redirect if a the signed in Member is pending
-     * @param ContentController $controller
      * @return mixed
      */
     public function contentcontrollerInit(ContentController $controller)
     {
-        return $this->handlePromptForVerificationCode($controller, $this->owner);
+        return $this->handlePromptForVerificationCode($controller, $this->getOwner());
     }
 
     /**
      * Handle pending members accessing SiteTree records
-     * @return mixed
      * @param Member $member
      */
-    public function canView($member)
+    public function canView($member): ?bool
     {
-        if($this->checkPendingMemberCanView($member, $this->owner) === false) {
+        if($this->checkPendingMemberCanView($member, $this->getOwner()) === false) {
             return false;
         }
+
         return null;
     }
 
     /**
      * Handle redirect for pending members. If turned off in configuration,
      * no redirect will occur
-     *
-     * @return mixed
      */
-    protected function handlePromptForVerificationCode(Controller $controller, SiteTree $record)
+    protected function handlePromptForVerificationCode(Controller $controller, SiteTree $record): ?\SilverStripe\Control\HTTPResponse
     {
         if(!PendingProfile::config()->get('redirect_when_pending')) {
             return null;
         }
+
         $member = Security::getCurrentUser();
         if($member && $member->getIsPending() && !$this->hasAnyoneViewPermission($record)) {
             $links = $member->extend('promptForVerificationCodeLink');
@@ -62,13 +60,13 @@ class SiteTreeExtension extends Extension
                 }
             }
         }
+
         return null;
     }
 
     /**
      * Check if the member is pending and can/cannot view
      * For pending members, records without ANYONE permission cannot be viewed
-     * @return bool
      */
     protected function checkPendingMemberCanView(?Member $member, SiteTree $record): bool
     {
@@ -82,7 +80,6 @@ class SiteTreeExtension extends Extension
     /**
      * Determine whether a SiteTree record can be viewed by anyone, taking into
      * account site access settings and parent settings
-     * @return bool
      */
     protected function hasAnyoneViewPermission(SiteTree $record): bool
     {

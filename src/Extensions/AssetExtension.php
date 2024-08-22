@@ -15,16 +15,17 @@ class AssetExtension extends Extension
     /**
      * Handle pending members accessing files
      * @param Member|null $member
-     * @return mixed
      */
-    public function canView($member)
+    public function canView($member): ?bool
     {
-        if($this->owner instanceof Folder) {
+        if($this->getOwner() instanceof Folder) {
             return null;
         }
+
         if($member && $member->getIsPending()) {
             return false;
         }
+
         return null;
     }
 

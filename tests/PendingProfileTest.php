@@ -19,7 +19,7 @@ class PendingProfileTest extends SapphireTest
         Config::modify()->set(PendingProfile::class, 'require_self_verification', true);
     }
 
-    public function testMakePending()
+    public function testMakePending(): void
     {
         $member = Member::create([
             'FirstName' => 'Pending',
@@ -45,7 +45,7 @@ class PendingProfileTest extends SapphireTest
 
     }
 
-    public function testMakeRemovePending()
+    public function testMakeRemovePending(): void
     {
         $member = Member::create([
             'FirstName' => 'Pending',
@@ -78,7 +78,7 @@ class PendingProfileTest extends SapphireTest
 
     }
 
-    public function testCreateForMember()
+    public function testCreateForMember(): void
     {
         $member = Member::create([
             'FirstName' => 'Pending',
@@ -94,7 +94,7 @@ class PendingProfileTest extends SapphireTest
         $this->assertTrue($member->getIsPending());
     }
 
-    public function testDirectCreate()
+    public function testDirectCreate(): void
     {
         $member = Member::create([
             'FirstName' => 'Pending',
@@ -112,7 +112,7 @@ class PendingProfileTest extends SapphireTest
         $this->assertTrue($member->getIsPending());
     }
 
-    public function testDirectCreateDelete()
+    public function testDirectCreateDelete(): void
     {
         $member = Member::create([
             'FirstName' => 'Pending',

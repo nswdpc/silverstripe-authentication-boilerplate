@@ -16,23 +16,22 @@ class DictionaryWordRule extends AbstractPasswordRule
     /**
      * @config
      */
-    private static $locale = "en_AU";
+    private static string $locale = "en_AU";
 
     /**
      * @config
      */
-    private static $template_var = "DICTIONARY_WORD_RULE";
+    private static string $template_var = "DICTIONARY_WORD_RULE";
 
     /**
      * @config
      */
-    private static $template_value = "Your password cannot be a dictionary word";
+    private static string $template_value = "Your password cannot be a dictionary word";
 
     /**
      * By default, allow rule checks can run
-     * @return boolean
      */
-    public function canRun()
+    public function canRun(): bool
     {
         return extension_loaded('enchant');
     }
@@ -57,6 +56,7 @@ class DictionaryWordRule extends AbstractPasswordRule
                 throw new PasswordVerificationException(_t("NSWDPC\\Passwords.DICTIONARY_WORD_FAIL", "Dictionary words are not allowed in the password"));
             }
         }
+
         return true;
     }
 }

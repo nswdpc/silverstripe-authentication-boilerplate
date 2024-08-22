@@ -25,7 +25,7 @@ class UpgradeTasks extends BuildTask
     /**
      * @inheritdoc
      */
-    private static $segment = 'AuthUpgradeTasks';
+    private static string $segment = 'AuthUpgradeTasks';
 
     private bool $commit = false;
 
@@ -44,7 +44,7 @@ class UpgradeTasks extends BuildTask
         }
     }
 
-    private function taskRemoveIsPendingField($request)
+    private function taskRemoveIsPendingField()
     {
         if($this->commit) {
             DB::query("ALTER TABLE `Member` DROP COLUMN `IsPending`");

@@ -14,10 +14,6 @@ use SilverStripe\Core\Extension;
 class PasswordVerifier extends Extension
 {
     /**
-     * @param string $password
-     * @param ValidationResult $validation_result
-     * @param PasswordValidator $validator
-     * @param Member $member
      * @return void
      */
     public function updateValidatePassword(string $password, ValidationResult $validation_result, PasswordValidator $validator, Member $member)

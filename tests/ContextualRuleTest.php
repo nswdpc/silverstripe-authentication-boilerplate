@@ -14,7 +14,7 @@ class ContextualRuleTest extends SapphireTest
     protected $usesDatabase = true;
 
 
-    public function testContextualWords()
+    public function testContextualWords(): void
     {
         $strings = [
             'Our website',

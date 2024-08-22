@@ -14,10 +14,9 @@ use SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest;
 class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
 {
     /**
-     * @var array
      * @config
      */
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'edit',
         'view',
         'ItemEditForm',
@@ -37,6 +36,7 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
                 }
             }
         }
+
         return $form;
     }
 
@@ -70,6 +70,7 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
             $form->sessionMessage('Profile approved and notified', 'good');
 
         }
+
         return $this->edit(Controller::curr()->getRequest());
     }
 
@@ -101,13 +102,14 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
             $form->sessionMessage('The profile was unapproved', 'good');
 
         }
+
         return $this->edit(Controller::curr()->getRequest());
     }
 
     public function doNotifyApprovers($data, $form)
     {
         if(!($this->record instanceof PendingProfile)) {
-            return;
+            return null;
         }
 
         $admin = Permission::check('ADMIN');
@@ -122,6 +124,7 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
         $notifier = Injector::inst()->create(Notifier::class);
         $notifications = $notifier->sendAdministrationApprovalRequired($this->record);
         $form->sessionMessage("{$notifications} approver(s) notified", 'good');
+        return null;
 
     }
 

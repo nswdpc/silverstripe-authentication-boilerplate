@@ -16,17 +16,15 @@ use SilverStripe\SiteConfig\SiteConfig;
 class AuthenticationHelpController extends Controller
 {
     /**
-     * @var array
      * @config
      */
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'index'
     ];
 
     /**
      * Find the AuthenticationHelpPage and redirect to it, otherwise 404
      *
-     * @param HTTPRequest $request
      * @return HTTPResponse
      */
     public function index(HTTPRequest $request)

@@ -17,7 +17,7 @@ class PasswordStrengthTest extends SapphireTest
 {
     protected $usesDatabase = true;
 
-    public function testContextualWords()
+    public function testContextualWords(): bool
     {
         $strings = [
             'website',
@@ -75,7 +75,7 @@ class PasswordStrengthTest extends SapphireTest
 
     }
 
-    public function testDictionaryWords()
+    public function testDictionaryWords(): bool
     {
         // password set to check
         $passwords = [
@@ -111,7 +111,7 @@ class PasswordStrengthTest extends SapphireTest
         return true;
     }
 
-    public function testSequentialCharacters()
+    public function testSequentialCharacters(): bool
     {
 
         // password set to check
@@ -146,7 +146,7 @@ class PasswordStrengthTest extends SapphireTest
         return true;
     }
 
-    public function testRepetitiveCharacters()
+    public function testRepetitiveCharacters(): bool
     {
         // password set to check
         $passwords = [
@@ -181,7 +181,7 @@ class PasswordStrengthTest extends SapphireTest
         return true;
     }
 
-    public function testVerifier()
+    public function testVerifier(): void
     {
 
         $member = Member::create([
@@ -211,7 +211,7 @@ class PasswordStrengthTest extends SapphireTest
     /**
      * Given some random passwords based on alphabets, check their validity
      */
-    public function testRandomPasswords()
+    public function testRandomPasswords(): void
     {
 
         // use english lower/upper and numbers
@@ -239,6 +239,7 @@ class PasswordStrengthTest extends SapphireTest
             foreach($keys as $key) {
                 $password .= $letters[ $key ];
             }
+
             $result = $member->changePassword($password, false);
             $this->assertTrue($result->isValid(), "{$password} as a password is not valid, it should be");
         }
