@@ -33,7 +33,7 @@ class AuthenticationHelpController extends Controller
         $page = AuthenticationHelpPage::get()->first();
         if(!$page || !$page->exists()) {
             // return a 404
-            return $this->httpError(404, _t('NSWDPC_MFA.PageNotFound', 'Page not found'));
+            return $this->httpError(404, _t(self::class . '.PageNotFound', 'Page not found'));
         } else {
             // redirect to this page, provided the content exists
             return $this->redirect($page->AbsoluteLink());

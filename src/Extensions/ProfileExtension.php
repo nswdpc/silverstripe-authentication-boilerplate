@@ -74,8 +74,8 @@ class ProfileExtension extends DataExtension
     public function IsProfilePendingNice()
     {
         return $this->IsProfilePending() ?
-            _t('NSWDPC\Members.PENDING_YES', 'Yes')
-            : _t('NSWDPC\Members.PENDING_YES', 'No');
+            _t(self::class . '.PENDING_YES', 'Yes')
+            : _t(self::class . '.PENDING_YES', 'No');
     }
 
     /**
@@ -84,7 +84,7 @@ class ProfileExtension extends DataExtension
     public function updateSummaryFields(&$fields)
     {
         $fields = array_merge($fields, [
-            'IsProfilePendingNice' => _t('NSWDPC\Authentication.IS_PENDING', "Pending")
+            'IsProfilePendingNice' => _t(self::class . 'IS_PENDING', "Pending")
         ]);
     }
 
@@ -101,11 +101,11 @@ class ProfileExtension extends DataExtension
 
             $link = $pendingProfile->CMSEditLink();
             $value = _t(
-                PendingProfile::class . ".MEMBER_HAS_PENDING_PROFILE",
+                self::class . ".MEMBER_HAS_PENDING_PROFILE",
                 "View this member's pending profile."
             );
             $title = _t(
-                PendingProfile::class . ".PENDING",
+                self::class . ".PENDING",
                 "Pending profile"
             );
 
@@ -283,7 +283,7 @@ class ProfileExtension extends DataExtension
         foreach($fields as $field) {
             $title = $field->Title();
             $what->push([
-                'Value' => sprintf(_t('NSWDPC\Authentication.FIELD_CHANGED', "'%s' was updated on your profile"), $title)
+                'Value' => sprintf(_t(self::class . '.FIELD_CHANGED', "'%s' was updated on your profile"), $title)
             ]);
         }
 

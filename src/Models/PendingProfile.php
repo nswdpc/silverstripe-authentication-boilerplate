@@ -445,7 +445,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         $key = $this->getEncryptionKey();
         if ($key === '') {
             Logger::log("Someone tried to create an approval code during registration via TOTP but the system has no MFA encryption key defined", "ERROR");
-            throw new VerificationFailureException(_t('auth.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.'));
+            throw new VerificationFailureException(_t(self::class . '.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.'));
         }
 
         $period = $this->config()->get('code_lifetime');
@@ -491,7 +491,7 @@ class PendingProfile extends DataObject implements PermissionProvider
             if($this->hasMaxVerificationAttempts()) {
                 throw new VerificationFailureException(
                     _t(
-                        'auth.CANNOT_VERIFY_REACHED_LIMIT',
+                        self::class . '.CANNOT_VERIFY_REACHED_LIMIT',
                         'Sorry, your account cannot be verified. You will need to request a new verification code and try again.'
                     )
                 );
@@ -505,7 +505,7 @@ class PendingProfile extends DataObject implements PermissionProvider
                 Logger::log("Profile {#$this->ID} tried to verify an approval code via TOTP but the system has no MFA encryption key defined", "ERROR");
                 throw new VerificationFailureException(
                     _t(
-                        'auth.CANNOT_VERIFY_CODE',
+                        self::class . '.CANNOT_VERIFY_CODE',
                         'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.'
                     )
                 );
@@ -516,7 +516,7 @@ class PendingProfile extends DataObject implements PermissionProvider
                 Logger::log("Profile {#$this->ID} tried to verify an approval code but they have no verification data", "NOTICE");
                 throw new VerificationFailureException(
                     _t(
-                        'auth.CANNOT_VERIFY_CODE_NO_PROVISIONING_DATA',
+                        self::class . '.CANNOT_VERIFY_CODE_NO_PROVISIONING_DATA',
                         'Sorry, your account cannot be verified at the current time. Please try again later.'
                     )
                 );
@@ -547,7 +547,7 @@ class PendingProfile extends DataObject implements PermissionProvider
             Logger::log("Profile {#$this->ID} verifySelfApprovalCode error=" . $e->getMessage(), "NOTICE");
             throw new VerificationFailureException(
                 _t(
-                    'auth.CANNOT_VERIFY_CODE_GENERAL_EXCEPTION',
+                    self::class . '.CANNOT_VERIFY_CODE_GENERAL_EXCEPTION',
                     'Sorry, your account cannot be verified at the current time. Please try again later.'
                 )
             );

@@ -40,7 +40,7 @@ class RepetitiveCharacterRule extends AbstractPasswordRule
         $result = preg_match($pattern, $password, $matches);
         if($result > 0) {
             $match = $matches[0] ?? "";
-            throw new PasswordVerificationException(_t("NSWDPC\\Passwords.REPETITIVE_CHARACTER_FAIL", "Repetitive characters are not allowed in the password"));
+            throw new PasswordVerificationException(_t(self::class . ".REPETITIVE_CHARACTER_FAIL", "Repetitive characters are not allowed in the password"));
         }
 
         return true;

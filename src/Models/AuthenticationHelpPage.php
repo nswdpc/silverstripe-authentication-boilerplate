@@ -76,8 +76,8 @@ class AuthenticationHelpPage extends \Page
 
         // create a default page, save the templated content but do not publish
         $page = AuthenticationHelpPage::create();
-        $page->Title = _t('NSWDPC_MFA.PageTitle', 'Multi-Factor Authentication');
-        $page->AuthenticationHelpHeading = _t('NSWDPC_MFA.SubHeading', 'Setting up MFA');
+        $page->Title = _t(self::class . '.PageTitle', 'Multi-Factor Authentication');
+        $page->AuthenticationHelpHeading = _t(self::class . '.SubHeading', 'Setting up MFA');
         $page->AuthenticationHelpContent = trim($content);
         $page->write();
     }
@@ -93,15 +93,15 @@ class AuthenticationHelpPage extends \Page
             [
                 TextField::create(
                     'AuthenticationHelpHeading',
-                    _t('NSWDPC_MFA.AuthenticationHelpHeading', 'Heading')
+                    _t(self::class . '.AuthenticationHelpHeading', 'Heading')
                 ),
                 HTMLEditorField::create(
                     'AuthenticationHelpContent',
-                    _t('NSWDPC_MFA.AuthenticationHelpContent', 'Content')
+                    _t(self::class . '.AuthenticationHelpContent', 'Content')
                 ),
                 CheckboxField::create(
                     'AuthenticationHelpShowAbove',
-                    'Show this content above page content'
+                    _t(self::class . '.AuthenticationHelpShowAbove', 'Show this content above page content')
                 )
             ]
         );

@@ -106,7 +106,7 @@ class ContextualWordRule extends AbstractPasswordRule
             // at least one banned word detected
             throw new PasswordVerificationException(
                 _t(
-                    "NSWDPC\\Passwords.PASSWORD_STRENGTH_FAIL",
+                    self::class . ".PASSWORD_STRENGTH_FAIL",
                     "The password provided contains disallowed words, please try a different password"
                 )
             );

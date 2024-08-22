@@ -69,7 +69,7 @@ class SequentialCharacterRule extends AbstractPasswordRule
                             throw new PasswordVerificationException(
                                 sprintf(
                                     _t(
-                                        "NSWDPC\\Passwords.SEQUENTIAL_CHARACTER_FAIL",
+                                        self::class . ".SEQUENTIAL_CHARACTER_FAIL",
                                         "The sequential characters '%s' are not allowed in the password"
                                     ),
                                     $pattern
