@@ -15,9 +15,4 @@ class ConfigurationService
 {
     use Configurable;
 
-    /**
-     * @config
-     */
-    private static string $ss_mfa_secret_key = '';
-
 }

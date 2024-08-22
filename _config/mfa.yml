@@ -17,9 +17,6 @@ SilverStripe\TOTP\Method:
   code_length: 6
 SilverStripe\MFA\BackupCode\RegisterHandler:
   user_help_link: '/mfa_help#regain_access'
-# MFA setup
-NSWDPC\MFA\ConfigurationService:
-  ss_mfa_secret_key: ''
 # Reset account notification
 SilverStripe\MFA\Extension\AccountReset\SecurityExtension:
   extensions:
