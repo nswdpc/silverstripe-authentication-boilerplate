@@ -22,7 +22,6 @@ use SilverStripe\Admin\ModelAdmin;
  */
 class PendingProfileAdmin extends ModelAdmin
 {
-
     /**
      * @var array
      * @config
@@ -49,7 +48,8 @@ class PendingProfileAdmin extends ModelAdmin
      */
     private static $menu_title = 'Pending Profiles';
 
-    public function getEditForm($id = null, $fields = null) {
+    public function getEditForm($id = null, $fields = null)
+    {
         $form = parent::getEditForm($id, $fields);
         if($this->modelClass == PendingProfile::class) {
             $gf = $form->Fields()->fieldByName($this->sanitiseClassName($this->modelClass));

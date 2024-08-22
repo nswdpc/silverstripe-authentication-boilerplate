@@ -10,8 +10,8 @@ use SilverStripe\Security\Member;
  * Checks a password for sequential characters
  * @author James <james.ellis@dpc.nsw.gov.au>
  */
-class SequentialCharacterRule extends AbstractPasswordRule {
-
+class SequentialCharacterRule extends AbstractPasswordRule
+{
     use Configurable;
 
     /**
@@ -46,14 +46,15 @@ class SequentialCharacterRule extends AbstractPasswordRule {
      * @throws PasswordVerificationException
      * @returns boolean
      */
-    public function check($password, Member $member = null): bool {
+    public function check($password, Member $member = null): bool
+    {
         $alphabets = $this->config()->get('alphabets');
         $length = $this->config()->get('length');
         if(!empty($alphabets) && is_array($alphabets)) {
             foreach($alphabets as $alphabet) {
                 // split each alphabet
                 $chunks = mb_str_split($alphabet, 1);
-                foreach($chunks as $k=>$character) {
+                foreach($chunks as $k => $character) {
                     $pattern = $character;
                     for($c = 1;$c < $length; $c++) {
                         if(isset($chunks[ $k + $c ])) {
@@ -66,7 +67,7 @@ class SequentialCharacterRule extends AbstractPasswordRule {
                         $count = mb_substr_count($password, $pattern);
                         if($count > 0) {
                             throw new PasswordVerificationException(
-                                sprintf (
+                                sprintf(
                                     _t(
                                         "NSWDPC\\Passwords.SEQUENTIAL_CHARACTER_FAIL",
                                         "The sequential characters '%s' are not allowed in the password"

@@ -8,8 +8,8 @@ use SilverStripe\Security\Member;
 /**
  * Checks a password for sequential characters
  */
-abstract class AbstractPasswordRule {
-
+abstract class AbstractPasswordRule
+{
     use Configurable;
 
     abstract public function check($password, Member $member = null): bool;
@@ -18,7 +18,8 @@ abstract class AbstractPasswordRule {
      * By default, allow rule checks can run
      * @return boolean
      */
-    public function canRun() {
+    public function canRun()
+    {
         return true;
     }
 

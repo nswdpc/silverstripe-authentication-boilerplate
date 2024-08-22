@@ -1,4 +1,5 @@
 <?php
+
 namespace NSWDPC\Authentication\Tests;
 
 use NSWDPC\Authentication\Models\PendingProfile;
@@ -9,13 +10,13 @@ use SilverStripe\Security\Member;
 
 class PendingProfileTest extends SapphireTest
 {
-
     protected $usesDatabase = true;
 
-    public function setUp() : void {
+    public function setUp(): void
+    {
         parent::setUp();
-        Config::modify()->set( PendingProfile::class, 'require_admin_approval', true );
-        Config::modify()->set( PendingProfile::class, 'require_self_verification', true );
+        Config::modify()->set(PendingProfile::class, 'require_admin_approval', true);
+        Config::modify()->set(PendingProfile::class, 'require_self_verification', true);
     }
 
     public function testMakePending()
@@ -40,7 +41,7 @@ class PendingProfileTest extends SapphireTest
         $this->assertEquals(1, $pendingProfile->RequireAdminApproval);
         $this->assertEquals(1, $pendingProfile->RequireSelfVerification);
 
-        $this->assertTrue( $member->getIsPending() );
+        $this->assertTrue($member->getIsPending());
 
     }
 
@@ -66,14 +67,14 @@ class PendingProfileTest extends SapphireTest
         $this->assertEquals(1, $pendingProfile->RequireAdminApproval);
         $this->assertEquals(1, $pendingProfile->RequireSelfVerification);
 
-        $this->assertTrue( $member->getIsPending() );
+        $this->assertTrue($member->getIsPending());
 
         $member->removePending();
 
         $checkProfile = PendingProfile::get()->byId($pendingProfile->ID);
         $this->assertEmpty($checkProfile);
 
-        $this->assertFalse( $member->getIsPending() );
+        $this->assertFalse($member->getIsPending());
 
     }
 
@@ -90,7 +91,7 @@ class PendingProfileTest extends SapphireTest
         $this->assertEquals(1, $pendingProfile->RequireAdminApproval);
         $this->assertEquals(1, $pendingProfile->RequireSelfVerification);
 
-        $this->assertTrue( $member->getIsPending() );
+        $this->assertTrue($member->getIsPending());
     }
 
     public function testDirectCreate()
@@ -108,7 +109,7 @@ class PendingProfileTest extends SapphireTest
             'MemberID' => $memberId
         ]);
         $pendingProfile->write();
-        $this->assertTrue( $member->getIsPending() );
+        $this->assertTrue($member->getIsPending());
     }
 
     public function testDirectCreateDelete()
@@ -126,9 +127,9 @@ class PendingProfileTest extends SapphireTest
             'MemberID' => $memberId
         ]);
         $pendingProfile->write();
-        $this->assertTrue( $member->getIsPending() );
+        $this->assertTrue($member->getIsPending());
         $pendingProfile->delete();
-        $this->assertFalse( $member->getIsPending() );
+        $this->assertFalse($member->getIsPending());
     }
 
 

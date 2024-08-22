@@ -7,5 +7,6 @@ use PageController;
 /**
  * Controller for {@link AuthenticationHelpPage}
  */
-class AuthenticationHelpPageController extends PageController {
+class AuthenticationHelpPageController extends PageController
+{
 }

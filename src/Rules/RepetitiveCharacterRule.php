@@ -10,8 +10,8 @@ use SilverStripe\Security\Member;
  * Checks a password for sequential characters
  * @author James <james.ellis@dpc.nsw.gov.au>
  */
-class RepetitiveCharacterRule extends AbstractPasswordRule {
-
+class RepetitiveCharacterRule extends AbstractPasswordRule
+{
     use Configurable;
 
     /**
@@ -34,12 +34,13 @@ class RepetitiveCharacterRule extends AbstractPasswordRule {
      * @throws PasswordVerificationException
      * @returns boolean
      */
-    public function check($password, Member $member = null): bool {
+    public function check($password, Member $member = null): bool
+    {
         $pattern = '/(.)\1{2,}/';
-        $result = preg_match( $pattern, $password, $matches);
+        $result = preg_match($pattern, $password, $matches);
         if($result > 0) {
             $match = isset($matches[0]) ? $matches[0] : "";
-            throw new PasswordVerificationException( _t("NSWDPC\\Passwords.REPETITIVE_CHARACTER_FAIL", "Repetitive characters are not allowed in the password") );
+            throw new PasswordVerificationException(_t("NSWDPC\\Passwords.REPETITIVE_CHARACTER_FAIL", "Repetitive characters are not allowed in the password"));
         }
         return true;
     }

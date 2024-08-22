@@ -16,14 +16,15 @@ use SilverStripe\Security\Member;
 /**
  * Extension for SiteTree handling when silverstripe/cms is installed
  */
-class SiteTreeExtension extends Extension {
-
+class SiteTreeExtension extends Extension
+{
     /**
      * Handle redirect if a the signed in Member is pending
      * @param ContentController $controller
      * @return mixed
      */
-    public function contentcontrollerInit($controller) {
+    public function contentcontrollerInit($controller)
+    {
         return $this->handlePromptForVerificationCode($controller, $this->owner);
     }
 
@@ -32,7 +33,8 @@ class SiteTreeExtension extends Extension {
      * @return mixed
      * @param Member $member
      */
-    public function canView($member) {
+    public function canView($member)
+    {
         if($this->checkPendingMemberCanView($member, $this->owner) === false) {
             return false;
         }
@@ -45,7 +47,8 @@ class SiteTreeExtension extends Extension {
      *
      * @return mixed
      */
-    protected function handlePromptForVerificationCode(Controller $controller, SiteTree $record) {
+    protected function handlePromptForVerificationCode(Controller $controller, SiteTree $record)
+    {
         if(!PendingProfile::config()->get('redirect_when_pending')) {
             return null;
         }
@@ -55,7 +58,7 @@ class SiteTreeExtension extends Extension {
             if(is_array($links)) {
                 $redirectLink = array_pop($links);
                 if($redirectLink) {
-                    return $controller->redirect( $redirectLink );
+                    return $controller->redirect($redirectLink);
                 }
             }
         }
@@ -67,7 +70,8 @@ class SiteTreeExtension extends Extension {
      * For pending members, records without ANYONE permission cannot be viewed
      * @return bool
      */
-    protected function checkPendingMemberCanView(?Member $member, SiteTree $record) : bool {
+    protected function checkPendingMemberCanView(?Member $member, SiteTree $record): bool
+    {
         if($member && $member->getIsPending() && !$this->hasAnyoneViewPermission($record)) {
             return false;
         } else {
@@ -80,13 +84,14 @@ class SiteTreeExtension extends Extension {
      * account site access settings and parent settings
      * @return bool
      */
-    protected function hasAnyoneViewPermission(SiteTree $record) : bool {
+    protected function hasAnyoneViewPermission(SiteTree $record): bool
+    {
         if($record->CanViewType === InheritedPermissions::ANYONE) {
             // this record sets permissions
             return true;
-        } else if ($record->CanViewType === InheritedPermissions::INHERIT) {
+        } elseif ($record->CanViewType === InheritedPermissions::INHERIT) {
             // inheriting from parent or site config
-            if( ($parent = $record->Parent()) && $parent->exists() ) {
+            if(($parent = $record->Parent()) && $parent->exists()) {
                 // record has parent
                 \PHPStan\dumpType($parent);
                 return $this->hasAnyoneViewPermission($parent);

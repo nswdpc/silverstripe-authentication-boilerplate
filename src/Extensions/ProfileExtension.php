@@ -18,12 +18,11 @@ use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 
-
 /**
  * Provides profile handling extension methods and fields
  */
-class ProfileExtension extends DataExtension {
-
+class ProfileExtension extends DataExtension
+{
     /**
      * @var array
      */
@@ -42,7 +41,8 @@ class ProfileExtension extends DataExtension {
      * In that a PendingProfile exists and it requires approval of some sort
      * @return boolean
      */
-    public function getIsPending() : bool {
+    public function getIsPending(): bool
+    {
         /** @var \SilverStripe\Security\Member $owner */
         $owner = $this->getOwner();
         $profile = PendingProfile::forMember($owner);
@@ -57,16 +57,19 @@ class ProfileExtension extends DataExtension {
      * and existence of profile with specific values
      * @return boolean
      */
-    public function IsProfilePending() {
+    public function IsProfilePending()
+    {
         return $this->getIsPending();
     }
 
-    public function getProfileRequiresSelfVerification() {
+    public function getProfileRequiresSelfVerification()
+    {
         $profile = PendingProfile::forMember($this->getOwner());
         return $profile && $profile->requiresPromptForSelfVerification();
     }
 
-    public function getProfileRequiresAdministrationApproval() {
+    public function getProfileRequiresAdministrationApproval()
+    {
         $profile = PendingProfile::forMember($this->getOwner());
         return $profile && $profile->requiresPromptForAdministrationApproval();
     }
@@ -74,7 +77,8 @@ class ProfileExtension extends DataExtension {
     /**
      * For use in fields
      */
-    public function IsProfilePendingNice() {
+    public function IsProfilePendingNice()
+    {
         return $this->IsProfilePending() ?
             _t('NSWDPC\Members.PENDING_YES', 'Yes')
             : _t('NSWDPC\Members.PENDING_YES', 'No');
@@ -83,7 +87,8 @@ class ProfileExtension extends DataExtension {
     /**
      * Update summary data for gridfield tables
      */
-    public function updateSummaryFields(&$fields) {
+    public function updateSummaryFields(&$fields)
+    {
         $fields = array_merge($fields, [
             'IsProfilePendingNice' => _t('NSWDPC\Authentication.IS_PENDING', "Pending")
         ]);
@@ -132,13 +137,14 @@ class ProfileExtension extends DataExtension {
     public function onBeforeWrite()
     {
         // Store field that were changed while writing
-        $this->getOwner()->storeChangedFields( $this->getOwner()->getChangedFields(false, DataObject::CHANGE_VALUE) );
+        $this->getOwner()->storeChangedFields($this->getOwner()->getChangedFields(false, DataObject::CHANGE_VALUE));
     }
 
     /**
      * When the Member is deleted, delete any linked {@link PendingProfile}
      */
-    public function onBeforeDelete() {
+    public function onBeforeDelete()
+    {
         parent::onBeforeDelete();
         if($profile = PendingProfile::forMember($this->getOwner())) {
             $profile->delete();
@@ -149,7 +155,8 @@ class ProfileExtension extends DataExtension {
      * Store for later use
      * @param array $fields
      */
-    public function storeChangedFields($fields) {
+    public function storeChangedFields($fields)
+    {
         $this->changed_fields = $fields;
     }
 
@@ -158,14 +165,16 @@ class ProfileExtension extends DataExtension {
      * This can create a PendingProfile record based on configuration
      * @return PendingProfile
      */
-    public function makePending($initial = false) : ?PendingProfile {
+    public function makePending($initial = false): ?PendingProfile
+    {
         return PendingProfile::findOrMake($this->getOwner());
     }
 
     /**
      * Remove a linked PendingProfile from the member
      */
-    public function removePending() : bool {
+    public function removePending(): bool
+    {
         if($profile = PendingProfile::forMember($this->getOwner())) {
             $profile->delete();
             return true;
@@ -178,7 +187,8 @@ class ProfileExtension extends DataExtension {
      * Handle reprompt of a user requiring them to enter a new activation code
      * @return boolean
      */
-    public function rePromptForActivationCode(Controller $controller) {
+    public function rePromptForActivationCode(Controller $controller)
+    {
         return $this->getOwner()->sendRegistrationApprovalEmail(false, $controller);
     }
 
@@ -186,9 +196,10 @@ class ProfileExtension extends DataExtension {
      * Send the registration approval email for this member
      * @param boolean $initial whether this is the initial prompt
      */
-    public function sendRegistrationApprovalEmail($initial, Controller $controller) {
+    public function sendRegistrationApprovalEmail($initial, Controller $controller)
+    {
         $notifier = Notifier::create();
-        return $notifier->sendSelfRegistrationToken( $this->getOwner(), $initial, $controller );
+        return $notifier->sendSelfRegistrationToken($this->getOwner(), $initial, $controller);
     }
 
     /**
@@ -196,7 +207,8 @@ class ProfileExtension extends DataExtension {
      * @param array $changes - if empty the changed fields stored in {@link self::onBeforeWrite()} are used
      * @return boolean|null
      */
-    public function notifyProfileChange($changes = []) {
+    public function notifyProfileChange($changes = [])
+    {
 
         if(empty($changes)) {
             // Automated changes
@@ -217,7 +229,7 @@ class ProfileExtension extends DataExtension {
         $notifier = Notifier::create();
 
         // Handle email notification change
-        if( Config::inst()->get( Notifier::class, 'notify_email_change') ) {
+        if(Config::inst()->get(Notifier::class, 'notify_email_change')) {
 
             // unset from later profile notification
             $emailKey = array_search('Email', $params['restrictFields']);
@@ -228,7 +240,7 @@ class ProfileExtension extends DataExtension {
             // Check email change
             if(!empty($this->changed_fields['Email'])
                 && isset($this->changed_fields['Email']['before'])
-                && isset($this->changed_fields['Email']['after']) ) {
+                && isset($this->changed_fields['Email']['after'])) {
 
                 try {
                     // Send to previous
@@ -277,7 +289,7 @@ class ProfileExtension extends DataExtension {
         foreach($fields as $field) {
             $title = $field->Title();
             $what->push([
-                'Value' => sprintf( _t('NSWDPC\Authentication.FIELD_CHANGED', '\'%s\' was updated on your profile'), $title )
+                'Value' => sprintf(_t('NSWDPC\Authentication.FIELD_CHANGED', '\'%s\' was updated on your profile'), $title)
             ]);
         }
 

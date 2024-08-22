@@ -11,8 +11,8 @@ use SilverStripe\Security\Member;
  * Checks if a password provided is within a list of words based on site context / member details, based on configuration
  * @see 5.1.1.2 Memorized Secret Verifiers
  */
-class ContextualWordRule extends AbstractPasswordRule {
-
+class ContextualWordRule extends AbstractPasswordRule
+{
     use Configurable;
 
     /**
@@ -38,7 +38,8 @@ class ContextualWordRule extends AbstractPasswordRule {
     /**
      * Allow classes extending this rule to use base level strings along with their own
      */
-    public function getContextStrings(Member $member) {
+    public function getContextStrings(Member $member)
+    {
         $config = SiteConfig::current_site_config();
         $site_strings = [
             $config->Title,
@@ -64,7 +65,7 @@ class ContextualWordRule extends AbstractPasswordRule {
             $parts = preg_split("/[^a-zA-Z0-9]/", $string);
             $parts = array_filter(
                 $parts,
-                function($value) use ($min_length) {
+                function ($value) use ($min_length) {
                     // filter out items that are not > min_length length
                     return strlen($value) >= $min_length;
                 }
@@ -86,7 +87,8 @@ class ContextualWordRule extends AbstractPasswordRule {
      * @param Member $member
      * @returns boolean
      */
-    public function check($password, Member $member = null): bool {
+    public function check($password, Member $member = null): bool
+    {
         $words = $this->getContextStrings($member);
         $valid = true;
         foreach($words as $word) {
@@ -95,7 +97,7 @@ class ContextualWordRule extends AbstractPasswordRule {
              * haystack = password
              * Test whether the word appears in the password
              */
-            if(strpos( strtolower($password), strtolower($word) ) !== false) {
+            if(strpos(strtolower($password), strtolower($word)) !== false) {
                 $valid = false;
                 break;
             }

@@ -15,8 +15,8 @@ use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
  * A page to display and handle requests about MFA help
  * See docs/en/index.md for details
  */
-class AuthenticationHelpPage extends \Page {
-
+class AuthenticationHelpPage extends \Page
+{
     /**
      * @inheritdoc
      */
@@ -62,7 +62,8 @@ class AuthenticationHelpPage extends \Page {
      */
     private static $plural_name = 'Authentication Help Pages';
 
-    public function requireDefaultRecords() {
+    public function requireDefaultRecords()
+    {
         parent::requireDefaultRecords();
 
         $page = AuthenticationHelpPage::get()->first();
@@ -120,12 +121,14 @@ class AuthenticationHelpPage extends \Page {
         $this->AuthenticationHelpContent = trim($this->AuthenticationHelpContent);
     }
 
-    public function MFARequired() {
+    public function MFARequired()
+    {
         $config = SiteConfig::current_site_config();
         return $config->MFARequired;
     }
 
-    public function MFAGracePeriodExpires() {
+    public function MFAGracePeriodExpires()
+    {
         $config = SiteConfig::current_site_config();
         return $config->MFAGracePeriodExpires;
     }

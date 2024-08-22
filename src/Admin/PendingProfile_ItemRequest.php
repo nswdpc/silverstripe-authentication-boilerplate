@@ -11,20 +11,20 @@ use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
 use SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest;
 
-class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest {
-
+class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
+{
     /**
      * @var array
      * @config
      */
-    private static $allowed_actions = array(
+    private static $allowed_actions = [
         'edit',
         'view',
         'ItemEditForm',
         'doApprove',
         'doUnapprove',
         'doNotifyApprovers'
-    );
+    ];
 
     public function ItemEditForm()
     {
@@ -104,7 +104,8 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest {
         return $this->edit(Controller::curr()->getRequest());
     }
 
-    public function doNotifyApprovers($data, $form) {
+    public function doNotifyApprovers($data, $form)
+    {
         if(!($this->record instanceof PendingProfile)) {
             return;
         }

@@ -9,8 +9,8 @@ use SilverStripe\Security\Member;
 /**
  * Checks if a password is a dictionary word
  */
-class DictionaryWordRule extends AbstractPasswordRule {
-
+class DictionaryWordRule extends AbstractPasswordRule
+{
     use Configurable;
 
     /**
@@ -32,7 +32,8 @@ class DictionaryWordRule extends AbstractPasswordRule {
      * By default, allow rule checks can run
      * @return boolean
      */
-    public function canRun() {
+    public function canRun()
+    {
         return extension_loaded('enchant');
     }
 
@@ -42,17 +43,18 @@ class DictionaryWordRule extends AbstractPasswordRule {
      * @throws PasswordVerificationException
      * @returns boolean
      */
-    public function check($password, Member $member = null): bool {
+    public function check($password, Member $member = null): bool
+    {
         $locale = $this->config()->get('locale');
         $broker = enchant_broker_init();
         if (!enchant_broker_dict_exists($broker, $locale)) {
-            throw new \Exception( _t("NSWDPC\\Passwords.GENERAL_EXCEPTION", "The password cannot be validated") );
+            throw new \Exception(_t("NSWDPC\\Passwords.GENERAL_EXCEPTION", "The password cannot be validated"));
         } else {
             $dictionary = enchant_broker_request_dict($broker, $locale);
             $suggestions = [];
-            $check = enchant_dict_quick_check($dictionary, $password, $suggestions );
+            $check = enchant_dict_quick_check($dictionary, $password, $suggestions);
             if($check) {
-                throw new PasswordVerificationException( _t("NSWDPC\\Passwords.DICTIONARY_WORD_FAIL", "Dictionary words are not allowed in the password") );
+                throw new PasswordVerificationException(_t("NSWDPC\\Passwords.DICTIONARY_WORD_FAIL", "Dictionary words are not allowed in the password"));
             }
         }
         return true;

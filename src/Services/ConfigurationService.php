@@ -11,8 +11,8 @@ use SilverStripe\Security\PasswordValidator;
  * Helper class to handle configuration of MFA options
  * Read the documentation for configuration instructions
  */
-class ConfigurationService {
-
+class ConfigurationService
+{
     use Configurable;
 
     /**

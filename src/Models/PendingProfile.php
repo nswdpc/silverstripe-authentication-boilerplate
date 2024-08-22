@@ -175,7 +175,8 @@ class PendingProfile extends DataObject implements PermissionProvider
         }
     }
 
-    public function getTitle() {
+    public function getTitle()
+    {
         $title = "Pending profile";
         if($member = $this->Member()) {
             $title .= " for " . $member->getTitle();
@@ -188,7 +189,8 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * Returns members who can approve profiles
      */
-    public static function getApprovers() : SS_List {
+    public static function getApprovers(): SS_List
+    {
         $members = Permission::get_members_by_permission('PENDINGPROFILE_EDIT');
         return $members;
     }
@@ -274,11 +276,11 @@ class PendingProfile extends DataObject implements PermissionProvider
             // neither required
             return true;
 
-        } else if(
+        } elseif(
             ($this->RequireAdminApproval == 1 && $this->IsAdminApproved == 0)
             ||
             ($this->RequireSelfVerification == 1 && $this->IsSelfVerified == 0)
-            ) {
+        ) {
             // one of the verifications is missing
             return false;
         } elseif ($this->RequireAdminApproval == 1
@@ -326,9 +328,9 @@ class PendingProfile extends DataObject implements PermissionProvider
      * Find or create a pending profile for the Member
      * @return self
      */
-    public static function forMember(Member $member) : ?PendingProfile
+    public static function forMember(Member $member): ?PendingProfile
     {
-        $profile = PendingProfile::get()->filter(['MemberID'=>$member->ID])->first();
+        $profile = PendingProfile::get()->filter(['MemberID' => $member->ID])->first();
         return ($profile && $profile->exists() ? $profile : null);
     }
 
@@ -336,7 +338,7 @@ class PendingProfile extends DataObject implements PermissionProvider
      * Create a pending profile for the Member, this is actioned by the profile owner upon registration
      * @return self
      */
-    public static function createForMember(Member $member) : PendingProfile
+    public static function createForMember(Member $member): PendingProfile
     {
         $profile = PendingProfile::create();
         $profile->IsAdminApproved = 0;
@@ -355,7 +357,8 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * @returns mixed
      */
-    private static function sendAdministrationApprovalRequiredEmail(PendingProfile $profile) {
+    private static function sendAdministrationApprovalRequiredEmail(PendingProfile $profile)
+    {
         try {
             if($profile->RequireAdminApproval == 1
                 && !$profile->NotifiedRequireAdminApproval // and not previously notified
@@ -379,7 +382,7 @@ class PendingProfile extends DataObject implements PermissionProvider
      * If the profile exists, an admin approval email *may* be sent if required
      * @return self
      */
-    public static function findOrMake(Member $member) : self
+    public static function findOrMake(Member $member): self
     {
         $profile = self::forMember($member);
         if (!$profile) {
@@ -397,13 +400,13 @@ class PendingProfile extends DataObject implements PermissionProvider
     {
         parent::onBeforeWrite();
 
-        if(empty($this->MemberID )) {
+        if(empty($this->MemberID)) {
             throw new ValidationException("Please select a user");
         }
 
         if($this->exists()) {
             // check if a profile already exists from the member selected
-            $member = Member::get()->byId( $this->MemberID );
+            $member = Member::get()->byId($this->MemberID);
             if($member) {
                 $profile = self::forMember($member);
                 if($profile && $profile->ID != $this->ID) {
@@ -451,7 +454,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         $key = $this->getEncryptionKey();
         if (empty($key)) {
             Logger::log("Someone tried to create an approval code during registration via TOTP but the system has no MFA encryption key defined", "ERROR");
-            throw new VerificationFailureException( _t('auth.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.') );
+            throw new VerificationFailureException(_t('auth.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.'));
         }
 
         $period = $this->config()->get('code_lifetime');
@@ -489,7 +492,7 @@ class PendingProfile extends DataObject implements PermissionProvider
      * @return bool
      * @throws VerificationFailureException
      */
-    public function verifySelfApprovalCode(string $code) : bool
+    public function verifySelfApprovalCode(string $code): bool
     {
         try {
             $verified = false;
@@ -565,7 +568,8 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * Return whether the maximum allowed attempts has been reached
      */
-    public function hasMaxVerificationAttempts() : bool {
+    public function hasMaxVerificationAttempts(): bool
+    {
         return $this->VerificationsAttempted >= static::config()->get('verification_limit');
     }
 
@@ -586,7 +590,7 @@ class PendingProfile extends DataObject implements PermissionProvider
                 'User',
                 $members->map('ID', 'Email')->toArray()
             )->setHasEmptyDefault(true)
-                ->setDescription( $members->count() . ' users to choose from');
+                ->setDescription($members->count() . ' users to choose from');
 
             $fields->addFieldsToTab(
                 'Root.Main',
@@ -650,12 +654,10 @@ class PendingProfile extends DataObject implements PermissionProvider
                             'IsAdminApproved',
                             'Approved'
                         )->performReadonlyTransformation(),
-
                         CheckboxField::create(
                             'RequireAdminApproval',
                             'Require administration approval'
                         ),
-
                         CheckboxField::create(
                             'NotifiedRequireAdminApproval',
                             'Notification to approvers was sent'
@@ -663,23 +665,19 @@ class PendingProfile extends DataObject implements PermissionProvider
                     )->setTitle('Administrator approval'),
 
                     CompositeField::create(
-
                         CheckboxField::create(
                             'IsSelfVerified',
                             'User has self-verified'
                         )->setDescription('Unchecking this box will require the owner to self-verify, provided \'Require self-verification is checked\'.'),
-
                         CheckboxField::create(
                             'RequireSelfVerification',
                             'Require self-verification',
                             $this->RequireSelfVerification == 1 ? "yes" : "no"
                         ),
-
                         ReadonlyField::create(
                             'VerificationsAttempted',
                             'Verifications attempted'
                         ),
-
                         ReadonlyField::create(
                             'VerificationsFailed',
                             'Verifications failed'

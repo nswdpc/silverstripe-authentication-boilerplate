@@ -15,7 +15,6 @@ use SilverStripe\Security\PasswordValidator;
 
 class PasswordStrengthTest extends SapphireTest
 {
-
     protected $usesDatabase = true;
 
     public function testContextualWords()
@@ -54,7 +53,7 @@ class PasswordStrengthTest extends SapphireTest
         Config::modify()->set(ContextualWordRule::class, 'context_strings', $strings);
         Config::modify()->set(ContextualWordRule::class, 'min_length', 3);
 
-        $rule = Injector::inst()->create( ContextualWordRule::class );
+        $rule = Injector::inst()->create(ContextualWordRule::class);
         $strings = $rule->getContextStrings($member);
 
         $this->assertNotEmpty($strings, "Strings are empty!");
@@ -91,7 +90,7 @@ class PasswordStrengthTest extends SapphireTest
 
         $member = null;
 
-        $rule = Injector::inst()->create( DictionaryWordRule::class );
+        $rule = Injector::inst()->create(DictionaryWordRule::class);
 
         if($rule->canRun()) {
 
@@ -130,7 +129,7 @@ class PasswordStrengthTest extends SapphireTest
 
         Config::modify()->set(SequentialCharacterRule::class, 'length', 3);
 
-        $rule = Injector::inst()->create( SequentialCharacterRule::class );
+        $rule = Injector::inst()->create(SequentialCharacterRule::class);
 
         foreach($passwords as $password => $result) {
             try {
@@ -165,7 +164,7 @@ class PasswordStrengthTest extends SapphireTest
 
         Config::modify()->set(RepetitiveCharacterRule::class, 'length', 3);
 
-        $rule = Injector::inst()->create( RepetitiveCharacterRule::class );
+        $rule = Injector::inst()->create(RepetitiveCharacterRule::class);
 
         foreach($passwords as $password => $result) {
             try {
@@ -182,7 +181,8 @@ class PasswordStrengthTest extends SapphireTest
         return true;
     }
 
-    public function testVerifier() {
+    public function testVerifier()
+    {
 
         $member = Member::create([
             'Email' => 'bob.smith@example.com',
@@ -211,7 +211,8 @@ class PasswordStrengthTest extends SapphireTest
     /**
      * Given some random passwords based on alphabets, check their validity
      */
-    public function testRandomPasswords() {
+    public function testRandomPasswords()
+    {
 
         // use english lower/upper and numbers
         $alphabets = [
@@ -232,7 +233,7 @@ class PasswordStrengthTest extends SapphireTest
         ]);
 
         $password_count = 5;
-        for($i=0;$i<$password_count;$i++) {
+        for($i = 0;$i < $password_count;$i++) {
             $keys = array_rand($letters, 8);
             $password = "";
             foreach($keys as $key) {

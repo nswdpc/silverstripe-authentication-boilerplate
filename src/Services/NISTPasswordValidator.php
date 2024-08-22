@@ -25,13 +25,13 @@ use SilverStripe\Security\PasswordValidator;
  *
  * @author James
  */
-class NISTPasswordValidator extends PasswordValidator {
-
+class NISTPasswordValidator extends PasswordValidator
+{
     /**
      * @var int
      * When setting a minimum password length, this is used as the min value
      */
-    const PASSWORD_MINIMUM_LENGTH = 8;
+    public const PASSWORD_MINIMUM_LENGTH = 8;
 
     /**
      * Composition rules, this must be null to override array

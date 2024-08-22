@@ -13,7 +13,6 @@ use SilverStripe\Core\Extension;
  */
 class PasswordVerifier extends Extension
 {
-
     /**
      * @param string $password
      * @param Member $member

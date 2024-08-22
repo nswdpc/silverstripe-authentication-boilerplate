@@ -20,7 +20,7 @@ class ResetAccountExtension extends Extension
 
             // notify a group with a relevant permission
             $notifier = Notifier::create();
-            return $notifier->sendMfaAccountResetNotification( $member,  'completed' );
+            return $notifier->sendMfaAccountResetNotification($member, 'completed');
 
         } catch (\Exception $e) {
 

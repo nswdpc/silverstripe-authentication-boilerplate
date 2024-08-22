@@ -5,8 +5,8 @@ namespace NSWDPC\Authentication\Tasks;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
 
-class UpgradeTasks extends BuildTask {
-
+class UpgradeTasks extends BuildTask
+{
     /**
      * @inheritdoc
      */
@@ -32,7 +32,8 @@ class UpgradeTasks extends BuildTask {
     /**
      * @inheritdoc
      */
-    public function run($request) {
+    public function run($request)
+    {
         $this->commit = $request->getVar('commit') == 1;
         $upgrade = $request->getVar('upgrade');
         $method = "task{$upgrade}";
@@ -43,7 +44,8 @@ class UpgradeTasks extends BuildTask {
         }
     }
 
-    private function taskRemoveIsPendingField($request) {
+    private function taskRemoveIsPendingField($request)
+    {
         if($this->commit) {
             DB::query("ALTER TABLE `Member` DROP COLUMN `IsPending`");
             DB::alteration_message("Dropped column `IsPending`", "change");

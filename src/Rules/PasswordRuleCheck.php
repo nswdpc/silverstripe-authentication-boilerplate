@@ -10,8 +10,8 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\PasswordValidator;
 use SilverStripe\ORM\ValidationResult;
 
-class PasswordRuleCheck {
-
+class PasswordRuleCheck
+{
     use Configurable;
 
     use Injectable;
@@ -30,14 +30,15 @@ class PasswordRuleCheck {
     /**
      * Process all configured checks
      */
-    public function runChecks($password, Member $member = null, ValidationResult $validation_result, PasswordValidator $validator = null) {
+    public function runChecks($password, Member $member = null, ValidationResult $validation_result, PasswordValidator $validator = null)
+    {
         $checks = $this->config()->get('checks');
         if(!is_array($checks)) {
             return;
         }
 
         foreach($checks as $rule) {
-            $inst = Injector::inst()->create( $rule );
+            $inst = Injector::inst()->create($rule);
             if(!$inst instanceof AbstractPasswordRule || !$inst->canRun()) {
                 // ignore
                 continue;
