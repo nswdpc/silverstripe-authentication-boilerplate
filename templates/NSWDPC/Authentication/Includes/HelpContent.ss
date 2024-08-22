@@ -1,6 +1,6 @@
 <div class="mfa_help">
 <% if $AuthenticationHelpHeading %>
-    <% include NSWDPC/MFA/HelpHeading HeadingLevel=$AuthenticationHelpHeadingLevel, Heading=$AuthenticationHelpHeading %>
+    <% include NSWDPC/Authentication/HelpHeading HeadingLevel=$AuthenticationHelpHeadingLevel, Heading=$AuthenticationHelpHeading %>
 <% end_if %>
 
 <% if $AuthenticationHelpContent %>
@@ -8,6 +8,6 @@
 $AuthenticationHelpContent
 <% else %>
 <!-- default -->
-<% include DefaultAuthenticationHelpContent %>
+<% include NSWDPC/Authentication/DefaultAuthenticationHelpContent %>
 <% end_if %>
 </div>

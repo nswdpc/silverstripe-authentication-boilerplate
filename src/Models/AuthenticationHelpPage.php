@@ -72,7 +72,7 @@ class AuthenticationHelpPage extends \Page
             'MFARequired' => $this->MFARequired(),
             'MFAGracePeriodExpires' => $this->MFAGracePeriodExpires(),
         ]);
-        $content = $data->renderWith('NSWDPC/MFA/DefaultHTMLContent');
+        $content = $data->renderWith('NSWDPC/Authentication/DefaultHTMLContent');
 
         // create a default page, save the templated content but do not publish
         $page = AuthenticationHelpPage::create();
