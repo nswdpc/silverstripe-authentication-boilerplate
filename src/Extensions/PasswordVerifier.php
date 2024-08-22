@@ -16,17 +16,17 @@ class PasswordVerifier extends Extension
     /**
      * @return void
      */
-    public function updateValidatePassword(string $password, ValidationResult $validation_result, PasswordValidator $validator, Member $member)
+    public function updateValidatePassword(string $password, Member $member, ValidationResult $validationResult, PasswordValidator $passwordValidator)
     {
 
-        if(!$validation_result->isValid()) {
+        if(!$validationResult->isValid()) {
             // no need to continue with validation here as the password is already invalid for some reason
             return;
         }
 
         // $validation_result will contain errors if the password is not verified
         $checker = PasswordRuleCheck::create();
-        $checker->runChecks($password, $validation_result, $validator, $member);
+        $checker->runChecks($password, $member, $validationResult, $passwordValidator);
 
     }
 

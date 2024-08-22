@@ -29,7 +29,7 @@ class PasswordRuleCheck
     /**
      * Process all configured checks
      */
-    public function runChecks(string $password, ValidationResult $validation_result, PasswordValidator $validator = null, Member $member = null)
+    public function runChecks(string $password, Member $member, ValidationResult $validation_result, PasswordValidator $validator)
     {
         $checks = $this->config()->get('checks');
         if(!is_array($checks)) {
