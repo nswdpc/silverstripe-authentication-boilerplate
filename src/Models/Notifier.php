@@ -284,9 +284,10 @@ class Notifier
     /**
      * Sends the email
      * @returns boolean
-     * @param mixed $to either a string or array
-     * @param mixed $from either a string or array
-     * @param array $data
+     * @param string|array $to either a string or array
+     * @param string|array $from either a string or array
+     * @param string $subject email subject
+     * @param array $data email data
      * @param array $headers extra Email headers e.g Cc, Bcc, X-Some-Header
      * @param string $template template to use
      */

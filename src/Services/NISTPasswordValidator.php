@@ -115,7 +115,7 @@ class NISTPasswordValidator extends PasswordValidator
      */
     public function getMinLength()
     {
-        $minLength = $this->minLength ?? $this->config()->get('min_length');
+        $minLength = $this->minLength > 0 ? $this->minLength : $this->config()->get('min_length');
 
         if($minLength < self::PASSWORD_MINIMUM_LENGTH) {
             $minLength = self::PASSWORD_MINIMUM_LENGTH;

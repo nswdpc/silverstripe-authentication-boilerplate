@@ -26,7 +26,7 @@ class PasswordVerifier extends Extension
 
         // $validation_result will contain errors if the password is not verified
         $checker = PasswordRuleCheck::create();
-        $checker->runChecks($password, $member, $validation_result, $validator);
+        $checker->runChecks($password, $validation_result, $validator, $member);
 
     }
 
