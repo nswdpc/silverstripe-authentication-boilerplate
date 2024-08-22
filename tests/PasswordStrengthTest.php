@@ -1,6 +1,12 @@
 <?php
-namespace NSWDPC\Passwords;
 
+namespace NSWDPC\Authentication\Tests;
+
+use NSWDPC\Authentication\Exceptions\PasswordVerificationException;
+use NSWDPC\Authentication\Rules\ContextualWordRule;
+use NSWDPC\Authentication\Rules\DictionaryWordRule;
+use NSWDPC\Authentication\Rules\RepetitiveCharacterRule;
+use NSWDPC\Authentication\Rules\SequentialCharacterRule;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;

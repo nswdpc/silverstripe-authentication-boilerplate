@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\Passwords;
+namespace NSWDPC\Authentication\Extensions;
 
+use NSWDPC\Authentication\Rules\PasswordRuleCheck;
 use SilverStripe\Security\PasswordValidator;
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;

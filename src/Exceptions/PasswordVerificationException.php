@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Passwords;
+namespace NSWDPC\Authentication\Exceptions;
 
 /**
  * Custom exception when a password does not meet verification rules

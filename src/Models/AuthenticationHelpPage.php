@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\MFA;
+namespace NSWDPC\Authentication\Models;
 
+use NSWDPC\Authentication\Controllers\AuthenticationHelpPageController;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Core\Manifest\ModuleLoader;
 use SilverStripe\View\ArrayData;
@@ -9,14 +10,17 @@ use SilverStripe\Core\Extension;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
-use Page;
 
 /**
  * A page to display and handle requests about MFA help
  * See docs/en/index.md for details
- * @author James <james.ellis@dpc.nsw.gov.au>
  */
-class AuthenticationHelpPage extends Page {
+class AuthenticationHelpPage extends \Page {
+
+    /**
+     * @inheritdoc
+     */
+    private static $controller_name = AuthenticationHelpPageController::class;
 
     /**
      * Defines the database table name

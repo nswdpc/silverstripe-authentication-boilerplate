@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Authentication;
+namespace NSWDPC\Authentication\Extensions;
 
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
@@ -9,7 +9,6 @@ use SilverStripe\Security\Member;
 
 /**
  * File handling
- * @author James
  */
 class AssetExtension extends Extension {
 

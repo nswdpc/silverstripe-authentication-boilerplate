@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\MFA;
+namespace NSWDPC\Authentication\Controllers;
 
+use NSWDPC\Authentication\Models\AuthenticationHelpPage;
 use SilverStripe\View\ArrayData;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
@@ -11,7 +12,6 @@ use SilverStripe\SiteConfig\SiteConfig;
 /**
  * This controller exists to handle requests to the configured {@link SilverStripe\TOTP\RegisterHandler} user_help_link value
  * If the {@link AuthenticationHelpPage} exists it will redirect to that, otherwise a 404 will be shown
- * @author James <james.ellis@dpc.nsw.gov.au>
  */
 class AuthenticationHelpController extends Controller {
 

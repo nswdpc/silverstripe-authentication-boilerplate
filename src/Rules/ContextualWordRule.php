@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\Passwords;
+namespace NSWDPC\Authentication\Rules;
 
+use NSWDPC\Authentication\Exceptions\PasswordVerificationException;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Security\Member;
@@ -9,7 +10,6 @@ use SilverStripe\Security\Member;
 /**
  * Checks if a password provided is within a list of words based on site context / member details, based on configuration
  * @see 5.1.1.2 Memorized Secret Verifiers
- * @author James <james.ellis@dpc.nsw.gov.au>
  */
 class ContextualWordRule extends AbstractPasswordRule {
 
@@ -86,7 +86,7 @@ class ContextualWordRule extends AbstractPasswordRule {
      * @param Member $member
      * @returns boolean
      */
-    public function check($password, Member $member = null) {
+    public function check($password, Member $member = null): bool {
         $words = $this->getContextStrings($member);
         $valid = true;
         foreach($words as $word) {

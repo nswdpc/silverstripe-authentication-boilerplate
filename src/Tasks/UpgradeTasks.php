@@ -1,22 +1,37 @@
 <?php
 
-namespace NSWDPC\Authentication;
+namespace NSWDPC\Authentication\Tasks;
 
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
 
 class UpgradeTasks extends BuildTask {
 
+    /**
+     * @inheritdoc
+     */
     protected $title = 'Auth Upgrade Tasks';
+
+    /**
+     * @inheritdoc
+     */
     protected $description = 'Handle upgrade changes to support deprecations / new features';
 
     /**
-     * @config
+     * @inheritdoc
+     */
+    protected $enabled = false;
+
+    /**
+     * @inheritdoc
      */
     private static $segment = 'AuthUpgradeTasks';
 
-    private $commit = false;
+    private bool $commit = false;
 
+    /**
+     * @inheritdoc
+     */
     public function run($request) {
         $this->commit = $request->getVar('commit') == 1;
         $upgrade = $request->getVar('upgrade');

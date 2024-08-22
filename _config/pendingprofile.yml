@@ -1,7 +1,7 @@
 ---
 Name: nswdpc-authentication-boilerplate-pendingprofile
 ---
-NSWDPC\Authentication\PendingProfile:
+NSWDPC\Authentication\Models\PendingProfile:
   require_admin_approval: true
   require_self_verification: true
   redirect_when_pending: false

@@ -1,13 +1,13 @@
 <?php
 
-namespace NSWDPC\Authentication;
+namespace NSWDPC\Authentication\Extensions;
 
+use NSWDPC\Authentication\Models\Notifier;
 use SilverStripe\Core\Extension;
 use SilverStripe\Security\Member;
 
 /**
  * Handle reset account notifications when that occurs
- * @author James
  */
 class ResetAccountExtension extends Extension
 {

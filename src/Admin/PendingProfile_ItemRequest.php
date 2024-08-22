@@ -1,7 +1,9 @@
 <?php
 
-namespace NSWDPC\Authentication;
+namespace NSWDPC\Authentication\Admin;
 
+use NSWDPC\Authentication\Models\PendingProfile;
+use NSWDPC\Authentication\Models\Notifier;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\FormAction;
@@ -103,6 +105,10 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest {
     }
 
     public function doNotifyApprovers($data, $form) {
+        if(!($this->record instanceof PendingProfile)) {
+            return;
+        }
+
         $admin = Permission::check('ADMIN');
         if(!$admin) {
             return $this->edit(Controller::curr()->getRequest());
@@ -124,6 +130,10 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest {
     public function getFormActions()
     {
         $actions = parent::getFormActions();
+
+        if(!($this->record instanceof PendingProfile)) {
+            return $actions;
+        }
 
         if(!$this->record->canEdit()) {
             return $actions;

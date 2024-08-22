@@ -1,12 +1,11 @@
 <?php
 
-namespace NSWDPC\MFA;
+namespace NSWDPC\Authentication\Controllers;
 
 use PageController;
 
 /**
  * Controller for {@link AuthenticationHelpPage}
- * @author James <james.ellis@dpc.nsw.gov.au>
  */
 class AuthenticationHelpPageController extends PageController {
 }

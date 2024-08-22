@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\Passwords;
+namespace NSWDPC\Authentication\Rules;
 
+use NSWDPC\Authentication\Exceptions\PasswordVerificationException;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Security\Member;
 
@@ -45,7 +46,7 @@ class SequentialCharacterRule extends AbstractPasswordRule {
      * @throws PasswordVerificationException
      * @returns boolean
      */
-    public function check($password, Member $member = null) {
+    public function check($password, Member $member = null): bool {
         $alphabets = $this->config()->get('alphabets');
         $length = $this->config()->get('length');
         if(!empty($alphabets) && is_array($alphabets)) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Passwords;
+namespace NSWDPC\Authentication\Services;
 
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;

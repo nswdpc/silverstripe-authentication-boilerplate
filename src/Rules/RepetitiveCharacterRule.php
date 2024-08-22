@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\Passwords;
+namespace NSWDPC\Authentication\Rules;
 
+use NSWDPC\Authentication\Exceptions\PasswordVerificationException;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Security\Member;
 
@@ -33,7 +34,7 @@ class RepetitiveCharacterRule extends AbstractPasswordRule {
      * @throws PasswordVerificationException
      * @returns boolean
      */
-    public function check($password, Member $member = null) {
+    public function check($password, Member $member = null): bool {
         $pattern = '/(.)\1{2,}/';
         $result = preg_match( $pattern, $password, $matches);
         if($result > 0) {

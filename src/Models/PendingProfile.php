@@ -1,7 +1,10 @@
 <?php
 
-namespace NSWDPC\Authentication;
+namespace NSWDPC\Authentication\Models;
 
+use NSWDPC\Authentication\Admin\PendingProfileAdmin;
+use NSWDPC\Authentication\Exceptions\VerificationFailureException;
+use NSWDPC\Authentication\Services\Logger;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\CheckboxField;

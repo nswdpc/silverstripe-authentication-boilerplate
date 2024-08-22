@@ -23,4 +23,4 @@ NSWDPC\MFA\ConfigurationService:
 # Reset account notification
 SilverStripe\MFA\Extension\AccountReset\SecurityExtension:
   extensions:
-    mfaResetAccountExtension: 'NSWDPC\Authentication\ResetAccountExtension'
+    mfaResetAccountExtension: 'NSWDPC\Authentication\Extensions\ResetAccountExtension'

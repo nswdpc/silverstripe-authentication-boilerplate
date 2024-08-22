@@ -1,7 +1,10 @@
 <?php
 
-namespace NSWDPC\Passwords;
+namespace NSWDPC\Authentication\Models;
 
+use NSWDPC\Authentication\Rules\AbstractPasswordRule;
+use NSWDPC\Authentication\Rules\PasswordRuleCheck;
+use NSWDPC\Pwnage\Pwnage;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
@@ -9,7 +12,6 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\PasswordValidator;
 use SilverStripe\View\ArrayData;
 use SilverStripe\ORM\ArrayList;
-use NSWDPC\Pwnage\Pwnage;
 
 /**
  * Password model

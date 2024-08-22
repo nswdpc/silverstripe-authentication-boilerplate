@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\Authentication;
+namespace NSWDPC\Authentication\Admin;
 
+use NSWDPC\Authentication\Models\PendingProfile;
 use SilverStripe\Reports\Report;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
@@ -18,7 +19,6 @@ use SilverStripe\Admin\ModelAdmin;
 
 /**
  * Pending profile admin, to  allow creation and management of pending profiles
- * @author James <james.ellis@dpc.nsw.gov.au>
  */
 class PendingProfileAdmin extends ModelAdmin
 {

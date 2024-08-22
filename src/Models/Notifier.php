@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\Authentication;
+namespace NSWDPC\Authentication\Models;
 
+use NSWDPC\Authentication\Services\Logger;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Security\Member;
@@ -19,8 +20,7 @@ use SilverStripe\MFA\Extension\MemberExtension as MFAMemberExtension;
 use SilverStripe\Security\Security;
 
 /**
- * Notification model for nswpdc/silverstripe-members
- * @author James <james.ellis@dpc.nsw.gov.au>
+ * Notification model
  */
 class Notifier {
 
@@ -202,7 +202,7 @@ class Notifier {
 
         // approvers - based on permission
         $approvers = PendingProfile::getApprovers();
-        if(!$approvers || $approvers->count() == 0) {
+        if($approvers->count() == 0) {
             Logger::log("Cannot sendAdministrationApprovalRequired as there are no approvers. Please create some with the 'Edit Pending Profile' permission.", "NOTICE");
             return false;
         }

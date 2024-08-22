@@ -1,8 +1,8 @@
 ---
-Name: nswdpc-members-cms
+Name: nswdpc-authentication-cms
 Only:
   moduleexists: 'silverstripe/cms'
 ---
 SilverStripe\CMS\Model\SiteTree:
   extensions:
-    - 'NSWDPC\Authentication\SiteTreeExtension'
+    - 'NSWDPC\Authentication\Extensions\SiteTreeExtension'

@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Authentication;
+namespace NSWDPC\Authentication\Services;
 
 use Psr\Log\LoggerInterface;
 use SilverStripe\Core\Injector\Injector;

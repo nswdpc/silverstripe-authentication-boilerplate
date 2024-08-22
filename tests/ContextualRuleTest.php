@@ -1,6 +1,7 @@
 <?php
-namespace NSWDPC\Passwords;
+namespace NSWDPC\Authentication\Tests;
 
+use NSWDPC\Authentication\Rules\ContextualWordRule;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;

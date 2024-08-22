@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\Passwords;
+namespace NSWDPC\Authentication\Rules;
 
+use NSWDPC\Authentication\Exceptions\PasswordVerificationException;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Security\Member;
 use SilverStripe\Core\Injector\Injectable;
@@ -12,6 +13,7 @@ use SilverStripe\ORM\ValidationResult;
 class PasswordRuleCheck {
 
     use Configurable;
+
     use Injectable;
 
     /**
@@ -19,10 +21,10 @@ class PasswordRuleCheck {
      * @config
      */
     private static $checks = [
-        'NSWDPC\\Passwords\\DictionaryWordRule',
-        'NSWDPC\\Passwords\\SequentialCharacterRule',
-        'NSWDPC\\Passwords\\RepetitiveCharacterRule',
-        'NSWDPC\\Passwords\\ContextualWordRule',
+        DictionaryWordRule::class,
+        SequentialCharacterRule::class,
+        RepetitiveCharacterRule::class,
+        ContextualWordRule::class
     ];
 
     /**

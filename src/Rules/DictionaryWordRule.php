@@ -1,13 +1,13 @@
 <?php
 
-namespace NSWDPC\Passwords;
+namespace NSWDPC\Authentication\Rules;
 
+use NSWDPC\Authentication\Exceptions\PasswordVerificationException;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Security\Member;
 
 /**
  * Checks if a password is a dictionary word
- * @author James <james.ellis@dpc.nsw.gov.au>
  */
 class DictionaryWordRule extends AbstractPasswordRule {
 
@@ -42,14 +42,14 @@ class DictionaryWordRule extends AbstractPasswordRule {
      * @throws PasswordVerificationException
      * @returns boolean
      */
-    public function check($password, Member $member = null) {
+    public function check($password, Member $member = null): bool {
         $locale = $this->config()->get('locale');
         $broker = enchant_broker_init();
         if (!enchant_broker_dict_exists($broker, $locale)) {
             throw new \Exception( _t("NSWDPC\\Passwords.GENERAL_EXCEPTION", "The password cannot be validated") );
         } else {
             $dictionary = enchant_broker_request_dict($broker, $locale);
-            $suggestions = null;
+            $suggestions = [];
             $check = enchant_dict_quick_check($dictionary, $password, $suggestions );
             if($check) {
                 throw new PasswordVerificationException( _t("NSWDPC\\Passwords.DICTIONARY_WORD_FAIL", "Dictionary words are not allowed in the password") );

@@ -1,7 +1,10 @@
 <?php
 
-namespace NSWDPC\Authentication;
+namespace NSWDPC\Authentication\Extensions;
 
+use NSWDPC\Authentication\Models\PendingProfile;
+use NSWDPC\Authentication\Models\Notifier;
+use NSWDPC\Authentication\Services\Logger;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\LabelField;
 use SilverStripe\Forms\LiteralField;
@@ -40,7 +43,9 @@ class ProfileExtension extends DataExtension {
      * @return boolean
      */
     public function getIsPending() : bool {
-        $profile = PendingProfile::forMember($this->owner);
+        /** @var \SilverStripe\Security\Member $owner */
+        $owner = $this->getOwner();
+        $profile = PendingProfile::forMember($owner);
         return $profile
             && $profile->exists()
             && ($profile->requiresPromptForSelfVerification()
@@ -57,12 +62,12 @@ class ProfileExtension extends DataExtension {
     }
 
     public function getProfileRequiresSelfVerification() {
-        $profile = PendingProfile::forMember($this->owner);
+        $profile = PendingProfile::forMember($this->getOwner());
         return $profile && $profile->requiresPromptForSelfVerification();
     }
 
     public function getProfileRequiresAdministrationApproval() {
-        $profile = PendingProfile::forMember($this->owner);
+        $profile = PendingProfile::forMember($this->getOwner());
         return $profile && $profile->requiresPromptForAdministrationApproval();
     }
 
@@ -91,7 +96,7 @@ class ProfileExtension extends DataExtension {
     {
 
         if(
-            ($pendingProfile = $this->owner->PendingProfile())
+            ($pendingProfile = $this->getOwner()->PendingProfile())
             && $pendingProfile->exists()
         ) {
 
@@ -127,7 +132,7 @@ class ProfileExtension extends DataExtension {
     public function onBeforeWrite()
     {
         // Store field that were changed while writing
-        $this->owner->storeChangedFields( $this->owner->getChangedFields(false, DataObject::CHANGE_VALUE) );
+        $this->getOwner()->storeChangedFields( $this->getOwner()->getChangedFields(false, DataObject::CHANGE_VALUE) );
     }
 
     /**
@@ -135,7 +140,7 @@ class ProfileExtension extends DataExtension {
      */
     public function onBeforeDelete() {
         parent::onBeforeDelete();
-        if($profile = PendingProfile::forMember($this->owner)) {
+        if($profile = PendingProfile::forMember($this->getOwner())) {
             $profile->delete();
         }
     }
@@ -154,14 +159,14 @@ class ProfileExtension extends DataExtension {
      * @return PendingProfile
      */
     public function makePending($initial = false) : ?PendingProfile {
-        return PendingProfile::findOrMake($this->owner);
+        return PendingProfile::findOrMake($this->getOwner());
     }
 
     /**
      * Remove a linked PendingProfile from the member
      */
     public function removePending() : bool {
-        if($profile = PendingProfile::forMember($this->owner)) {
+        if($profile = PendingProfile::forMember($this->getOwner())) {
             $profile->delete();
             return true;
         } else {
@@ -174,7 +179,7 @@ class ProfileExtension extends DataExtension {
      * @return boolean
      */
     public function rePromptForActivationCode(Controller $controller) {
-        return $this->owner->sendRegistrationApprovalEmail(false, $controller);
+        return $this->getOwner()->sendRegistrationApprovalEmail(false, $controller);
     }
 
     /**
@@ -183,7 +188,7 @@ class ProfileExtension extends DataExtension {
      */
     public function sendRegistrationApprovalEmail($initial, Controller $controller) {
         $notifier = Notifier::create();
-        return $notifier->sendSelfRegistrationToken( $this->owner, $initial, $controller );
+        return $notifier->sendSelfRegistrationToken( $this->getOwner(), $initial, $controller );
     }
 
     /**
@@ -228,7 +233,7 @@ class ProfileExtension extends DataExtension {
                 try {
                     // Send to previous
                     $notifier->sendChangeEmailNotification(
-                        $this->owner,
+                        $this->getOwner(),
                         true, // this email is going to previous address
                         $this->changed_fields['Email']['before'],// send to this email
                         $this->changed_fields['Email']['after']
@@ -241,7 +246,7 @@ class ProfileExtension extends DataExtension {
                 try {
                     // Send to new
                     $notifier->sendChangeEmailNotification(
-                        $this->owner,
+                        $this->getOwner(),
                         false, // this email is going to new address
                         $this->changed_fields['Email']['after'],// send to this email
                         $this->changed_fields['Email']['before']
@@ -255,7 +260,7 @@ class ProfileExtension extends DataExtension {
         }
 
         // Ignore 'Password' if the notify_password_change notification is active
-        if($this->owner->config()->get('notify_password_change')) {
+        if($this->getOwner()->config()->get('notify_password_change')) {
             $key = array_search('Password', $params['restrictFields']);
             if($key !== false) {
                 unset($params['restrictFields'][$key]);
@@ -267,7 +272,7 @@ class ProfileExtension extends DataExtension {
             return null;
         }
 
-        $fields = $this->owner->getFrontEndFields($params);
+        $fields = $this->getOwner()->getFrontEndFields($params);
         $what = new ArrayList();
         foreach($fields as $field) {
             $title = $field->Title();
@@ -277,9 +282,9 @@ class ProfileExtension extends DataExtension {
         }
 
         return $notifier->sendChangeNotification(
-            $this->owner, // about this member
+            $this->getOwner(), // about this member
             $what,// what has changed
-            $this->owner // send to same member
+            $this->getOwner() // send to same member
         );
 
     }

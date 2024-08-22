@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\MFA;
+namespace NSWDPC\Authentication\Services;
 
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;

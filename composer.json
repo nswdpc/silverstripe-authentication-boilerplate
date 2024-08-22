@@ -35,6 +35,16 @@
         "url": "https://github.com/nswdpc/ci-files.git"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "NSWDPC\\Authentication\\Tests\\": [
+                "tests/"
+            ],
+            "NSWDPC\\Authentication\\": [
+                "src/"
+            ]
+        }
+    },
     "authors": [
         {
             "name": "James Ellis",
