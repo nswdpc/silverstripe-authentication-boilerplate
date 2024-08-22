@@ -47,10 +47,10 @@ class UpgradeTasks extends BuildTask
     private function taskRemoveIsPendingField()
     {
         if($this->commit) {
-            DB::query("ALTER TABLE `Member` DROP COLUMN `IsPending`");
-            DB::alteration_message("Dropped column `IsPending`", "change");
+            DB::query("ALTER TABLE \"Member\" DROP COLUMN \"IsPending\"");
+            DB::alteration_message("Dropped column 'IsPending'", "change");
         } else {
-            DB::alteration_message("Would drop column `IsPending`", "info");
+            DB::alteration_message("Would drop column 'IsPending'", "info");
         }
     }
 }
