@@ -15,12 +15,12 @@ class PasswordVerifier extends Extension
 {
     /**
      * @param string $password
-     * @param Member $member
      * @param ValidationResult $validation_result
      * @param PasswordValidator $validator
+     * @param Member $member
      * @return void
      */
-    public function updateValidatePassword($password, $member, ValidationResult $validation_result, PasswordValidator $validator)
+    public function updateValidatePassword(string $password, ValidationResult $validation_result, PasswordValidator $validator, Member $member)
     {
 
         if(!$validation_result->isValid()) {
