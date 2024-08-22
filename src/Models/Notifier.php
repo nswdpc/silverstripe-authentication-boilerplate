@@ -129,7 +129,7 @@ class Notifier
 
         // get the recipient
         $to = [];
-        if($toEmail) {
+        if($toEmail !== '') {
             $to[ $toEmail ] = $member->getName();
         }
 

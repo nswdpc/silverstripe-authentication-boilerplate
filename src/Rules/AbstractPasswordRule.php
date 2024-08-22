@@ -12,7 +12,7 @@ abstract class AbstractPasswordRule
 {
     use Configurable;
 
-    abstract public function check($password, Member $member = null): bool;
+    abstract public function check(string $password, Member $member = null): bool;
 
     /**
      * By default, allow rule checks can run

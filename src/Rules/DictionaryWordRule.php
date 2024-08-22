@@ -43,7 +43,7 @@ class DictionaryWordRule extends AbstractPasswordRule
      * @throws PasswordVerificationException
      * @returns boolean
      */
-    public function check($password, Member $member = null): bool
+    public function check(string $password, Member $member = null): bool
     {
         $locale = $this->config()->get('locale');
         $broker = enchant_broker_init();

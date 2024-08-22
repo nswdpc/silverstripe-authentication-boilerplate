@@ -175,7 +175,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         }
     }
 
-    public function getTitle()
+    public function getTitle(): string
     {
         $title = "Pending profile";
         if($member = $this->Member()) {
@@ -197,9 +197,8 @@ class PendingProfile extends DataObject implements PermissionProvider
 
     /**
      * Permissions that can be assigned to groups or roles
-     * @returns array
      */
-    public function providePermissions()
+    public function providePermissions(): array
     {
         return [
             'PENDINGPROFILE_EDIT' => [
@@ -269,7 +268,7 @@ class PendingProfile extends DataObject implements PermissionProvider
      *  2. user requires admin approval
      *  4. user requires no approval (trusted system)
      */
-    public function isCompletelyVerified()
+    public function isCompletelyVerified(): bool
     {
         if ($this->RequireAdminApproval == 0
             && $this->RequireSelfVerification == 0) {
@@ -302,13 +301,13 @@ class PendingProfile extends DataObject implements PermissionProvider
         }
     }
 
-    public function requiresPromptForSelfVerification()
+    public function requiresPromptForSelfVerification(): bool
     {
         return $this->RequireSelfVerification == 1
                 && $this->IsSelfVerified == 0;
     }
 
-    public function requiresPromptForAdministrationApproval()
+    public function requiresPromptForAdministrationApproval(): bool
     {
         return $this->RequireAdminApproval == 1
                 && $this->IsAdminApproved == 0;
@@ -317,7 +316,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * Flag this profile as self-completed
      */
-    public function completeSelfVerification()
+    public function completeSelfVerification(): void
     {
         $this->IsSelfVerified = 1;
         $this->ProvisioningData = null;
@@ -355,9 +354,9 @@ class PendingProfile extends DataObject implements PermissionProvider
     }
 
     /**
-     * @returns mixed
+     * Send approval required email
      */
-    private static function sendAdministrationApprovalRequiredEmail(PendingProfile $profile)
+    private static function sendAdministrationApprovalRequiredEmail(PendingProfile $profile): bool
     {
         try {
             if($profile->RequireAdminApproval == 1
@@ -368,6 +367,7 @@ class PendingProfile extends DataObject implements PermissionProvider
                 if($result) {
                     $profile->NotifiedRequireAdminApproval = 1;
                     $profile->write();
+                    return true;
                 }
             }
         } catch (\Exception $e) {
@@ -419,9 +419,8 @@ class PendingProfile extends DataObject implements PermissionProvider
 
     /**
      * Get a list of members that could be made pending
-     * @return DataList
      */
-    protected function getApplicableMembers()
+    protected function getApplicableMembers(): DataList
     {
         // currently pending members
         $pending_members = PendingProfile::get()->column('MemberID');
@@ -437,7 +436,7 @@ class PendingProfile extends DataObject implements PermissionProvider
      * Create a random secret
      * @returns string
      */
-    protected function generateRandomSecret()
+    protected function generateRandomSecret(): string
     {
         $generator = new RandomGenerator();
         return $generator->randomToken('sha256');
@@ -447,12 +446,11 @@ class PendingProfile extends DataObject implements PermissionProvider
      * Create an approval code using the TOTP module, store the provisioning URI
      * The code is provided to the user who verifies it within an allowed window
      * If they fail they can request a new code
-     * @return string
      */
-    public function createApprovalCode()
+    public function createApprovalCode(): string
     {
         $key = $this->getEncryptionKey();
-        if (empty($key)) {
+        if ($key === '') {
             Logger::log("Someone tried to create an approval code during registration via TOTP but the system has no MFA encryption key defined", "ERROR");
             throw new VerificationFailureException(_t('auth.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.'));
         }
@@ -488,7 +486,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * Given a code, verify it against the provisioning URI stored
      * This is called when a user wants to verify with their code
-     * @param string $code
+     * @param string $code the code to verify
      * @return bool
      * @throws VerificationFailureException
      */
@@ -511,7 +509,7 @@ class PendingProfile extends DataObject implements PermissionProvider
             $this->VerificationsAttempted += 1;
 
             $key = $this->getEncryptionKey();
-            if (empty($key)) {
+            if ($key === '') {
                 Logger::log("Profile {#$this->ID} tried to verify an approval code via TOTP but the system has no MFA encryption key defined", "ERROR");
                 throw new VerificationFailureException(
                     _t(

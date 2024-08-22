@@ -23,7 +23,7 @@ class SiteTreeExtension extends Extension
      * @param ContentController $controller
      * @return mixed
      */
-    public function contentcontrollerInit($controller)
+    public function contentcontrollerInit(ContentController $controller)
     {
         return $this->handlePromptForVerificationCode($controller, $this->owner);
     }

@@ -34,7 +34,7 @@ class RepetitiveCharacterRule extends AbstractPasswordRule
      * @throws PasswordVerificationException
      * @returns boolean
      */
-    public function check($password, Member $member = null): bool
+    public function check(string $password, Member $member = null): bool
     {
         $pattern = '/(.)\1{2,}/';
         $result = preg_match($pattern, $password, $matches);
