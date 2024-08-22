@@ -20,9 +20,8 @@ class SiteTreeExtension extends Extension
 {
     /**
      * Handle redirect if a the signed in Member is pending
-     * @return mixed
      */
-    public function contentcontrollerInit(ContentController $controller)
+    public function contentcontrollerInit(ContentController $controller): ?\SilverStripe\Control\HTTPResponse
     {
         return $this->handlePromptForVerificationCode($controller, $this->getOwner());
     }

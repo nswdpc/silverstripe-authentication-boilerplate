@@ -147,9 +147,8 @@ class ProfileExtension extends DataExtension
 
     /**
      * Store for later use
-     * @param array $fields
      */
-    public function storeChangedFields($fields)
+    public function storeChangedFields(array $fields)
     {
         $this->changed_fields = $fields;
     }

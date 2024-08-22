@@ -69,7 +69,7 @@ class ContextualWordRule extends AbstractPasswordRule
                 $parts,
                 fn ($value): bool =>
                     // filter out items that are not > min_length length
-                    strlen((string) $value) >= $min_length
+                    strlen($value) >= $min_length
             );
             // add filtered parts to context strings
             $context_strings = array_merge($context_strings, $parts);
