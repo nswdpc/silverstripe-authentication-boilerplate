@@ -7,6 +7,7 @@ use NSWDPC\Authentication\Rules\ContextualWordRule;
 use NSWDPC\Authentication\Rules\DictionaryWordRule;
 use NSWDPC\Authentication\Rules\RepetitiveCharacterRule;
 use NSWDPC\Authentication\Rules\SequentialCharacterRule;
+use NSWDPC\Authentication\Services\NISTPasswordValidator;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
@@ -16,6 +17,18 @@ use SilverStripe\Security\PasswordValidator;
 class PasswordStrengthTest extends SapphireTest
 {
     protected $usesDatabase = true;
+
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        $validator = Injector::inst()->get(PasswordValidator::class);
+        Member::set_password_validator($validator);
+    }
+
+    public function testHasValidator(): void {
+        $validator = Member::password_validator();
+        $this->assertInstanceOf(NISTPasswordValidator::class, $validator, "PasswordValidator is a NISTPasswordValidator");
+    }
 
     public function testContextualWords(): bool
     {
@@ -106,6 +119,8 @@ class PasswordStrengthTest extends SapphireTest
                 }
             }
 
+        } else {
+            $this->markTestSkipped( 'This test could not be run because the enchant extension was not available' );
         }
 
         return true;
@@ -192,7 +207,7 @@ class PasswordStrengthTest extends SapphireTest
 
         $validator = Member::password_validator();
 
-        $this->assertTrue($validator instanceof  PasswordValidator, "Member password validator is not an instance of PasswordValidator");
+        $this->assertInstanceOf(PasswordValidator::class, $validator, "Member password validator is an instance of PasswordValidator");
 
         // Bob wants to set his password to this... it should fail
         $repetitive_password = "abcd12345defgh";
@@ -232,9 +247,14 @@ class PasswordStrengthTest extends SapphireTest
             'Surname' => 'Smith',
         ]);
 
+        $validator = Member::password_validator();
+        $minLength = $validator->getMinLength();
+        if(!$minLength) {
+            $minLength = 8;
+        }
         $password_count = 5;
         for($i = 0;$i < $password_count;$i++) {
-            $keys = array_rand($letters, 8);
+            $keys = array_rand($letters, $minLength);
             $password = "";
             foreach($keys as $key) {
                 $password .= $letters[ $key ];
