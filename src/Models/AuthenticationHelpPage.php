@@ -78,7 +78,7 @@ class AuthenticationHelpPage extends \Page
         $page = AuthenticationHelpPage::create();
         $page->Title = _t(self::class . '.PageTitle', 'Multi-Factor Authentication');
         $page->AuthenticationHelpHeading = _t(self::class . '.SubHeading', 'Setting up MFA');
-        $page->AuthenticationHelpContent = trim($content);
+        $page->AuthenticationHelpContent = trim($content ?? '');
         $page->write();
     }
 
@@ -114,7 +114,7 @@ class AuthenticationHelpPage extends \Page
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        $this->AuthenticationHelpContent = trim($this->AuthenticationHelpContent);
+        $this->AuthenticationHelpContent = trim($this->AuthenticationHelpContent ?? '');
     }
 
     public function MFARequired()
