@@ -29,21 +29,21 @@ class Password
         // Min length
         $data = [];
         $minLength = $validator->getMinLength();
-        if($minLength > 0) {
+        if ($minLength > 0) {
             $data['MinLength'] =  sprintf(_t(self::class . '.MIN_LENGTH', 'The password must have a minimum length of %d characters'), $minLength);
         }
 
         // Min tests, if any
         $minTestScore = $validator->getMinTestScore();
-        if($minTestScore > 0) {
+        if ($minTestScore > 0) {
             $data['MinTestScore'] =  sprintf(_t(self::class . '.MIN_TEST_SCORE', 'Your password must pass %d of the following test(s)'), $minTestScore);
 
             // Available character strength tests
             $data['CharacterStrengthTests'] = ArrayList::create();
             $testNames = $validator->getTestNames();
-            if(!empty($testNames)  && is_array($testNames)) {
+            if (!empty($testNames)  && is_array($testNames)) {
 
-                foreach($testNames as $name) {
+                foreach ($testNames as $name) {
                     match ($name) {
                         "lowercase" => $data['CharacterStrengthTests']->push([
                             'Description' => _t(self::class . '.LOWERCASE_REQUIRED', 'Lowercase characters are required')
@@ -73,17 +73,17 @@ class Password
                                     : '';
         $data['PwnageAttribution'] = false;
         $pwnageAttribution = $pwnage->config()->get('hibp_attribution');
-        if($pwnageAttribution) {
+        if ($pwnageAttribution) {
             $data['PwnageAttribution'] = $pwnageAttribution;
         }
 
         // Password rule checks
         $rule_checks = Config::inst()->get(PasswordRuleCheck::class, 'checks');
-        if(!empty($rule_checks) && is_array($rule_checks)) {
+        if (!empty($rule_checks) && is_array($rule_checks)) {
             $data['RuleChecks'] = ArrayList::create();
-            foreach($rule_checks as $rule_check_class) {
+            foreach ($rule_checks as $rule_check_class) {
                 $inst = Injector::inst()->create($rule_check_class);
-                if(!$inst instanceof AbstractPasswordRule || !$inst->canRun()) {
+                if (!$inst instanceof AbstractPasswordRule || !$inst->canRun()) {
                     continue;
                 }
 

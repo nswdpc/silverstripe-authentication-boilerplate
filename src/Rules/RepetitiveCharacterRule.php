@@ -38,7 +38,7 @@ class RepetitiveCharacterRule extends AbstractPasswordRule
     {
         $pattern = '/(.)\1{2,}/';
         $result = preg_match($pattern, $password, $matches);
-        if($result > 0) {
+        if ($result > 0) {
             $match = $matches[0] ?? "";
             throw new PasswordVerificationException(_t(self::class . ".REPETITIVE_CHARACTER_FAIL", "Repetitive characters are not allowed in the password"));
         }

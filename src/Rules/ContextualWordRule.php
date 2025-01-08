@@ -59,8 +59,8 @@ class ContextualWordRule extends AbstractPasswordRule
         $min_length = $this->config()->get('min_length');
 
         // split strings into chunks that only contain alphanumeric chrs
-        foreach($site_strings as $string) {
-            if(!is_string($string)) {
+        foreach ($site_strings as $string) {
+            if (!is_string($string)) {
                 $string = "";
             }
 
@@ -90,19 +90,19 @@ class ContextualWordRule extends AbstractPasswordRule
     {
         $words = $this->getContextStrings($member);
         $valid = true;
-        foreach($words as $word) {
+        foreach ($words as $word) {
             /**
              * needle = word
              * haystack = password
              * Test whether the word appears in the password
              */
-            if(str_contains(strtolower($password), strtolower((string) $word))) {
+            if (str_contains(strtolower($password), strtolower((string) $word))) {
                 $valid = false;
                 break;
             }
         }
 
-        if(!$valid) {
+        if (!$valid) {
             // at least one banned word detected
             throw new PasswordVerificationException(
                 _t(

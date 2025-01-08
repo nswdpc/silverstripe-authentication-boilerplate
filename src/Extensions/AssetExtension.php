@@ -18,11 +18,11 @@ class AssetExtension extends Extension
      */
     public function canView($member): ?bool
     {
-        if($this->getOwner() instanceof Folder) {
+        if ($this->getOwner() instanceof Folder) {
             return null;
         }
 
-        if($member && $member->getIsPending()) {
+        if ($member && $member->getIsPending()) {
             return false;
         }
 

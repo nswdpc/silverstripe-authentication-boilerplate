@@ -19,7 +19,7 @@ class PasswordVerifier extends Extension
     public function updateValidatePassword(string $password, Member $member, ValidationResult $validationResult, PasswordValidator $passwordValidator)
     {
 
-        if(!$validationResult->isValid()) {
+        if (!$validationResult->isValid()) {
             // no need to continue with validation here as the password is already invalid for some reason
             return;
         }

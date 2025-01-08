@@ -52,7 +52,7 @@ class DictionaryWordRule extends AbstractPasswordRule
             $dictionary = enchant_broker_request_dict($broker, $locale);
             $suggestions = [];
             $check = enchant_dict_quick_check($dictionary, $password, $suggestions);
-            if($check) {
+            if ($check) {
                 throw new PasswordVerificationException(_t(self::class . ".DICTIONARY_WORD_FAIL", "Dictionary words are not allowed in the password"));
             }
         }

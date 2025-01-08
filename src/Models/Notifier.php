@@ -39,7 +39,7 @@ class Notifier
     public function getDefaultFrom()
     {
         $default_email_from = $this->config()->get('default_email_from');
-        if(!$default_email_from) {
+        if (!$default_email_from) {
             $default_email_from = Config::inst()->get(Email::class, 'admin_email');
         }
 
@@ -77,16 +77,16 @@ class Notifier
 
         // get the recipient
         $to = [];
-        if($to_member instanceof \SilverStripe\Security\Member) {
+        if ($to_member instanceof \SilverStripe\Security\Member) {
             $to[ $to_member->Email ] = $to_member->getName();
         }
 
         // send out group emails in a Bcc to stop emails being seen within the group
         // and are not visible to the to_member
         $headers = [];
-        if($to_group instanceof \SilverStripe\Security\Group) {
+        if ($to_group instanceof \SilverStripe\Security\Group) {
             $group_members = $to_group->Members();
-            foreach($group_members as $group_member) {
+            foreach ($group_members as $group_member) {
                 $headers['Bcc'][ $group_member->Email ] = $group_member->getName();
             }
         }
@@ -111,7 +111,7 @@ class Notifier
         string $otherEmail // the other email related to this change
     ) {
 
-        if(!Email::is_valid_address($toEmail)) {
+        if (!Email::is_valid_address($toEmail)) {
             throw new \InvalidArgumentException("The email address provided is not valid");
         }
 
@@ -131,7 +131,7 @@ class Notifier
 
         // get the recipient
         $to = [];
-        if($toEmail !== '') {
+        if ($toEmail !== '') {
             $to[ $toEmail ] = $member->getName();
         }
 
@@ -155,7 +155,7 @@ class Notifier
      */
     public function sendSelfRegistrationToken(Member $member, $initial, Controller $controller)
     {
-        if(!$controller->hasMethod('RegisterPendingLink')) {
+        if (!$controller->hasMethod('RegisterPendingLink')) {
             throw new \Exception("Failed: the controller does not provide RegisterPendingLink");
         }
 
@@ -208,12 +208,12 @@ class Notifier
 
         // approvers - based on permission
         $approvers = PendingProfile::getApprovers();
-        if($approvers->count() == 0) {
+        if ($approvers->count() == 0) {
             Logger::log("Cannot sendAdministrationApprovalRequired as there are no approvers. Please create some with the 'Edit Pending Profile' permission.", "NOTICE");
             return false;
         }
 
-        foreach($approvers as $approver) {
+        foreach ($approvers as $approver) {
 
             // template data
             $content = ArrayData::create([
@@ -299,23 +299,23 @@ class Notifier
                     ->setSubject($subject)
                     ->setHTMLTemplate($template)
                     ->setData(ArrayData::create($data));
-        if(!empty($headers['Cc'])) {
+        if (!empty($headers['Cc'])) {
             $email->setCc($headers['Cc']);
             unset($headers['Cc']);
         }
 
-        if(!empty($headers['Bcc'])) {
+        if (!empty($headers['Bcc'])) {
             $email->setCc($headers['Bcc']);
             unset($headers['Bcc']);
         }
 
-        if(!empty($headers['Reply-To'])) {
+        if (!empty($headers['Reply-To'])) {
             $email->setReplyTo($headers['Reply-To']);
             unset($headers['Reply-To']);
         }
 
-        if(!empty($headers)) {
-            foreach($headers as $header => $value) {
+        if (!empty($headers)) {
+            foreach ($headers as $header => $value) {
                 $email->getSwiftMessage()->getHeaders()->addTextHeader($header, $value);
             }
         }
@@ -336,7 +336,7 @@ class Notifier
         $permissionCode = MFAMemberExtension::MFA_ADMINISTER_REGISTERED_METHODS;
 
         $recipients = Permission::get_members_by_permission($permissionCode);
-        if(!$recipients || $recipients->count() == 0) {
+        if (!$recipients || $recipients->count() == 0) {
             Logger::log("sendMfaAccountResetNotification failed - no members can be notified", "NOTICE");
             return false;
         }
@@ -346,7 +346,7 @@ class Notifier
 
         // environment
         $browser = "";
-        if(!empty($_SERVER['HTTP_USER_AGENT'])) {
+        if (!empty($_SERVER['HTTP_USER_AGENT'])) {
             $browser = DBField::create_field(
                 DBVarchar::class,
                 $_SERVER['HTTP_USER_AGENT']
@@ -356,7 +356,7 @@ class Notifier
         $request = null;
         $requestIP = '';
         $controller = (Controller::has_curr() ? Controller::curr() : null);
-        if($controller) {
+        if ($controller) {
             $request = $controller->getRequest();
             $requestIP = DBField::create_field(
                 DBVarchar::class,
@@ -364,7 +364,7 @@ class Notifier
             );
         }
 
-        if($state === 'started') {
+        if ($state === 'started') {
             $subject = _t(
                 self::class . ".ACCOUNT_RESET_MFA_STARTED",
                 "An account reset was started on {siteTitle}",
@@ -384,7 +384,7 @@ class Notifier
         }
 
         $sends = 0;
-        foreach($recipients as $recipient) {
+        foreach ($recipients as $recipient) {
 
             // template data
             $content = ArrayData::create([
@@ -402,7 +402,7 @@ class Notifier
             try {
                 $to = [];
                 $to[ $recipient->Email ] = $recipient->getName();
-                if($this->sendEmail(
+                if ($this->sendEmail(
                     $to,
                     $this->getDefaultFrom(),
                     $subject,

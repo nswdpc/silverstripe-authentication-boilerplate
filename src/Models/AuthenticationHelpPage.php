@@ -63,7 +63,7 @@ class AuthenticationHelpPage extends \Page
         parent::requireDefaultRecords();
 
         $page = AuthenticationHelpPage::get()->first();
-        if($page && $page->exists()) {
+        if ($page && $page->exists()) {
             return;
         }
 

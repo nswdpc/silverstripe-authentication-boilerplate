@@ -32,13 +32,13 @@ class PasswordRuleCheck
     public function runChecks(string $password, Member $member, ValidationResult $validation_result, PasswordValidator $validator)
     {
         $checks = $this->config()->get('checks');
-        if(!is_array($checks)) {
+        if (!is_array($checks)) {
             return;
         }
 
-        foreach($checks as $rule) {
+        foreach ($checks as $rule) {
             $inst = Injector::inst()->create($rule);
-            if(!$inst instanceof AbstractPasswordRule || !$inst->canRun()) {
+            if (!$inst instanceof AbstractPasswordRule || !$inst->canRun()) {
                 // ignore
                 continue;
             }

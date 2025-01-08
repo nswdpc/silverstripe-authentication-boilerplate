@@ -31,7 +31,7 @@ class AuthenticationHelpController extends Controller
     {
         // If the silverstripe/cms module exists, defer to the AuthenticationHelpPage
         $page = AuthenticationHelpPage::get()->first();
-        if(!$page || !$page->exists()) {
+        if (!$page || !$page->exists()) {
             // return a 404
             return $this->httpError(404, _t(self::class . '.PageNotFound', 'Page not found'));
         } else {

@@ -94,7 +94,7 @@ class ProfileExtension extends DataExtension
     public function updateCMSFields(FieldList $fields)
     {
 
-        if(
+        if (
             ($pendingProfile = $this->getOwner()->PendingProfile())
             && $pendingProfile->exists()
         ) {
@@ -140,7 +140,7 @@ class ProfileExtension extends DataExtension
     public function onBeforeDelete()
     {
         parent::onBeforeDelete();
-        if(($profile = PendingProfile::forMember($this->getOwner())) instanceof \NSWDPC\Authentication\Models\PendingProfile) {
+        if (($profile = PendingProfile::forMember($this->getOwner())) instanceof \NSWDPC\Authentication\Models\PendingProfile) {
             $profile->delete();
         }
     }
@@ -168,7 +168,7 @@ class ProfileExtension extends DataExtension
      */
     public function removePending(): bool
     {
-        if(($profile = PendingProfile::forMember($this->getOwner())) instanceof \NSWDPC\Authentication\Models\PendingProfile) {
+        if (($profile = PendingProfile::forMember($this->getOwner())) instanceof \NSWDPC\Authentication\Models\PendingProfile) {
             $profile->delete();
             return true;
         } else {
@@ -203,9 +203,9 @@ class ProfileExtension extends DataExtension
     public function notifyProfileChange($changes = [])
     {
 
-        if(empty($changes)) {
+        if (empty($changes)) {
             // Automated changes
-            if($this->changed_fields === [] || !is_array($this->changed_fields)) {
+            if ($this->changed_fields === [] || !is_array($this->changed_fields)) {
                 return null;
             }
 
@@ -223,16 +223,16 @@ class ProfileExtension extends DataExtension
         $notifier = Notifier::create();
 
         // Handle email notification change
-        if(Config::inst()->get(Notifier::class, 'notify_email_change')) {
+        if (Config::inst()->get(Notifier::class, 'notify_email_change')) {
 
             // unset from later profile notification
             $emailKey = array_search('Email', $params['restrictFields'], true);
-            if($emailKey !== false) {
+            if ($emailKey !== false) {
                 unset($params['restrictFields'][$emailKey]);
             }
 
             // Check email change
-            if(!empty($this->changed_fields['Email'])
+            if (!empty($this->changed_fields['Email'])
                 && isset($this->changed_fields['Email']['before'])
                 && isset($this->changed_fields['Email']['after'])) {
 
@@ -244,7 +244,7 @@ class ProfileExtension extends DataExtension
                         $this->changed_fields['Email']['before'],// send to this email
                         $this->changed_fields['Email']['after']
                     );
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                     // Log
                     Logger::log("Failed to send change email notification to before email:" . $e->getMessage(), "WARNING");
                 }
@@ -257,7 +257,7 @@ class ProfileExtension extends DataExtension
                         $this->changed_fields['Email']['after'],// send to this email
                         $this->changed_fields['Email']['before']
                     );
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                     // Log
                     Logger::log("Failed to send change email notification to after email:" . $e->getMessage(), "WARNING");
                 }
@@ -266,21 +266,21 @@ class ProfileExtension extends DataExtension
         }
 
         // Ignore 'Password' if the notify_password_change notification is active
-        if($this->getOwner()->config()->get('notify_password_change')) {
+        if ($this->getOwner()->config()->get('notify_password_change')) {
             $key = array_search('Password', $params['restrictFields'], true);
-            if($key !== false) {
+            if ($key !== false) {
                 unset($params['restrictFields'][$key]);
             }
         }
 
         // no fields were marked as changed
-        if(empty($params['restrictFields'])) {
+        if (empty($params['restrictFields'])) {
             return null;
         }
 
         $fields = $this->getOwner()->getFrontEndFields($params);
         $what = \SilverStripe\ORM\ArrayList::create();
-        foreach($fields as $field) {
+        foreach ($fields as $field) {
             $title = $field->Title();
             $what->push([
                 'Value' => sprintf(_t(self::class . '.FIELD_CHANGED', "'%s' was updated on your profile"), $title)

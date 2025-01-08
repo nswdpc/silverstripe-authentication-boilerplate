@@ -47,9 +47,9 @@ class PendingProfileAdmin extends ModelAdmin
     public function getEditForm($id = null, $fields = null)
     {
         $form = parent::getEditForm($id, $fields);
-        if($this->modelClass == PendingProfile::class) {
+        if ($this->modelClass == PendingProfile::class) {
             $gf = $form->Fields()->fieldByName($this->sanitiseClassName($this->modelClass));
-            if($gf instanceof GridField) {
+            if ($gf instanceof GridField) {
                 $config = $gf->getConfig();
                 $field = $config->getComponentByType(GridFieldDetailForm::class);
                 $field->setItemRequestClass(PendingProfile_ItemRequest::class);

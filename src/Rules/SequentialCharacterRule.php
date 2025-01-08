@@ -50,22 +50,22 @@ class SequentialCharacterRule extends AbstractPasswordRule
     {
         $alphabets = $this->config()->get('alphabets');
         $length = $this->config()->get('length');
-        if(!empty($alphabets) && is_array($alphabets)) {
-            foreach($alphabets as $alphabet) {
+        if (!empty($alphabets) && is_array($alphabets)) {
+            foreach ($alphabets as $alphabet) {
                 // split each alphabet
                 $chunks = mb_str_split((string) $alphabet, 1);
-                foreach($chunks as $k => $character) {
+                foreach ($chunks as $k => $character) {
                     $pattern = $character;
-                    for($c = 1;$c < $length; $c++) {
-                        if(isset($chunks[ $k + $c ])) {
+                    for ($c = 1;$c < $length; $c++) {
+                        if (isset($chunks[ $k + $c ])) {
                             $pattern .= $chunks[ $k + $c ];
                         }
                     }
 
                     // in each chunk, check the found pattern in the password
-                    if(mb_strlen($pattern) == $length) {
+                    if (mb_strlen($pattern) == $length) {
                         $count = mb_substr_count($password, $pattern);
-                        if($count > 0) {
+                        if ($count > 0) {
                             throw new PasswordVerificationException(
                                 sprintf(
                                     _t(

@@ -32,7 +32,7 @@ class SiteTreeExtension extends Extension
      */
     public function canView($member): ?bool
     {
-        if($this->checkPendingMemberCanView($member, $this->getOwner()) === false) {
+        if ($this->checkPendingMemberCanView($member, $this->getOwner()) === false) {
             return false;
         }
 
@@ -45,16 +45,16 @@ class SiteTreeExtension extends Extension
      */
     protected function handlePromptForVerificationCode(Controller $controller, SiteTree $record): ?\SilverStripe\Control\HTTPResponse
     {
-        if(!PendingProfile::config()->get('redirect_when_pending')) {
+        if (!PendingProfile::config()->get('redirect_when_pending')) {
             return null;
         }
 
         $member = Security::getCurrentUser();
-        if($member && $member->getIsPending() && !$this->hasAnyoneViewPermission($record)) {
+        if ($member && $member->getIsPending() && !$this->hasAnyoneViewPermission($record)) {
             $links = $member->extend('promptForVerificationCodeLink');
-            if(is_array($links)) {
+            if (is_array($links)) {
                 $redirectLink = array_pop($links);
-                if($redirectLink) {
+                if ($redirectLink) {
                     return $controller->redirect($redirectLink);
                 }
             }
@@ -69,7 +69,7 @@ class SiteTreeExtension extends Extension
      */
     protected function checkPendingMemberCanView(?Member $member, SiteTree $record): bool
     {
-        if($member && $member->getIsPending() && !$this->hasAnyoneViewPermission($record)) {
+        if ($member && $member->getIsPending() && !$this->hasAnyoneViewPermission($record)) {
             return false;
         } else {
             return true;
@@ -82,12 +82,12 @@ class SiteTreeExtension extends Extension
      */
     protected function hasAnyoneViewPermission(SiteTree $record): bool
     {
-        if($record->CanViewType === InheritedPermissions::ANYONE) {
+        if ($record->CanViewType === InheritedPermissions::ANYONE) {
             // this record sets permissions
             return true;
         } elseif ($record->CanViewType === InheritedPermissions::INHERIT) {
             // inheriting from parent or site config
-            if(($parent = $record->Parent()) && $parent->exists()) {
+            if (($parent = $record->Parent()) && $parent->exists()) {
                 // record has parent
                 \PHPStan\dumpType($parent);
                 return $this->hasAnyoneViewPermission($parent);

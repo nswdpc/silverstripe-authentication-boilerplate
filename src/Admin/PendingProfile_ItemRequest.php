@@ -47,17 +47,17 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
     {
         if ($this->record instanceof PendingProfile) {
 
-            if(!$this->record->canEdit()) {
+            if (!$this->record->canEdit()) {
                 $form->sessionMessage('You cannot approve this profile', 'bad');
                 return $this->edit(Controller::curr()->getRequest());
             }
 
-            if($this->record->RequireAdminApproval == 0) {
+            if ($this->record->RequireAdminApproval == 0) {
                 $form->sessionMessage('This profile does not require approval', 'good');
                 return $this->edit(Controller::curr()->getRequest());
             }
 
-            if($this->record->IsAdminApproved == 1) {
+            if ($this->record->IsAdminApproved == 1) {
                 $form->sessionMessage('This profile is already approved', 'good');
                 return $this->edit(Controller::curr()->getRequest());
             }
@@ -81,17 +81,17 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
     {
         if ($this->record instanceof PendingProfile) {
 
-            if(!$this->record->canEdit()) {
+            if (!$this->record->canEdit()) {
                 $form->sessionMessage('You cannot edit this profile', 'bad');
                 return $this->edit(Controller::curr()->getRequest());
             }
 
-            if($this->record->RequireAdminApproval == 0) {
+            if ($this->record->RequireAdminApproval == 0) {
                 $form->sessionMessage('This profile does not require approval', 'good');
                 return $this->edit(Controller::curr()->getRequest());
             }
 
-            if($this->record->IsAdminApproved == 0) {
+            if ($this->record->IsAdminApproved == 0) {
                 $form->sessionMessage('This profile is already unapproved', 'good');
                 return $this->edit(Controller::curr()->getRequest());
             }
@@ -108,16 +108,16 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
 
     public function doNotifyApprovers($data, $form)
     {
-        if(!($this->record instanceof PendingProfile)) {
+        if (!($this->record instanceof PendingProfile)) {
             return null;
         }
 
         $admin = Permission::check('ADMIN');
-        if(!$admin) {
+        if (!$admin) {
             return $this->edit(Controller::curr()->getRequest());
         }
 
-        if($this->record->IsAdminApproved == 1) {
+        if ($this->record->IsAdminApproved == 1) {
             return $this->edit(Controller::curr()->getRequest());
         }
 
@@ -135,19 +135,19 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
     {
         $actions = parent::getFormActions();
 
-        if(!($this->record instanceof PendingProfile)) {
+        if (!($this->record instanceof PendingProfile)) {
             return $actions;
         }
 
-        if(!$this->record->canEdit()) {
+        if (!$this->record->canEdit()) {
             return $actions;
         }
 
-        if($this->record->RequireAdminApproval == 0) {
+        if ($this->record->RequireAdminApproval == 0) {
             return $actions;
         }
 
-        if($this->record->IsAdminApproved == 1) {
+        if ($this->record->IsAdminApproved == 1) {
             $action = FormAction::create('doUnapprove', 'Unapprove')
                     ->addExtraClass('btn-outline-primary')
                     ->setUseButtonTag(true);
@@ -159,9 +159,9 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
 
         $actions->fieldByName('MajorActions')->push($action);
 
-        if($this->record->IsAdminApproved == 0) {
+        if ($this->record->IsAdminApproved == 0) {
             $admin = Permission::check('ADMIN');
-            if($admin) {
+            if ($admin) {
                 $action = FormAction::create('doNotifyApprovers', 'Notify approvers')
                         ->addExtraClass('btn-outline-primary')
                         ->setUseButtonTag(true);

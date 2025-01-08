@@ -161,7 +161,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     {
         $model_admin = PendingProfileAdmin::singleton();
         $class = str_replace('\\', '-', self::class);
-        if($this->exists()) {
+        if ($this->exists()) {
             return $model_admin->Link("/{$class}/EditForm/field/{$class}/item/{$this->ID}/edit");
         } else {
             return $model_admin->Link("/{$class}/EditForm/field/{$class}/item/new");
@@ -171,7 +171,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     public function getTitle(): string
     {
         $title = "Pending profile";
-        if($member = $this->Member()) {
+        if ($member = $this->Member()) {
             $title .= " for " . $member->getTitle();
         } else {
             $title .= "#{$this->ID}";
@@ -267,7 +267,7 @@ class PendingProfile extends DataObject implements PermissionProvider
             // neither required
             return true;
 
-        } elseif(
+        } elseif (
             ($this->RequireAdminApproval == 1 && $this->IsAdminApproved == 0)
             ||
             ($this->RequireSelfVerification == 1 && $this->IsSelfVerified == 0)
@@ -350,12 +350,12 @@ class PendingProfile extends DataObject implements PermissionProvider
     private static function sendAdministrationApprovalRequiredEmail(PendingProfile $profile): bool
     {
         try {
-            if($profile->RequireAdminApproval == 1
+            if ($profile->RequireAdminApproval == 1
                 && !$profile->NotifiedRequireAdminApproval // and not previously notified
                 && !$profile->IsAdminApproved) {
                 $notifier = Injector::inst()->create(Notifier::class);
                 $result = $notifier->sendAdministrationApprovalRequired($profile);
-                if($result) {
+                if ($result) {
                     $profile->NotifiedRequireAdminApproval = 1;
                     $profile->write();
                     return true;
@@ -392,16 +392,16 @@ class PendingProfile extends DataObject implements PermissionProvider
     {
         parent::onBeforeWrite();
 
-        if(empty($this->MemberID)) {
+        if (empty($this->MemberID)) {
             throw \SilverStripe\ORM\ValidationException::create("Please select a user");
         }
 
-        if($this->exists()) {
+        if ($this->exists()) {
             // check if a profile already exists from the member selected
             $member = Member::get()->byId($this->MemberID);
-            if($member) {
+            if ($member) {
                 $profile = self::forMember($member);
-                if($profile && $profile->ID != $this->ID) {
+                if ($profile && $profile->ID != $this->ID) {
                     throw \SilverStripe\ORM\ValidationException::create("The user selected already has a pending profile, please edit that profile or select a different user");
                 }
             }
@@ -418,7 +418,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         $pending_members = PendingProfile::get()->column('MemberID');
         $members = Member::get()
                     ->sort('Surname ASC, Firstname ASC');
-        if(!empty($pending_members)) {
+        if (!empty($pending_members)) {
             $members = $members->exclude('ID', $pending_members);
         }
 
@@ -488,7 +488,7 @@ class PendingProfile extends DataObject implements PermissionProvider
             $verified = false;
 
             // Check if max attempts reached
-            if($this->hasMaxVerificationAttempts()) {
+            if ($this->hasMaxVerificationAttempts()) {
                 throw new VerificationFailureException(
                     _t(
                         self::class . '.CANNOT_VERIFY_REACHED_LIMIT',
@@ -511,7 +511,7 @@ class PendingProfile extends DataObject implements PermissionProvider
                 );
             }
 
-            if(!$this->ProvisioningData) {
+            if (!$this->ProvisioningData) {
                 // oops
                 Logger::log("Profile {#$this->ID} tried to verify an approval code but they have no verification data", "NOTICE");
                 throw new VerificationFailureException(
@@ -534,7 +534,7 @@ class PendingProfile extends DataObject implements PermissionProvider
                 $verified = $otp->verify($code, time(), $window);
             }
 
-            if(!$verified) {
+            if (!$verified) {
                 $this->VerificationsFailed += 1;
             }
 
@@ -613,7 +613,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         } elseif ($member->exists()) {
 
             $memberValue = $member->getTitle();
-            if($memberEmail = $member->Email) {
+            if ($memberEmail = $member->Email) {
                 $memberValue .= " ({$memberEmail})";
             }
 
