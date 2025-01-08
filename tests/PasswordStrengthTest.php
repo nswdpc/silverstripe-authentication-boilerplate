@@ -253,6 +253,7 @@ class PasswordStrengthTest extends SapphireTest
         if (!$minLength) {
             $minLength = 8;
         }
+
         $password_count = 5;
         for ($i = 0;$i < $password_count;$i++) {
             $keys = array_rand($letters, $minLength);
