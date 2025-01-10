@@ -1,5 +1,7 @@
 ---
 Name: nswdpc-authentication-assets
+Only:
+  moduleexists: 'silverstripe/assets'
 ---
 SilverStripe\Assets\File:
   extensions:
