@@ -6,4 +6,4 @@ After:
 ---
 SilverStripe\Control\Director:
   rules:
-    'mfa_help': NSWDPC\MFA\AuthenticationHelpController
+    'mfa_help': NSWDPC\Authentication\Controllers\AuthenticationHelpController

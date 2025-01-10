@@ -17,27 +17,52 @@
       "security"
     ],
     "require": {
-        "silverstripe/totp-authenticator": "^4",
-        "nswdpc/silverstripe-pwnage-hinter": "<1",
-        "silverstripe/security-extensions": "^4",
-        "silverstripe/securityreport" : "^2.2",
-        "spomky-labs/otphp": "^10",
-        "silverstripe/framework" : "^4.10.0"
+        "silverstripe/totp-authenticator": "^5",
+        "nswdpc/silverstripe-pwnage-hinter": "^1",
+        "silverstripe/securityreport" : "^3",
+        "silverstripe/framework" : "^5"
     },
     "require-dev": {
+        "cambis/silverstripe-rector": "^0.5.1",
         "phpunit/phpunit": "^9.5",
-        "friendsofphp/php-cs-fixer": "^3"
+        "syntro/silverstripe-phpstan": "^5",
+        "nswdpc/ci-files": "^1"
+    },
+    "repositories": [
+        {
+        "type": "git",
+        "url": "https://github.com/nswdpc/ci-files.git"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "NSWDPC\\Authentication\\Tests\\": [
+                "tests/"
+            ],
+            "NSWDPC\\Authentication\\": [
+                "src/"
+            ]
+        }
     },
     "authors": [
         {
             "name": "James Ellis",
-            "homepage": "https://dpc.nsw.gov.au",
             "role": "Developer"
         },
         {
             "name": "Mark Taylor",
-            "homepage": "https://dpc.nsw.gov.au",
             "role": "Developer"
         }
-    ]
+    ],
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "php-http/discovery": true,
+            "silverstripe/vendor-plugin": true,
+            "silverstripe/recipe-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev"
 }

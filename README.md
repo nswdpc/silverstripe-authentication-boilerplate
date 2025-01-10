@@ -6,21 +6,8 @@ This module provides a standard set of rules for defining access to Silverstripe
 - password handling and management
 - password checking via pwnedpasswords API
 - multi-factor authentication setup (MFA)
-- security extensions
 - security reports
 - pending profiles
-
-> This module is under active development and should not be considered production-ready just yet
->
-> We welcome testing and feedback via the Github issue tracker
-
-## Requirements
-
-+ silverstripe/totp-authenticator - for MFA via a Time-based One-time Password
-+ nswdpc/silverstripe-pwnage-hinter -  provides pwned password/breached account assistance
-+ silverstripe/security-extensions - provides features including sudo mode, password change on next sign in
-+ silverstripe/securityreport - "Users, Groups and Permissions" report in the administration area for Administrators
-+ spomky-labs/otphp - TOTP base library
 
 See [composer.json](./composer.json) for details
 
@@ -28,20 +15,17 @@ See [composer.json](./composer.json) for details
 
 See [_config/config.yml](./_config/config.yml)
 
-Note that this module provides the ability to configure the MFA secret key via per-project YAML rather than in .env
-
 More: [Multi Factor Authentication](./docs/003_mfa.md)
 
 ## Good-to-know
 
 ### Password validator
 
-If you are setting a PasswordValidator in project configuration like so:
+Setting a PasswordValidator in project configuration will replace the password validator provided by this module:
 ```php
-$validator = \SilverStripe\Security\PasswordValidator::create();
+$validator = \My\Own\PasswordValidator::create();
 \SilverStripe\Security\Member::set_password_validator($validator);
 ```
-This will replace the password validator provided in this module.
 
 ## License
 
@@ -53,7 +37,7 @@ This will replace the password validator provided in this module.
 
 ## Maintainers
 
-+ [dpcdigital@NSWDPC:~$](https://dpc.nsw.gov.au)
+PD web team
 
 ## Bugtracker
 

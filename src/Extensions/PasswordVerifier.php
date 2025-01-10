@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\Passwords;
+namespace NSWDPC\Authentication\Extensions;
 
+use NSWDPC\Authentication\Rules\PasswordRuleCheck;
 use SilverStripe\Security\PasswordValidator;
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;
@@ -12,25 +13,20 @@ use SilverStripe\Core\Extension;
  */
 class PasswordVerifier extends Extension
 {
-
     /**
-     * @param string $password
-     * @param Member $member
-     * @param ValidationResult $validation_result
-     * @param PasswordValidator $validator
      * @return void
      */
-    public function updateValidatePassword($password, $member, ValidationResult $validation_result, PasswordValidator $validator)
+    public function updateValidatePassword(string $password, Member $member, ValidationResult $validationResult, PasswordValidator $passwordValidator)
     {
 
-        if(!$validation_result->isValid()) {
+        if (!$validationResult->isValid()) {
             // no need to continue with validation here as the password is already invalid for some reason
             return;
         }
 
         // $validation_result will contain errors if the password is not verified
         $checker = PasswordRuleCheck::create();
-        $checker->runChecks($password, $member, $validation_result, $validator);
+        $checker->runChecks($password, $member, $validationResult, $passwordValidator);
 
     }
 

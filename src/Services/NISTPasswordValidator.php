@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Passwords;
+namespace NSWDPC\Authentication\Services;
 
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;
@@ -25,46 +25,46 @@ use SilverStripe\Security\PasswordValidator;
  *
  * @author James
  */
-class NISTPasswordValidator extends PasswordValidator {
-
+class NISTPasswordValidator extends PasswordValidator
+{
     /**
      * @var int
      * When setting a minimum password length, this is used as the min value
      */
-    const PASSWORD_MINIMUM_LENGTH = 8;
+    public const PASSWORD_MINIMUM_LENGTH = 8;
 
     /**
      * Composition rules, this must be null to override array
      * @inheritdoc
      * @config
      */
-    private static $character_strength_tests = null;
+    private static $character_strength_tests;
 
     /**
      * Memorised secrets should be at least 8 characters
      * @inheritdoc
      * @config
      */
-    private static $min_length = 8;
+    private static int $min_length = 12;
 
     /**
      * Composition rules
      * @inheritdoc
      * @config
      */
-    private static $min_test_score = 0;
+    private static int $min_test_score = 0;
 
     /**
      * Historical password count
      * @inheritdoc
      * @config
      */
-    private static $historic_count = 0;
+    private static int $historic_count = 0;
 
     /**
      * @inheritdoc
      */
-    protected $minLength = 8;
+    protected $minLength = 12;
 
     /**
      * @inheritdoc
@@ -115,14 +115,12 @@ class NISTPasswordValidator extends PasswordValidator {
      */
     public function getMinLength()
     {
-        if ($this->minLength !== null) {
-            $minLength = $this->minLength;
-        } else {
-            $minLength = $this->config()->get('min_length');
-        }
-        if($minLength < self::PASSWORD_MINIMUM_LENGTH) {
+        $minLength = $this->minLength > 0 ? $this->minLength : $this->config()->get('min_length');
+
+        if ($minLength < self::PASSWORD_MINIMUM_LENGTH) {
             $minLength = self::PASSWORD_MINIMUM_LENGTH;
         }
+
         return $minLength;
     }
 
@@ -131,9 +129,10 @@ class NISTPasswordValidator extends PasswordValidator {
      */
     public function setMinLength($minLength)
     {
-        if($minLength < self::PASSWORD_MINIMUM_LENGTH) {
+        if ($minLength < self::PASSWORD_MINIMUM_LENGTH) {
             $minLength = self::PASSWORD_MINIMUM_LENGTH;
         }
+
         return parent::setMinLength($minLength);
     }
 
@@ -171,6 +170,7 @@ class NISTPasswordValidator extends PasswordValidator {
 
             $valid->addError($error, 'bad', 'TOO_SHORT');
         }
+
         $this->extend('updateValidatePassword', $password, $member, $valid, $this);
         return $valid;
     }

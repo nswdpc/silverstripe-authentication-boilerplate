@@ -1,0 +1,9 @@
+---
+Name: nswdpc-authentication-boilerplate-session
+---
+SilverStripe\Control\Session:
+  cookie_secure: true
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\Security\MemberAuthenticator\CookieAuthenticationHandler:
+    properties:
+      TokenCookieSecure: true

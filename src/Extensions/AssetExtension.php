@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Authentication;
+namespace NSWDPC\Authentication\Extensions;
 
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
@@ -9,22 +9,23 @@ use SilverStripe\Security\Member;
 
 /**
  * File handling
- * @author James
  */
-class AssetExtension extends Extension {
-
+class AssetExtension extends Extension
+{
     /**
      * Handle pending members accessing files
      * @param Member|null $member
-     * @return mixed
      */
-    public function canView($member) {
-        if($this->owner instanceof Folder) {
+    public function canView($member): ?bool
+    {
+        if ($this->getOwner() instanceof Folder) {
             return null;
         }
-        if($member && $member->getIsPending()) {
+
+        if ($member && $member->getIsPending()) {
             return false;
         }
+
         return null;
     }
 

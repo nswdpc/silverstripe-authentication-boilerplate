@@ -1,6 +1,8 @@
 <?php
-namespace NSWDPC\Passwords;
 
+namespace NSWDPC\Authentication\Tests;
+
+use NSWDPC\Authentication\Rules\ContextualWordRule;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
@@ -9,11 +11,10 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 class ContextualRuleTest extends SapphireTest
 {
-
     protected $usesDatabase = true;
 
 
-    public function testContextualWords()
+    public function testContextualWords(): void
     {
         $strings = [
             'Our website',
@@ -39,7 +40,7 @@ class ContextualRuleTest extends SapphireTest
         Config::modify()->set(ContextualWordRule::class, 'context_strings', $strings);
         Config::modify()->set(ContextualWordRule::class, 'min_length', 4);
 
-        $rule = Injector::inst()->create( ContextualWordRule::class );
+        $rule = Injector::inst()->create(ContextualWordRule::class);
         $strings = $rule->getContextStrings($member);
 
         sort($strings);

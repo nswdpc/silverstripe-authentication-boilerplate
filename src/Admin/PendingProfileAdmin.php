@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\Authentication;
+namespace NSWDPC\Authentication\Admin;
 
+use NSWDPC\Authentication\Models\PendingProfile;
 use SilverStripe\Reports\Report;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
@@ -18,47 +19,43 @@ use SilverStripe\Admin\ModelAdmin;
 
 /**
  * Pending profile admin, to  allow creation and management of pending profiles
- * @author James <james.ellis@dpc.nsw.gov.au>
  */
 class PendingProfileAdmin extends ModelAdmin
 {
-
     /**
-     * @var array
      * @config
      */
-    private static $managed_models = [
+    private static array $managed_models = [
         PendingProfile::class
     ];
 
     /**
-     * @var string
      * @config
      */
-    private static $menu_icon_class = 'font-icon-torsos-all';
+    private static string $menu_icon_class = 'font-icon-torsos-all';
 
     /**
-     * @var string
      * @config
      */
-    private static $url_segment = 'pending-profiles';
+    private static string $url_segment = 'pending-profiles';
 
     /**
-     * @var string
      * @config
      */
-    private static $menu_title = 'Pending Profiles';
+    private static string $menu_title = 'Pending Profiles';
 
-    public function getEditForm($id = null, $fields = null) {
+    public function getEditForm($id = null, $fields = null)
+    {
         $form = parent::getEditForm($id, $fields);
-        if($this->modelClass == PendingProfile::class) {
+        if ($this->modelClass == PendingProfile::class) {
             $gf = $form->Fields()->fieldByName($this->sanitiseClassName($this->modelClass));
-            if($gf instanceof GridField) {
+            if ($gf instanceof GridField) {
                 $config = $gf->getConfig();
                 $field = $config->getComponentByType(GridFieldDetailForm::class);
                 $field->setItemRequestClass(PendingProfile_ItemRequest::class);
             }
         }
+
         return $form;
     }
 }

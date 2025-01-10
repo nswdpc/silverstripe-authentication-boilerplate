@@ -1,5 +1,5 @@
 <% if $AuthenticationHelpShowAbove %>
-    <% include NSWDPC/MFA/HelpContent %>
+    <% include NSWDPC/Authentication/HelpContent %>
 <% end_if %>
 
 <% if $supportsElemental && $ElementalArea && $ElementalArea.Elements.count > 0 %>

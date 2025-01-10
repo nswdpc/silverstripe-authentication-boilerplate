@@ -1,6 +1,13 @@
 <?php
-namespace NSWDPC\Passwords;
 
+namespace NSWDPC\Authentication\Tests;
+
+use NSWDPC\Authentication\Exceptions\PasswordVerificationException;
+use NSWDPC\Authentication\Rules\ContextualWordRule;
+use NSWDPC\Authentication\Rules\DictionaryWordRule;
+use NSWDPC\Authentication\Rules\RepetitiveCharacterRule;
+use NSWDPC\Authentication\Rules\SequentialCharacterRule;
+use NSWDPC\Authentication\Services\NISTPasswordValidator;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
@@ -9,10 +16,22 @@ use SilverStripe\Security\PasswordValidator;
 
 class PasswordStrengthTest extends SapphireTest
 {
-
     protected $usesDatabase = true;
 
-    public function testContextualWords()
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        $validator = Injector::inst()->get(PasswordValidator::class);
+        Member::set_password_validator($validator);
+    }
+
+    public function testHasValidator(): void
+    {
+        $validator = Member::password_validator();
+        $this->assertInstanceOf(NISTPasswordValidator::class, $validator, "PasswordValidator is a NISTPasswordValidator");
+    }
+
+    public function testContextualWords(): bool
     {
         $strings = [
             'website',
@@ -48,12 +67,12 @@ class PasswordStrengthTest extends SapphireTest
         Config::modify()->set(ContextualWordRule::class, 'context_strings', $strings);
         Config::modify()->set(ContextualWordRule::class, 'min_length', 3);
 
-        $rule = Injector::inst()->create( ContextualWordRule::class );
+        $rule = Injector::inst()->create(ContextualWordRule::class);
         $strings = $rule->getContextStrings($member);
 
         $this->assertNotEmpty($strings, "Strings are empty!");
 
-        foreach($passwords as $password => $result) {
+        foreach ($passwords as $password => $result) {
             try {
                 $check = $rule->check($password, $member);
                 // result of check should match
@@ -70,7 +89,7 @@ class PasswordStrengthTest extends SapphireTest
 
     }
 
-    public function testDictionaryWords()
+    public function testDictionaryWords(): bool
     {
         // password set to check
         $passwords = [
@@ -85,11 +104,11 @@ class PasswordStrengthTest extends SapphireTest
 
         $member = null;
 
-        $rule = Injector::inst()->create( DictionaryWordRule::class );
+        $rule = Injector::inst()->create(DictionaryWordRule::class);
 
-        if($rule->canRun()) {
+        if ($rule->canRun()) {
 
-            foreach($passwords as $password => $result) {
+            foreach ($passwords as $password => $result) {
                 try {
                     $check = $rule->check($password, $member);
                     $check_string = $check ? "OK" : "FAIL";
@@ -101,12 +120,14 @@ class PasswordStrengthTest extends SapphireTest
                 }
             }
 
+        } else {
+            $this->markTestSkipped('This test could not be run because the enchant extension was not available');
         }
 
         return true;
     }
 
-    public function testSequentialCharacters()
+    public function testSequentialCharacters(): bool
     {
 
         // password set to check
@@ -124,9 +145,9 @@ class PasswordStrengthTest extends SapphireTest
 
         Config::modify()->set(SequentialCharacterRule::class, 'length', 3);
 
-        $rule = Injector::inst()->create( SequentialCharacterRule::class );
+        $rule = Injector::inst()->create(SequentialCharacterRule::class);
 
-        foreach($passwords as $password => $result) {
+        foreach ($passwords as $password => $result) {
             try {
                 $check = $rule->check($password, $member);
                 $check_string = $check ? "OK" : "FAIL";
@@ -141,7 +162,7 @@ class PasswordStrengthTest extends SapphireTest
         return true;
     }
 
-    public function testRepetitiveCharacters()
+    public function testRepetitiveCharacters(): bool
     {
         // password set to check
         $passwords = [
@@ -159,9 +180,9 @@ class PasswordStrengthTest extends SapphireTest
 
         Config::modify()->set(RepetitiveCharacterRule::class, 'length', 3);
 
-        $rule = Injector::inst()->create( RepetitiveCharacterRule::class );
+        $rule = Injector::inst()->create(RepetitiveCharacterRule::class);
 
-        foreach($passwords as $password => $result) {
+        foreach ($passwords as $password => $result) {
             try {
                 $check = $rule->check($password, $member);
                 $check_string = $check ? "OK" : "FAIL";
@@ -176,7 +197,8 @@ class PasswordStrengthTest extends SapphireTest
         return true;
     }
 
-    public function testVerifier() {
+    public function testVerifier(): void
+    {
 
         $member = Member::create([
             'Email' => 'bob.smith@example.com',
@@ -186,7 +208,7 @@ class PasswordStrengthTest extends SapphireTest
 
         $validator = Member::password_validator();
 
-        $this->assertTrue($validator instanceof  PasswordValidator, "Member password validator is not an instance of PasswordValidator");
+        $this->assertInstanceOf(PasswordValidator::class, $validator, "Member password validator is an instance of PasswordValidator");
 
         // Bob wants to set his password to this... it should fail
         $repetitive_password = "abcd12345defgh";
@@ -205,7 +227,8 @@ class PasswordStrengthTest extends SapphireTest
     /**
      * Given some random passwords based on alphabets, check their validity
      */
-    public function testRandomPasswords() {
+    public function testRandomPasswords(): void
+    {
 
         // use english lower/upper and numbers
         $alphabets = [
@@ -215,7 +238,7 @@ class PasswordStrengthTest extends SapphireTest
         $alphabets[2] = strtoupper($alphabets[1]);
 
         $letters = [];
-        foreach($alphabets as $alphabet) {
+        foreach ($alphabets as $alphabet) {
             $letters = array_merge(str_split($alphabet), $letters);
         }
 
@@ -225,13 +248,20 @@ class PasswordStrengthTest extends SapphireTest
             'Surname' => 'Smith',
         ]);
 
+        $validator = Member::password_validator();
+        $minLength = $validator->getMinLength();
+        if (!$minLength) {
+            $minLength = 8;
+        }
+
         $password_count = 5;
-        for($i=0;$i<$password_count;$i++) {
-            $keys = array_rand($letters, 8);
+        for ($i = 0;$i < $password_count;$i++) {
+            $keys = array_rand($letters, $minLength);
             $password = "";
-            foreach($keys as $key) {
+            foreach ($keys as $key) {
                 $password .= $letters[ $key ];
             }
+
             $result = $member->changePassword($password, false);
             $this->assertTrue($result->isValid(), "{$password} as a password is not valid, it should be");
         }

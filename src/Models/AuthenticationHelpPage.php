@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\MFA;
+namespace NSWDPC\Authentication\Models;
 
+use NSWDPC\Authentication\Controllers\AuthenticationHelpPageController;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Core\Manifest\ModuleLoader;
 use SilverStripe\View\ArrayData;
@@ -9,28 +10,29 @@ use SilverStripe\Core\Extension;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
-use Page;
 
 /**
  * A page to display and handle requests about MFA help
  * See docs/en/index.md for details
- * @author James <james.ellis@dpc.nsw.gov.au>
  */
-class AuthenticationHelpPage extends Page {
+class AuthenticationHelpPage extends \Page
+{
+    /**
+     * @inheritdoc
+     */
+    private static string $controller_name = AuthenticationHelpPageController::class;
 
     /**
      * Defines the database table name
-     * @var string
      * @config
      */
-    private static $table_name = 'AuthenticationHelpPage';
+    private static string $table_name = 'AuthenticationHelpPage';
 
     /**
      * Database fields
-     * @var array
      * @config
      */
-    private static $db = [
+    private static array $db = [
         'AuthenticationHelpHeading' => 'Varchar(255)',
         'AuthenticationHelpContent' => 'HTMLText',
         'AuthenticationHelpShowAbove' => 'Boolean'
@@ -38,46 +40,45 @@ class AuthenticationHelpPage extends Page {
 
     /**
      * Defaults
-     * @var array
      * @config
      */
-    private static $defaults = [
+    private static array $defaults = [
         'AuthenticationHelpShowAbove' => 1
     ];
 
     /**
      * Singular name for CMS
-     * @var string
      * @config
      */
-    private static $singular_name = 'Authentication Help Page';
+    private static string $singular_name = 'Authentication Help Page';
+
     /**
      * Plural name for CMS
-     * @var string
      * @config
      */
-    private static $plural_name = 'Authentication Help Pages';
+    private static string $plural_name = 'Authentication Help Pages';
 
-    public function requireDefaultRecords() {
+    public function requireDefaultRecords()
+    {
         parent::requireDefaultRecords();
 
         $page = AuthenticationHelpPage::get()->first();
-        if($page && $page->exists()) {
+        if ($page && $page->exists()) {
             return;
         }
 
         // grab some content for writing
-        $data = new ArrayData([
+        $data = \SilverStripe\View\ArrayData::create([
             'MFARequired' => $this->MFARequired(),
             'MFAGracePeriodExpires' => $this->MFAGracePeriodExpires(),
         ]);
-        $content = $data->renderWith('NSWDPC/MFA/DefaultHTMLContent');
+        $content = $data->renderWith('NSWDPC/Authentication/DefaultHTMLContent');
 
         // create a default page, save the templated content but do not publish
         $page = AuthenticationHelpPage::create();
-        $page->Title = _t('NSWDPC_MFA.PageTitle', 'Multi-Factor Authentication');
-        $page->AuthenticationHelpHeading = _t('NSWDPC_MFA.SubHeading', 'Setting up MFA');
-        $page->AuthenticationHelpContent = trim($content);
+        $page->Title = _t(self::class . '.PageTitle', 'Multi-Factor Authentication');
+        $page->AuthenticationHelpHeading = _t(self::class . '.SubHeading', 'Setting up MFA');
+        $page->AuthenticationHelpContent = trim($content ?? '');
         $page->write();
     }
 
@@ -92,15 +93,15 @@ class AuthenticationHelpPage extends Page {
             [
                 TextField::create(
                     'AuthenticationHelpHeading',
-                    _t('NSWDPC_MFA.AuthenticationHelpHeading', 'Heading')
+                    _t(self::class . '.AuthenticationHelpHeading', 'Heading')
                 ),
                 HTMLEditorField::create(
                     'AuthenticationHelpContent',
-                    _t('NSWDPC_MFA.AuthenticationHelpContent', 'Content')
+                    _t(self::class . '.AuthenticationHelpContent', 'Content')
                 ),
                 CheckboxField::create(
                     'AuthenticationHelpShowAbove',
-                    'Show this content above page content'
+                    _t(self::class . '.AuthenticationHelpShowAbove', 'Show this content above page content')
                 )
             ]
         );
@@ -113,15 +114,17 @@ class AuthenticationHelpPage extends Page {
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        $this->AuthenticationHelpContent = trim($this->AuthenticationHelpContent);
+        $this->AuthenticationHelpContent = trim($this->AuthenticationHelpContent ?? '');
     }
 
-    public function MFARequired() {
+    public function MFARequired()
+    {
         $config = SiteConfig::current_site_config();
         return $config->MFARequired;
     }
 
-    public function MFAGracePeriodExpires() {
+    public function MFAGracePeriodExpires()
+    {
         $config = SiteConfig::current_site_config();
         return $config->MFAGracePeriodExpires;
     }

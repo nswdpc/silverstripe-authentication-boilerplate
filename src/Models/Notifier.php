@@ -1,7 +1,8 @@
 <?php
 
-namespace NSWDPC\Authentication;
+namespace NSWDPC\Authentication\Models;
 
+use NSWDPC\Authentication\Services\Logger;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Security\Member;
@@ -19,35 +20,37 @@ use SilverStripe\MFA\Extension\MemberExtension as MFAMemberExtension;
 use SilverStripe\Security\Security;
 
 /**
- * Notification model for nswpdc/silverstripe-members
- * @author James <james.ellis@dpc.nsw.gov.au>
+ * Notification model
  */
-class Notifier {
-
+class Notifier
+{
     use Configurable;
     use Injectable;
 
     /**
      * @config
      */
-    private static $default_email_from = "";
+    private static string $default_email_from = "";
 
     /**
      * Returns the default email from to be used in email sends
      * Can be a string "bob@example.com" or an array ["bob@example" => "Bob McBobFace"]
      */
-    public function getDefaultFrom() {
+    public function getDefaultFrom()
+    {
         $default_email_from = $this->config()->get('default_email_from');
-        if(!$default_email_from) {
+        if (!$default_email_from) {
             $default_email_from = Config::inst()->get(Email::class, 'admin_email');
         }
+
         return $default_email_from;
     }
 
     /**
      * Return profile change link for inclusion in emails
      */
-    public function getProfileChangeAlertLink() {
+    public function getProfileChangeAlertLink()
+    {
         return $this->config()->get('profile_change_link');
     }
 
@@ -74,24 +77,25 @@ class Notifier {
 
         // get the recipient
         $to = [];
-        if($to_member) {
+        if ($to_member instanceof \SilverStripe\Security\Member) {
             $to[ $to_member->Email ] = $to_member->getName();
         }
 
         // send out group emails in a Bcc to stop emails being seen within the group
         // and are not visible to the to_member
         $headers = [];
-        if($to_group) {
+        if ($to_group instanceof \SilverStripe\Security\Group) {
             $group_members = $to_group->Members();
-            foreach($group_members as $group_member) {
-                    $headers['Bcc'][ $group_member->Email ] = $group_member->getName();
+            foreach ($group_members as $group_member) {
+                $headers['Bcc'][ $group_member->Email ] = $group_member->getName();
             }
         }
+
         // send the notification
         return $this->sendEmail(
             $to,
             $this->getDefaultFrom(),
-            _t(self::class . ".PROFILE_CHANGED", "Your profile was updated" ),
+            _t(self::class . ".PROFILE_CHANGED", "Your profile was updated"),
             $data,
             $headers
         );
@@ -107,7 +111,7 @@ class Notifier {
         string $otherEmail // the other email related to this change
     ) {
 
-        if(!Email::is_valid_address($toEmail)) {
+        if (!Email::is_valid_address($toEmail)) {
             throw new \InvalidArgumentException("The email address provided is not valid");
         }
 
@@ -127,7 +131,7 @@ class Notifier {
 
         // get the recipient
         $to = [];
-        if($toEmail) {
+        if ($toEmail !== '') {
             $to[ $toEmail ] = $member->getName();
         }
 
@@ -138,7 +142,7 @@ class Notifier {
         return $this->sendEmail(
             $to,
             $this->getDefaultFrom(),
-            _t(self::class . ".PROFILE_CHANGED_EMAIL", "Your email address was changed" ),
+            _t(self::class . ".PROFILE_CHANGED_EMAIL", "Your email address was changed"),
             $data,
             $headers
         );
@@ -146,14 +150,15 @@ class Notifier {
 
     /**
      * Send an email containing a message and a link to complete the registration
-     * @param Member $member
      * @param boolean $initial if false, this is a re-notification of registration approval (e.g a reprompt)
      * @param Controller $controller a controller that can provide a link to a URL where  the user can enter the code
      */
-    public function sendSelfRegistrationToken(Member $member, $initial, Controller $controller) {
-        if(!$controller->hasMethod('RegisterPendingLink')) {
+    public function sendSelfRegistrationToken(Member $member, $initial, Controller $controller)
+    {
+        if (!$controller->hasMethod('RegisterPendingLink')) {
             throw new \Exception("Failed: the controller does not provide RegisterPendingLink");
         }
+
         // current site config
         $config = SiteConfig::current_site_config();
         // link to registration completion
@@ -190,7 +195,8 @@ class Notifier {
         );
     }
 
-    public function sendAdministrationApprovalRequired(PendingProfile $profile) {
+    public function sendAdministrationApprovalRequired(PendingProfile $profile): false|int
+    {
 
         $notifications = 0;
 
@@ -202,12 +208,12 @@ class Notifier {
 
         // approvers - based on permission
         $approvers = PendingProfile::getApprovers();
-        if(!$approvers || $approvers->count() == 0) {
+        if ($approvers->count() == 0) {
             Logger::log("Cannot sendAdministrationApprovalRequired as there are no approvers. Please create some with the 'Edit Pending Profile' permission.", "NOTICE");
             return false;
         }
 
-        foreach($approvers as $approver) {
+        foreach ($approvers as $approver) {
 
             // template data
             $content = ArrayData::create([
@@ -223,7 +229,7 @@ class Notifier {
             // TO: the approver
             $to = [];
             $to[ $approver->Email ] = $approver->getName();
-            $subject = sprintf( _t(self::class . ".APPROVAL_OF_ACCOUNT", "An account requires approval on %s"), $config->Title );
+            $subject = sprintf(_t(self::class . ".APPROVAL_OF_ACCOUNT", "An account requires approval on %s"), $config->Title);
 
             $notification = $this->sendEmail(
                 $to,
@@ -234,6 +240,7 @@ class Notifier {
             $notifications++;
 
         }
+
         return $notifications;
 
     }
@@ -241,7 +248,8 @@ class Notifier {
     /**
      * Notify a profile that they were approved
      */
-    public function sendProfileApproved(PendingProfile $profile) {
+    public function sendProfileApproved(PendingProfile $profile)
+    {
 
         // current site config
         $config = SiteConfig::current_site_config();
@@ -262,7 +270,7 @@ class Notifier {
         // TO: the approver
         $to = [];
         $to[ $member->Email ] = $member->getName();
-        $subject = sprintf( _t(self::class . ".ACCOUNT_APPROVED_SUBJECT", "Your account on %s was approved"), $config->Title );
+        $subject = sprintf(_t(self::class . ".ACCOUNT_APPROVED_SUBJECT", "Your account on %s was approved"), $config->Title);
 
         return $this->sendEmail(
             $to,
@@ -276,37 +284,42 @@ class Notifier {
     /**
      * Sends the email
      * @returns boolean
-     * @param mixed $to either a string or array
-     * @param mixed $from either a string or array
-     * @param string $subject
-     * @param array $data
+     * @param string|array $to either a string or array
+     * @param string|array $from either a string or array
+     * @param string $subject email subject
+     * @param array $data email data
      * @param array $headers extra Email headers e.g Cc, Bcc, X-Some-Header
      * @param string $template template to use
      */
-    protected function sendEmail($to, $from, $subject, $data = [], $headers = [], $template = "NSWDPC/Authentication/Email") {
+    protected function sendEmail(string|array $to, string|array $from, string $subject, $data = [], $headers = [], string $template = "NSWDPC/Authentication/Email")
+    {
         $email = Email::create()
-                    ->setFrom( $from )
-                    ->setTo( $to )
-                    ->setSubject( $subject )
-                    ->setHTMLTemplate( $template )
-                    ->setData( ArrayData::create( $data ) );
-        if(!empty($headers['Cc'])) {
+                    ->setFrom($from)
+                    ->setTo($to)
+                    ->setSubject($subject)
+                    ->setHTMLTemplate($template)
+                    ->setData(ArrayData::create($data));
+        if (!empty($headers['Cc'])) {
             $email->setCc($headers['Cc']);
             unset($headers['Cc']);
         }
-        if(!empty($headers['Bcc'])) {
+
+        if (!empty($headers['Bcc'])) {
             $email->setCc($headers['Bcc']);
             unset($headers['Bcc']);
         }
-        if(!empty($headers['Reply-To'])) {
+
+        if (!empty($headers['Reply-To'])) {
             $email->setReplyTo($headers['Reply-To']);
             unset($headers['Reply-To']);
         }
-        if(!empty($headers)) {
-            foreach($headers as $header => $value) {
+
+        if (!empty($headers)) {
+            foreach ($headers as $header => $value) {
                 $email->getSwiftMessage()->getHeaders()->addTextHeader($header, $value);
             }
         }
+
         return $email->send();
     }
 
@@ -317,12 +330,13 @@ class Notifier {
      * @param Member $resettingMember the member that reset their account
      * @param string $state started or completed
      */
-    public function sendMfaAccountResetNotification(Member $resettingMember, string $state = 'completed') : bool {
+    public function sendMfaAccountResetNotification(Member $resettingMember, string $state = 'completed'): bool
+    {
 
         $permissionCode = MFAMemberExtension::MFA_ADMINISTER_REGISTERED_METHODS;
 
-        $recipients = Permission::get_members_by_permission($permissionCode );
-        if(!$recipients || $recipients->count() == 0) {
+        $recipients = Permission::get_members_by_permission($permissionCode);
+        if (!$recipients || $recipients->count() == 0) {
             Logger::log("sendMfaAccountResetNotification failed - no members can be notified", "NOTICE");
             return false;
         }
@@ -332,7 +346,7 @@ class Notifier {
 
         // environment
         $browser = "";
-        if(!empty($_SERVER['HTTP_USER_AGENT'])) {
+        if (!empty($_SERVER['HTTP_USER_AGENT'])) {
             $browser = DBField::create_field(
                 DBVarchar::class,
                 $_SERVER['HTTP_USER_AGENT']
@@ -342,7 +356,7 @@ class Notifier {
         $request = null;
         $requestIP = '';
         $controller = (Controller::has_curr() ? Controller::curr() : null);
-        if($controller) {
+        if ($controller) {
             $request = $controller->getRequest();
             $requestIP = DBField::create_field(
                 DBVarchar::class,
@@ -350,7 +364,7 @@ class Notifier {
             );
         }
 
-        if($state == 'started') {
+        if ($state === 'started') {
             $subject = _t(
                 self::class . ".ACCOUNT_RESET_MFA_STARTED",
                 "An account reset was started on {siteTitle}",
@@ -370,7 +384,7 @@ class Notifier {
         }
 
         $sends = 0;
-        foreach($recipients as $recipient) {
+        foreach ($recipients as $recipient) {
 
             // template data
             $content = ArrayData::create([
@@ -388,7 +402,7 @@ class Notifier {
             try {
                 $to = [];
                 $to[ $recipient->Email ] = $recipient->getName();
-                if($this->sendEmail(
+                if ($this->sendEmail(
                     $to,
                     $this->getDefaultFrom(),
                     $subject,
@@ -396,11 +410,12 @@ class Notifier {
                 )) {
                     $sends++;
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 // failed to notify
                 Logger::log("sendMfaAccountResetNotification failed for member #{$recipient->ID}", "NOTICE");
             }
         }
+
         return $sends > 0;
     }
 
@@ -411,7 +426,8 @@ class Notifier {
      * Note: this requires a group with the relevant permission to be created, and members assigned
      * @param Member $resettingMember the member that reset their account
      */
-    public function sendMfaAccountResetStarted(Member $resettingMember) : bool {
+    public function sendMfaAccountResetStarted(Member $resettingMember): bool
+    {
         return $this->sendMfaAccountResetNotification($resettingMember, 'started');
     }
 
