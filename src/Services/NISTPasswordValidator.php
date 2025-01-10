@@ -45,7 +45,7 @@ class NISTPasswordValidator extends PasswordValidator
      * @inheritdoc
      * @config
      */
-    private static int $min_length = 8;
+    private static int $min_length = 12;
 
     /**
      * Composition rules
@@ -64,7 +64,7 @@ class NISTPasswordValidator extends PasswordValidator
     /**
      * @inheritdoc
      */
-    protected $minLength = 8;
+    protected $minLength = 12;
 
     /**
      * @inheritdoc
