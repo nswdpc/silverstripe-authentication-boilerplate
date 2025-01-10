@@ -2,7 +2,7 @@
 
 ## Passwords
 
-+ [Password checks](./004-password-checks.md)
++ [Password checks](./004_password_checks.md)
 
 ## Multi-Factor authentication
 
