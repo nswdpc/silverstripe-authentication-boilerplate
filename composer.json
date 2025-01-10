@@ -20,7 +20,6 @@
         "silverstripe/totp-authenticator": "^5",
         "nswdpc/silverstripe-pwnage-hinter": "^1",
         "silverstripe/securityreport" : "^3",
-        "spomky-labs/otphp": "^11",
         "silverstripe/framework" : "^5"
     },
     "require-dev": {
