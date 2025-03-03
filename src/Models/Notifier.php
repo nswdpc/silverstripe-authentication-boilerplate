@@ -257,10 +257,14 @@ class Notifier
         // member
         $member = $profile->Member();
 
+        // email information
+        $memberProfileSignInLink = Security::login_url();
+        $this->extend('updateMemberProfileSigninLink', $memberProfileSignInLink);
+
         // template data
         $content = ArrayData::create([
             'Member' => $member,
-            'MemberProfileSignInLink' => Security::login_url(),
+            'MemberProfileSignInLink' => $memberProfileSignInLink,
             'SiteConfig' => $config
         ])->renderWith('NSWDPC/Authentication/Email/ApprovedByAdministrator');
 
