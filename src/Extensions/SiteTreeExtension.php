@@ -89,7 +89,6 @@ class SiteTreeExtension extends Extension
             // inheriting from parent or site config
             if (($parent = $record->Parent()) && $parent->exists()) {
                 // record has parent
-                \PHPStan\dumpType($parent);
                 return $this->hasAnyoneViewPermission($parent);
             } else {
                 // inherit from site config
