@@ -18,6 +18,7 @@ use SilverStripe\Control\Email\Email;
 use SilverStripe\Control\Controller;
 use SilverStripe\MFA\Extension\MemberExtension as MFAMemberExtension;
 use SilverStripe\Security\Security;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
  * Notification model
@@ -327,7 +328,16 @@ class Notifier
             }
         }
 
-        return $email->send();
+        try {
+            $email->send();
+            return true;
+        } catch (TransportExceptionInterface $transportInterfaceException) {
+            Logger::log("Failed to send email with error: " . $transportInterfaceException->getMessage(), "NOTICE");
+            return false;
+        } catch (\Exception) {
+            Logger::log("General error sending email: " . $transportInterfaceException->getMessage(), "NOTICE");
+            return false;
+        }
     }
 
     /**
