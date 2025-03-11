@@ -4,7 +4,7 @@
 <p><%t NSWDPC\\Authentication\\Services\\ConfigurationService.ADMINISTRATOR_APPROVED_YOUR_ACCOUNT 'Good news, your account was approved on {siteName}' siteName=$SiteConfig.Title %>.</p>
 
 <% if $MemberProfileSignInLink %>
-<p><a href="{$MemberProfileSignInLink}"><%t NSWDPC\\Authentication\\Services\\ConfigurationService.PLEASE_APPROVE_LINK 'Sign in to use your account' %></a>.</p>
+<p><a href="{$MemberProfileSignInLink}"><%t NSWDPC\\Authentication\\Services\\ConfigurationService.LOG_IN_TO_ACCOUNT 'Log in to use your account' %></a> or if you are already logged in, refresh the page you are on.</p>
 <% end_if %>
 
 <% if $ProfileContactLink %>

@@ -18,6 +18,7 @@ use SilverStripe\Control\Email\Email;
 use SilverStripe\Control\Controller;
 use SilverStripe\MFA\Extension\MemberExtension as MFAMemberExtension;
 use SilverStripe\Security\Security;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
  * Notification model
@@ -246,6 +247,14 @@ class Notifier
     }
 
     /**
+     * Return the link used for member profile sign-in
+     */
+    public function getMemberProfileSignInLink(): string
+    {
+        return Security::login_url();
+    }
+
+    /**
      * Notify a profile that they were approved
      */
     public function sendProfileApproved(PendingProfile $profile)
@@ -260,7 +269,7 @@ class Notifier
         // template data
         $content = ArrayData::create([
             'Member' => $member,
-            'MemberProfileSignInLink' => Security::login_url(),
+            'MemberProfileSignInLink' => $this->getMemberProfileSignInLink(),
             'SiteConfig' => $config
         ])->renderWith('NSWDPC/Authentication/Email/ApprovedByAdministrator');
 
@@ -291,7 +300,7 @@ class Notifier
      * @param array $headers extra Email headers e.g Cc, Bcc, X-Some-Header
      * @param string $template template to use
      */
-    protected function sendEmail(string|array $to, string|array $from, string $subject, $data = [], $headers = [], string $template = "NSWDPC/Authentication/Email")
+    protected function sendEmail(string|array $to, string|array $from, string $subject, $data = [], $headers = [], string $template = "NSWDPC/Authentication/Email"): bool
     {
         $email = Email::create()
                     ->setFrom($from)
@@ -320,7 +329,16 @@ class Notifier
             }
         }
 
-        return $email->send();
+        try {
+            $email->send();
+            return true;
+        } catch (TransportExceptionInterface $transportInterfaceException) {
+            Logger::log("Failed to send email with error: " . $transportInterfaceException->getMessage(), "NOTICE");
+            return false;
+        } catch (\Exception) {
+            Logger::log("General error sending email: " . $transportInterfaceException->getMessage(), "NOTICE");
+            return false;
+        }
     }
 
     /**
