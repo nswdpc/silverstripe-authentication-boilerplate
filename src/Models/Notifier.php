@@ -248,7 +248,8 @@ class Notifier
     /**
      * Return the link used for member profile sign-in
      */
-    public function getMemberProfileSignInLink(): string {
+    public function getMemberProfileSignInLink(): string
+    {
         return Security::login_url();
     }
 
