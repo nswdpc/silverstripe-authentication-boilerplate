@@ -246,6 +246,14 @@ class Notifier
     }
 
     /**
+     * Return the link used for member profile sign-in
+     */
+    public function getMemberProfileSignInLink(): string
+    {
+        return Security::login_url();
+    }
+
+    /**
      * Notify a profile that they were approved
      */
     public function sendProfileApproved(PendingProfile $profile)
@@ -260,7 +268,7 @@ class Notifier
         // template data
         $content = ArrayData::create([
             'Member' => $member,
-            'MemberProfileSignInLink' => Security::login_url(),
+            'MemberProfileSignInLink' => $this->getMemberProfileSignInLink(),
             'SiteConfig' => $config
         ])->renderWith('NSWDPC/Authentication/Email/ApprovedByAdministrator');
 
