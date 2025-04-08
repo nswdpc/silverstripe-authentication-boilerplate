@@ -325,7 +325,7 @@ class Notifier
 
         if (!empty($headers)) {
             foreach ($headers as $header => $value) {
-                $email->getSwiftMessage()->getHeaders()->addTextHeader($header, $value);
+                $email->getHeaders()->addTextHeader($header, $value);
             }
         }
 
