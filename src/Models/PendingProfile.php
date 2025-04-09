@@ -466,7 +466,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         }
 
         $member = $this->Member();
-        if(!$member || !$member->isInDB()) {
+        if (!$member || !$member->isInDB()) {
             Logger::log("Someone tried to create an approval code without a linked, existing, member record", "ERROR");
             throw new VerificationFailureException(_t(self::class . '.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.'));
         }
