@@ -36,6 +36,16 @@ use SilverStripe\ORM\FieldType\DBField;
  * A model admin exists to allow certain administration members control over these pending profiles
  * When a member is verified, their record is deleted
  * @author James <james.ellis@dpc.nsw.gov.au>
+ * @property ?string $ProvisioningData
+ * @property bool $RequireAdminApproval
+ * @property bool $NotifiedRequireAdminApproval
+ * @property bool $IsAdminApproved
+ * @property bool $RequireSelfVerification
+ * @property bool $IsSelfVerified
+ * @property int $VerificationsAttempted
+ * @property int $VerificationsFailed
+ * @property int $MemberID
+ * @method \SilverStripe\Security\Member Member()
  */
 class PendingProfile extends DataObject implements PermissionProvider
 {
@@ -168,6 +178,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         }
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         $title = "Pending profile";
@@ -191,6 +202,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * Permissions that can be assigned to groups or roles
      */
+    #[\Override]
     public function providePermissions(): array
     {
         return [
@@ -228,11 +240,13 @@ class PendingProfile extends DataObject implements PermissionProvider
     }
 
 
+    #[\Override]
     public function canEdit($member = null)
     {
         return Permission::checkMember($member, 'PENDINGPROFILE_EDIT');
     }
 
+    #[\Override]
     public function canView($member = null)
     {
         return $this->canEdit($member)
@@ -240,11 +254,13 @@ class PendingProfile extends DataObject implements PermissionProvider
                 || $this->canDelete($member);
     }
 
+    #[\Override]
     public function canCreate($member = null, $context = [])
     {
         return Permission::check('PENDINGPROFILE_CREATE');
     }
 
+    #[\Override]
     public function canDelete($member = null)
     {
         return Permission::check('PENDINGPROFILE_DELETE');
@@ -310,7 +326,7 @@ class PendingProfile extends DataObject implements PermissionProvider
      */
     public function completeSelfVerification(): void
     {
-        $this->IsSelfVerified = 1;
+        $this->IsSelfVerified = true;
         $this->ProvisioningData = null;
         $this->write();
     }
@@ -331,8 +347,8 @@ class PendingProfile extends DataObject implements PermissionProvider
     public static function createForMember(Member $member): PendingProfile
     {
         $profile = PendingProfile::create();
-        $profile->IsAdminApproved = 0;
-        $profile->IsSelfVerified = 0;
+        $profile->IsAdminApproved = false;
+        $profile->IsSelfVerified = false;
         // initial setup takes up project config
         $profile->RequireAdminApproval = Config::inst()->get(PendingProfile::class, 'require_admin_approval');
         $profile->RequireSelfVerification = Config::inst()->get(PendingProfile::class, 'require_self_verification');
@@ -356,7 +372,7 @@ class PendingProfile extends DataObject implements PermissionProvider
                 $notifier = Injector::inst()->create(Notifier::class);
                 $result = $notifier->sendAdministrationApprovalRequired($profile);
                 if ($result) {
-                    $profile->NotifiedRequireAdminApproval = 1;
+                    $profile->NotifiedRequireAdminApproval = true;
                     $profile->write();
                     return true;
                 }
@@ -388,6 +404,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * Update RequireAdminApproval and RequireSelfVerification values with currently configured settings
      */
+    #[\Override]
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
@@ -448,6 +465,12 @@ class PendingProfile extends DataObject implements PermissionProvider
             throw new VerificationFailureException(_t(self::class . '.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.'));
         }
 
+        $member = $this->Member();
+        if (!$member || !$member->isInDB()) {
+            Logger::log("Someone tried to create an approval code without a linked, existing, member record", "ERROR");
+            throw new VerificationFailureException(_t(self::class . '.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.'));
+        }
+
         $period = $this->config()->get('code_lifetime');
         $digest = $this->config()->get('digest');
         $digits = $this->config()->get('digits');
@@ -455,7 +478,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         $secret = Base32::encodeUpper($this->generateRandomSecret());
 
         $otp = TOTP::create($secret, $period, $digest, $digits, $epoch);
-        $otp->setLabel($this->Member()->Email);
+        $otp->setLabel($member->Email);
 
         // store the provision url for later verification
         $provisioning_uri = $otp->getProvisioningUri();
@@ -568,6 +591,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * Return CMS fields
      */
+    #[\Override]
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();

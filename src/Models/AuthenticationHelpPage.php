@@ -14,6 +14,9 @@ use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 /**
  * A page to display and handle requests about MFA help
  * See docs/en/index.md for details
+ * @property ?string $AuthenticationHelpHeading
+ * @property ?string $AuthenticationHelpContent
+ * @property bool $AuthenticationHelpShowAbove
  */
 class AuthenticationHelpPage extends \Page
 {
@@ -58,6 +61,7 @@ class AuthenticationHelpPage extends \Page
      */
     private static string $plural_name = 'Authentication Help Pages';
 
+    #[\Override]
     public function requireDefaultRecords()
     {
         parent::requireDefaultRecords();
@@ -85,6 +89,7 @@ class AuthenticationHelpPage extends \Page
     /**
      * CMS Fields
      */
+    #[\Override]
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
@@ -111,6 +116,7 @@ class AuthenticationHelpPage extends \Page
     /**
      * Event handler called before writing to the database.
      */
+    #[\Override]
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();

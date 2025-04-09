@@ -18,6 +18,7 @@ class PasswordStrengthTest extends SapphireTest
 {
     protected $usesDatabase = true;
 
+    #[\Override]
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();

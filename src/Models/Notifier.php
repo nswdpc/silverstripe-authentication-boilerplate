@@ -62,7 +62,7 @@ class Notifier
      * @param Member $to_member the member to notify (could be $member)
      * @param Group $to_group the group to notify
      */
-    public function sendChangeNotification(Member $member, ArrayList $what, Member $to_member = null, Group $to_group = null)
+    public function sendChangeNotification(Member $member, ArrayList $what, Member $to_member = null, Group $to_group = null): bool
     {
         $config = SiteConfig::current_site_config();
         $link = $this->getProfileChangeAlertLink();
@@ -110,7 +110,7 @@ class Notifier
         bool $sendToPrevious, // when  true, toEmail is the previous email, otherEmail is the current
         string $toEmail, // recipient of this change
         string $otherEmail // the other email related to this change
-    ) {
+    ): bool {
 
         if (!Email::is_valid_address($toEmail)) {
             throw new \InvalidArgumentException("The email address provided is not valid");
@@ -154,7 +154,7 @@ class Notifier
      * @param boolean $initial if false, this is a re-notification of registration approval (e.g a reprompt)
      * @param Controller $controller a controller that can provide a link to a URL where  the user can enter the code
      */
-    public function sendSelfRegistrationToken(Member $member, $initial, Controller $controller)
+    public function sendSelfRegistrationToken(Member $member, $initial, Controller $controller): bool
     {
         if (!$controller->hasMethod('RegisterPendingLink')) {
             throw new \Exception("Failed: the controller does not provide RegisterPendingLink");
@@ -257,7 +257,7 @@ class Notifier
     /**
      * Notify a profile that they were approved
      */
-    public function sendProfileApproved(PendingProfile $profile)
+    public function sendProfileApproved(PendingProfile $profile): bool
     {
 
         // current site config
@@ -335,8 +335,8 @@ class Notifier
         } catch (TransportExceptionInterface $transportInterfaceException) {
             Logger::log("Failed to send email with error: " . $transportInterfaceException->getMessage(), "NOTICE");
             return false;
-        } catch (\Exception) {
-            Logger::log("General error sending email: " . $transportInterfaceException->getMessage(), "NOTICE");
+        } catch (\Exception $exception) {
+            Logger::log("General error sending email: " . $exception->getMessage(), "NOTICE");
             return false;
         }
     }

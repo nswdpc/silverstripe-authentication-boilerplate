@@ -20,13 +20,13 @@
         "silverstripe/totp-authenticator": "^5",
         "nswdpc/silverstripe-pwnage-hinter": "^1",
         "silverstripe/securityreport" : "^3",
-        "silverstripe/framework" : "^5"
+        "silverstripe/cms" : "^5.3"
     },
     "require-dev": {
-        "cambis/silverstripe-rector": "^0.5.1",
+        "cambis/silverstripe-rector": "^1",
         "phpunit/phpunit": "^9.5",
-        "syntro/silverstripe-phpstan": "^5",
-        "nswdpc/ci-files": "^1"
+        "cambis/silverstan": "^1",
+        "nswdpc/ci-files": "dev-v-3"
     },
     "repositories": [
         {

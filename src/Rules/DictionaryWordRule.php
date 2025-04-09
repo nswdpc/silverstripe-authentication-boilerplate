@@ -31,6 +31,7 @@ class DictionaryWordRule extends AbstractPasswordRule
     /**
      * By default, allow rule checks can run
      */
+    #[\Override]
     public function canRun(): bool
     {
         return extension_loaded('enchant');
@@ -42,6 +43,7 @@ class DictionaryWordRule extends AbstractPasswordRule
      * @throws PasswordVerificationException
      * @returns boolean
      */
+    #[\Override]
     public function check(string $password, Member $member = null): bool
     {
         $locale = $this->config()->get('locale');

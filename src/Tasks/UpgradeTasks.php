@@ -20,7 +20,7 @@ class UpgradeTasks extends BuildTask
     /**
      * @inheritdoc
      */
-    protected $enabled = false;
+    private static bool $is_enabled = false;
 
     /**
      * @inheritdoc
@@ -32,9 +32,10 @@ class UpgradeTasks extends BuildTask
     /**
      * @inheritdoc
      */
+    #[\Override]
     public function run($request)
     {
-        $this->commit = $request->getVar('commit') == 1;
+        $this->commit = $request->getVar('commit') == '1';
         $upgrade = $request->getVar('upgrade');
         $method = "task{$upgrade}";
         if (method_exists($this, $method)) {

@@ -85,6 +85,7 @@ class NISTPasswordValidator extends PasswordValidator
      * Override test complexity to none
      * @inheritdoc
      */
+    #[\Override]
     public function getTests()
     {
         return [];
@@ -94,6 +95,7 @@ class NISTPasswordValidator extends PasswordValidator
      * Disallow setting of testNames
      * @inheritdoc
      */
+    #[\Override]
     public function setTestNames($testNames)
     {
         return $this;
@@ -103,6 +105,7 @@ class NISTPasswordValidator extends PasswordValidator
      * Override complexity tests to none
      * @inheritdoc
      */
+    #[\Override]
     public function getTestNames()
     {
         return [];
@@ -113,6 +116,7 @@ class NISTPasswordValidator extends PasswordValidator
      * Enforce minimum length defined by constant value, if configuration sets
      * the length under that value
      */
+    #[\Override]
     public function getMinLength()
     {
         $minLength = $this->minLength > 0 ? $this->minLength : $this->config()->get('min_length');
@@ -127,6 +131,7 @@ class NISTPasswordValidator extends PasswordValidator
     /**
      * @inheritdoc
      */
+    #[\Override]
     public function setMinLength($minLength)
     {
         if ($minLength < self::PASSWORD_MINIMUM_LENGTH) {
@@ -139,6 +144,7 @@ class NISTPasswordValidator extends PasswordValidator
     /**
      * @inheritdoc
      */
+    #[\Override]
     public function setMinTestScore($minScore)
     {
         return $this;
@@ -147,6 +153,7 @@ class NISTPasswordValidator extends PasswordValidator
     /**
      * @inheritdoc
      */
+    #[\Override]
     public function setHistoricCount($count)
     {
         return $this;
@@ -157,6 +164,7 @@ class NISTPasswordValidator extends PasswordValidator
      * @param Member $member
      * @return ValidationResult
      */
+    #[\Override]
     public function validate($password, $member)
     {
         $valid = ValidationResult::create();

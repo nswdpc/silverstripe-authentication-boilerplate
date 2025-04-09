@@ -15,6 +15,7 @@ use SilverStripe\Security\Member;
 
 /**
  * Extension for SiteTree handling when silverstripe/cms is installed
+ * @extends \SilverStripe\Core\Extension<(\SilverStripe\CMS\Model\SiteTree & static)>
  */
 class SiteTreeExtension extends Extension
 {
@@ -87,7 +88,7 @@ class SiteTreeExtension extends Extension
             return true;
         } elseif ($record->CanViewType === InheritedPermissions::INHERIT) {
             // inheriting from parent or site config
-            if (($parent = $record->Parent()) && $parent->exists()) {
+            if (($parent = $record->Parent()) && $parent->exists() && ($parent instanceof SiteTree)) {
                 // record has parent
                 return $this->hasAnyoneViewPermission($parent);
             } else {

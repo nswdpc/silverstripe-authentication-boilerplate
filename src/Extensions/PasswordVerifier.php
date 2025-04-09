@@ -10,6 +10,7 @@ use SilverStripe\Core\Extension;
 
 /**
  * Extends {@link SilverStripe\Security\PasswordValidator} to provide verifiers of basic passwords
+ * @extends \SilverStripe\Core\Extension<(\SilverStripe\Security\PasswordValidator & static)>
  */
 class PasswordVerifier extends Extension
 {

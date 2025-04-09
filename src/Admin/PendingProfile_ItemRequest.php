@@ -25,6 +25,7 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
         'doNotifyApprovers'
     ];
 
+    #[\Override]
     public function ItemEditForm()
     {
         $form = parent::ItemEditForm();
@@ -52,17 +53,17 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
                 return $this->edit(Controller::curr()->getRequest());
             }
 
-            if ($this->record->RequireAdminApproval == 0) {
+            if (!$this->record->RequireAdminApproval) {
                 $form->sessionMessage('This profile does not require approval', 'good');
                 return $this->edit(Controller::curr()->getRequest());
             }
 
-            if ($this->record->IsAdminApproved == 1) {
+            if ($this->record->IsAdminApproved) {
                 $form->sessionMessage('This profile is already approved', 'good');
                 return $this->edit(Controller::curr()->getRequest());
             }
 
-            $this->record->IsAdminApproved = 1;
+            $this->record->IsAdminApproved = true;
             $this->record->write();
 
             $notifier = Injector::inst()->create(Notifier::class);
@@ -86,17 +87,17 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
                 return $this->edit(Controller::curr()->getRequest());
             }
 
-            if ($this->record->RequireAdminApproval == 0) {
+            if (!$this->record->RequireAdminApproval) {
                 $form->sessionMessage('This profile does not require approval', 'good');
                 return $this->edit(Controller::curr()->getRequest());
             }
 
-            if ($this->record->IsAdminApproved == 0) {
+            if (!$this->record->IsAdminApproved) {
                 $form->sessionMessage('This profile is already unapproved', 'good');
                 return $this->edit(Controller::curr()->getRequest());
             }
 
-            $this->record->IsAdminApproved = 0;
+            $this->record->IsAdminApproved = false;
             $this->record->write();
 
             $form->sessionMessage('The profile was unapproved', 'good');
@@ -131,6 +132,7 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
     /**
      * Apply actions to the CMS action area
      */
+    #[\Override]
     public function getFormActions()
     {
         $actions = parent::getFormActions();
@@ -157,7 +159,9 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
                     ->setUseButtonTag(true);
         }
 
-        $actions->fieldByName('MajorActions')->push($action);
+        $majorActions = $actions->fieldByName('MajorActions');
+        /** @var \SilverStripe\Forms\CompositeField $majorActions */
+        $majorActions->push($action);
 
         if ($this->record->IsAdminApproved == 0) {
             $admin = Permission::check('ADMIN');
@@ -165,7 +169,7 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
                 $action = FormAction::create('doNotifyApprovers', 'Notify approvers')
                         ->addExtraClass('btn-outline-primary')
                         ->setUseButtonTag(true);
-                $actions->fieldByName('MajorActions')->push($action);
+                $majorActions->push($action);
             }
         }
 

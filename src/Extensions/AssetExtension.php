@@ -9,6 +9,7 @@ use SilverStripe\Security\Member;
 
 /**
  * File handling
+ * @extends \SilverStripe\Core\Extension<(\SilverStripe\Assets\File & static)>
  */
 class AssetExtension extends Extension
 {
