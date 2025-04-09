@@ -88,7 +88,7 @@ class SiteTreeExtension extends Extension
             return true;
         } elseif ($record->CanViewType === InheritedPermissions::INHERIT) {
             // inheriting from parent or site config
-            if (($parent = $record->Parent()) && $parent->exists()) {
+            if (($parent = $record->Parent()) && $parent->exists() && ($parent instanceof SiteTree)) {
                 // record has parent
                 return $this->hasAnyoneViewPermission($parent);
             } else {

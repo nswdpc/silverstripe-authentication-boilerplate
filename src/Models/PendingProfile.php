@@ -326,7 +326,7 @@ class PendingProfile extends DataObject implements PermissionProvider
      */
     public function completeSelfVerification(): void
     {
-        $this->IsSelfVerified = 1;
+        $this->IsSelfVerified = true;
         $this->ProvisioningData = null;
         $this->write();
     }
@@ -347,8 +347,8 @@ class PendingProfile extends DataObject implements PermissionProvider
     public static function createForMember(Member $member): PendingProfile
     {
         $profile = PendingProfile::create();
-        $profile->IsAdminApproved = 0;
-        $profile->IsSelfVerified = 0;
+        $profile->IsAdminApproved = false;
+        $profile->IsSelfVerified = false;
         // initial setup takes up project config
         $profile->RequireAdminApproval = Config::inst()->get(PendingProfile::class, 'require_admin_approval');
         $profile->RequireSelfVerification = Config::inst()->get(PendingProfile::class, 'require_self_verification');
@@ -372,7 +372,7 @@ class PendingProfile extends DataObject implements PermissionProvider
                 $notifier = Injector::inst()->create(Notifier::class);
                 $result = $notifier->sendAdministrationApprovalRequired($profile);
                 if ($result) {
-                    $profile->NotifiedRequireAdminApproval = 1;
+                    $profile->NotifiedRequireAdminApproval = true;
                     $profile->write();
                     return true;
                 }
@@ -465,6 +465,12 @@ class PendingProfile extends DataObject implements PermissionProvider
             throw new VerificationFailureException(_t(self::class . '.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.'));
         }
 
+        $member = $this->Member();
+        if(!$member || !$member->isInDB()) {
+            Logger::log("Someone tried to create an approval code without a linked, existing, member record", "ERROR");
+            throw new VerificationFailureException(_t(self::class . '.CANNOT_COMPLETE_REGISTRATION', 'Sorry, an error occurred and this action cannot be completed at the current time. Please try again later.'));
+        }
+
         $period = $this->config()->get('code_lifetime');
         $digest = $this->config()->get('digest');
         $digits = $this->config()->get('digits');
@@ -472,7 +478,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         $secret = Base32::encodeUpper($this->generateRandomSecret());
 
         $otp = TOTP::create($secret, $period, $digest, $digits, $epoch);
-        $otp->setLabel($this->Member()->Email);
+        $otp->setLabel($member->Email);
 
         // store the provision url for later verification
         $provisioning_uri = $otp->getProvisioningUri();

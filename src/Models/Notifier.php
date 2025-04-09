@@ -335,8 +335,8 @@ class Notifier
         } catch (TransportExceptionInterface $transportInterfaceException) {
             Logger::log("Failed to send email with error: " . $transportInterfaceException->getMessage(), "NOTICE");
             return false;
-        } catch (\Exception) {
-            Logger::log("General error sending email: " . $transportInterfaceException->getMessage(), "NOTICE");
+        } catch (\Exception $exception) {
+            Logger::log("General error sending email: " . $exception->getMessage(), "NOTICE");
             return false;
         }
     }
