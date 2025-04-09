@@ -12,6 +12,7 @@ class PendingProfileTest extends SapphireTest
 {
     protected $usesDatabase = true;
 
+    #[\Override]
     public function setUp(): void
     {
         parent::setUp();

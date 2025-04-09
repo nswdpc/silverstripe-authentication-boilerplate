@@ -36,6 +36,16 @@ use SilverStripe\ORM\FieldType\DBField;
  * A model admin exists to allow certain administration members control over these pending profiles
  * When a member is verified, their record is deleted
  * @author James <james.ellis@dpc.nsw.gov.au>
+ * @property ?string $ProvisioningData
+ * @property bool $RequireAdminApproval
+ * @property bool $NotifiedRequireAdminApproval
+ * @property bool $IsAdminApproved
+ * @property bool $RequireSelfVerification
+ * @property bool $IsSelfVerified
+ * @property int $VerificationsAttempted
+ * @property int $VerificationsFailed
+ * @property int $MemberID
+ * @method \SilverStripe\Security\Member Member()
  */
 class PendingProfile extends DataObject implements PermissionProvider
 {
@@ -168,6 +178,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         }
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         $title = "Pending profile";
@@ -191,6 +202,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * Permissions that can be assigned to groups or roles
      */
+    #[\Override]
     public function providePermissions(): array
     {
         return [
@@ -228,11 +240,13 @@ class PendingProfile extends DataObject implements PermissionProvider
     }
 
 
+    #[\Override]
     public function canEdit($member = null)
     {
         return Permission::checkMember($member, 'PENDINGPROFILE_EDIT');
     }
 
+    #[\Override]
     public function canView($member = null)
     {
         return $this->canEdit($member)
@@ -240,11 +254,13 @@ class PendingProfile extends DataObject implements PermissionProvider
                 || $this->canDelete($member);
     }
 
+    #[\Override]
     public function canCreate($member = null, $context = [])
     {
         return Permission::check('PENDINGPROFILE_CREATE');
     }
 
+    #[\Override]
     public function canDelete($member = null)
     {
         return Permission::check('PENDINGPROFILE_DELETE');
@@ -388,6 +404,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * Update RequireAdminApproval and RequireSelfVerification values with currently configured settings
      */
+    #[\Override]
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
@@ -568,6 +585,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * Return CMS fields
      */
+    #[\Override]
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();

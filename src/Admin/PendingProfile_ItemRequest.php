@@ -25,6 +25,7 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
         'doNotifyApprovers'
     ];
 
+    #[\Override]
     public function ItemEditForm()
     {
         $form = parent::ItemEditForm();
@@ -131,6 +132,7 @@ class PendingProfile_ItemRequest extends GridFieldDetailForm_ItemRequest
     /**
      * Apply actions to the CMS action area
      */
+    #[\Override]
     public function getFormActions()
     {
         $actions = parent::getFormActions();

@@ -8,6 +8,7 @@ use SilverStripe\Security\Member;
 
 /**
  * Handle reset account notifications when that occurs
+ * @extends \SilverStripe\Core\Extension<(\SilverStripe\MFA\Extension\AccountReset\SecurityExtension & static)>
  */
 class ResetAccountExtension extends Extension
 {

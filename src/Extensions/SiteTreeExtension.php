@@ -15,6 +15,7 @@ use SilverStripe\Security\Member;
 
 /**
  * Extension for SiteTree handling when silverstripe/cms is installed
+ * @extends \SilverStripe\Core\Extension<(\SilverStripe\CMS\Model\SiteTree & static)>
  */
 class SiteTreeExtension extends Extension
 {

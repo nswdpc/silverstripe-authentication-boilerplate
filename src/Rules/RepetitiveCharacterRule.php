@@ -34,6 +34,7 @@ class RepetitiveCharacterRule extends AbstractPasswordRule
      * @throws PasswordVerificationException
      * @returns boolean
      */
+    #[\Override]
     public function check(string $password, Member $member = null): bool
     {
         $pattern = '/(.)\1{2,}/';

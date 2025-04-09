@@ -46,6 +46,7 @@ class SequentialCharacterRule extends AbstractPasswordRule
      * @throws PasswordVerificationException
      * @returns boolean
      */
+    #[\Override]
     public function check(string $password, Member $member = null): bool
     {
         $alphabets = $this->config()->get('alphabets');

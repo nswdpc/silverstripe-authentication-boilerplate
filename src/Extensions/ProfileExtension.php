@@ -20,6 +20,9 @@ use SilverStripe\Core\Config\Config;
 
 /**
  * Provides profile handling extension methods and fields
+ * @property int $PendingProfileID
+ * @method \NSWDPC\Authentication\Models\PendingProfile PendingProfile()
+ * @extends \SilverStripe\ORM\DataExtension<(\SilverStripe\Security\Member & static)>
  */
 class ProfileExtension extends DataExtension
 {
@@ -81,6 +84,7 @@ class ProfileExtension extends DataExtension
     /**
      * Update summary data for gridfield tables
      */
+    #[\Override]
     public function updateSummaryFields(&$fields)
     {
         $fields = array_merge($fields, [
@@ -91,6 +95,7 @@ class ProfileExtension extends DataExtension
     /**
      * Update CMS fields for the member
      */
+    #[\Override]
     public function updateCMSFields(FieldList $fields)
     {
 
@@ -128,6 +133,7 @@ class ProfileExtension extends DataExtension
     /**
      * Take action prior to Member write()
      */
+    #[\Override]
     public function onBeforeWrite()
     {
         // Store field that were changed while writing
@@ -137,6 +143,7 @@ class ProfileExtension extends DataExtension
     /**
      * When the Member is deleted, delete any linked {@link PendingProfile}
      */
+    #[\Override]
     public function onBeforeDelete()
     {
         parent::onBeforeDelete();
@@ -189,7 +196,7 @@ class ProfileExtension extends DataExtension
      * Send the registration approval email for this member
      * @param boolean $initial whether this is the initial prompt
      */
-    public function sendRegistrationApprovalEmail($initial, Controller $controller)
+    public function sendRegistrationApprovalEmail($initial, Controller $controller): bool
     {
         $notifier = Notifier::create();
         return $notifier->sendSelfRegistrationToken($this->getOwner(), $initial, $controller);
