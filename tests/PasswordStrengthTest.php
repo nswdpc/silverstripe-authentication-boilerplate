@@ -19,11 +19,10 @@ class PasswordStrengthTest extends SapphireTest
     protected $usesDatabase = true;
 
     #[\Override]
-    public static function setUpBeforeClass(): void
+    protected function setUp(): void
     {
-        parent::setUpBeforeClass();
-        $validator = Injector::inst()->get(PasswordValidator::class);
-        Member::set_password_validator($validator);
+        parent::setUp();
+        Member::set_password_validator(NISTPasswordValidator::create());
     }
 
     public function testHasValidator(): void
