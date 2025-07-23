@@ -3,18 +3,9 @@
 namespace NSWDPC\Authentication\Admin;
 
 use NSWDPC\Authentication\Models\PendingProfile;
-use SilverStripe\Reports\Report;
-use SilverStripe\Security\Member;
-use SilverStripe\Security\Security;
-use SilverStripe\Security\Permission;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\ORM\DataList;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\DropdownField;
-use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
-use SilverStripe\Core\Convert;
 use SilverStripe\Admin\ModelAdmin;
 
 /**

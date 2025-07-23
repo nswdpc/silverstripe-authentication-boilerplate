@@ -3,11 +3,9 @@
 namespace NSWDPC\Authentication\Controllers;
 
 use NSWDPC\Authentication\Models\AuthenticationHelpPage;
-use SilverStripe\View\ArrayData;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
-use SilverStripe\SiteConfig\SiteConfig;
 
 /**
  * This controller exists to handle requests to the configured {@link SilverStripe\TOTP\RegisterHandler} user_help_link value

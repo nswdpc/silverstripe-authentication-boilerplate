@@ -5,7 +5,6 @@ namespace NSWDPC\Authentication\Tests;
 use NSWDPC\Authentication\Models\PendingProfile;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\Member;
 
 class PendingProfileTest extends SapphireTest
