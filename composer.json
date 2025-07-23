@@ -17,10 +17,9 @@
       "security"
     ],
     "require": {
-        "silverstripe/totp-authenticator": "^5",
-        "nswdpc/silverstripe-pwnage-hinter": "^1",
-        "silverstripe/securityreport" : "^3",
-        "silverstripe/cms" : "^5.4"
+        "silverstripe/totp-authenticator": "^6",
+        "nswdpc/silverstripe-pwnage-hinter": "^2",
+        "silverstripe/cms" : "^6"
     },
     "require-dev": {
         "cambis/silverstripe-rector": "^2",
@@ -29,7 +28,8 @@
         "nswdpc/ci-files": "dev-v-4",
         "phpstan/phpstan": "^2",
         "rector/rector": "^2",
-        "phpstan/phpstan-phpunit": "^2"
+        "phpstan/phpstan-phpunit": "^2",
+        "friendsofphp/php-cs-fixer": "^3"
     },
     "autoload": {
         "psr-4": {
