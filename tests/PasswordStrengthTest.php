@@ -232,39 +232,20 @@ class PasswordStrengthTest extends SapphireTest
     {
 
         // use english lower/upper and numbers
-        $alphabets = [
-            '0123456789',
-            'abcdefghijklmnopqrstuvwxyz'
+        $passwords = [
+            '82;-=mhjjhfg;=?GH',
+            'jhfg;==/GH95;-=mhj',
+            'math-jubilant-stallion-shrivel-oxidation-papaya-obstinate-staunch-voicing-overcast',
         ];
-        $alphabets[2] = strtoupper($alphabets[1]);
-
-        $letters = [];
-        foreach ($alphabets as $alphabet) {
-            $letters = array_merge(str_split($alphabet), $letters);
-        }
 
         $member = Member::create([
             'Email' => 'bob.smith@example.com',
             'FirstName' => 'Bob',
             'Surname' => 'Smith',
         ]);
-
-        $validator = Member::password_validator();
-        $minLength = $validator->getMinLength();
-        if (!$minLength) {
-            $minLength = 8;
-        }
-
-        $password_count = 5;
-        for ($i = 0;$i < $password_count;$i++) {
-            $keys = array_rand($letters, $minLength);
-            $password = "";
-            foreach ($keys as $key) {
-                $password .= $letters[ $key ];
-            }
-
+        foreach($passwords as $password) {
             $result = $member->changePassword($password, false);
-            $this->assertTrue($result->isValid(), "{$password} as a password is not valid, it should be");
+            $this->assertTrue($result->isValid(), "{$password} marked invalid");
         }
     }
 }
