@@ -39,7 +39,7 @@ class RepetitiveCharacterRule extends AbstractPasswordRule
     {
         $min = 2;
         $length = (int)static::config()->get('length') - 1;
-        if($length < $min) {
+        if ($length < $min) {
             $length = $min;
         }
 

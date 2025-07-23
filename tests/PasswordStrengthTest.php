@@ -242,7 +242,7 @@ class PasswordStrengthTest extends SapphireTest
             'FirstName' => 'Bob',
             'Surname' => 'Smith',
         ]);
-        foreach($passwords as $password) {
+        foreach ($passwords as $password) {
             $result = $member->changePassword($password, false);
             $this->assertTrue($result->isValid(), "{$password} marked invalid");
         }
