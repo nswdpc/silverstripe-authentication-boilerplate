@@ -37,7 +37,12 @@ class RepetitiveCharacterRule extends AbstractPasswordRule
     #[\Override]
     public function check(string $password, Member $member = null): bool
     {
-        $pattern = '/(.)\1{2,}/';
+        $min = 2;
+        $length = (int)static::config()->get('length') - 1;
+        if($length < $min) {
+            $length = $min;
+        }
+        $pattern = '/(.)\1{' . $length . ',}/';
         $result = preg_match($pattern, $password, $matches);
         if ($result > 0) {
             $match = $matches[0] ?? "";
