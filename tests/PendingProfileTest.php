@@ -12,7 +12,7 @@ class PendingProfileTest extends SapphireTest
     protected $usesDatabase = true;
 
     #[\Override]
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Config::modify()->set(PendingProfile::class, 'require_admin_approval', true);
