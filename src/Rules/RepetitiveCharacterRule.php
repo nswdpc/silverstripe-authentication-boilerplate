@@ -42,6 +42,7 @@ class RepetitiveCharacterRule extends AbstractPasswordRule
         if($length < $min) {
             $length = $min;
         }
+
         $pattern = '/(.)\1{' . $length . ',}/';
         $result = preg_match($pattern, $password, $matches);
         if ($result > 0) {
