@@ -4,9 +4,6 @@ namespace NSWDPC\Authentication\Models;
 
 use NSWDPC\Authentication\Controllers\AuthenticationHelpPageController;
 use SilverStripe\Forms\CheckboxField;
-use SilverStripe\Core\Manifest\ModuleLoader;
-use SilverStripe\View\ArrayData;
-use SilverStripe\Core\Extension;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;

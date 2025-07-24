@@ -20,20 +20,18 @@
         "silverstripe/totp-authenticator": "^5",
         "nswdpc/silverstripe-pwnage-hinter": "^1",
         "silverstripe/securityreport" : "^3",
-        "silverstripe/cms" : "^5.3"
+        "silverstripe/cms" : "^5.4"
     },
     "require-dev": {
-        "cambis/silverstripe-rector": "^1",
+        "cambis/silverstripe-rector": "^2",
         "phpunit/phpunit": "^9.5",
-        "cambis/silverstan": "^1",
-        "nswdpc/ci-files": "dev-v-3"
+        "cambis/silverstan": "^2",
+        "nswdpc/ci-files": "dev-v-4",
+        "phpstan/phpstan": "^2",
+        "rector/rector": "^2",
+        "phpstan/phpstan-phpunit": "^2",
+        "friendsofphp/php-cs-fixer": "^3"
     },
-    "repositories": [
-        {
-        "type": "git",
-        "url": "https://github.com/nswdpc/ci-files.git"
-        }
-    ],
     "autoload": {
         "psr-4": {
             "NSWDPC\\Authentication\\Tests\\": [

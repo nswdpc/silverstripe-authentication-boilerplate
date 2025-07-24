@@ -3,12 +3,10 @@
 namespace NSWDPC\Authentication\Extensions;
 
 use NSWDPC\Authentication\Models\PendingProfile;
-use NSWDPC\Authentication\Traits\PendingMemberHandler;
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Extension;
-use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\InheritedPermissions;
 use SilverStripe\Security\Security;
 use SilverStripe\Security\Member;

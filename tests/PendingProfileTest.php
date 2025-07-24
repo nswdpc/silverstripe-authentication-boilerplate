@@ -5,7 +5,6 @@ namespace NSWDPC\Authentication\Tests;
 use NSWDPC\Authentication\Models\PendingProfile;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\Member;
 
 class PendingProfileTest extends SapphireTest
@@ -13,7 +12,7 @@ class PendingProfileTest extends SapphireTest
     protected $usesDatabase = true;
 
     #[\Override]
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Config::modify()->set(PendingProfile::class, 'require_admin_approval', true);

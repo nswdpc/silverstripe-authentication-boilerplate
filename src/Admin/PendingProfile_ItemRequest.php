@@ -7,7 +7,6 @@ use NSWDPC\Authentication\Models\Notifier;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\FormAction;
-use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
 use SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest;
 

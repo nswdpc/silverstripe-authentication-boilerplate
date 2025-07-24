@@ -2,10 +2,7 @@
 
 namespace NSWDPC\Authentication\Services;
 
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
-use SilverStripe\Core\Environment;
-use SilverStripe\Security\PasswordValidator;
 
 /**
  * Helper class to handle configuration of MFA options

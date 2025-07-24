@@ -14,21 +14,17 @@ use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\Member;
-use SilverStripe\Security\Security;
 use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Permission;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\SS_List;
-use SilverStripe\ORM\ValidationException;
 use OTPHP\TOTP;
 use ParagonIE\ConstantTime\Base32;
 use OTPHP\Factory as TOTPFactory;
 use SilverStripe\TOTP\TOTPAware;
 use SilverStripe\MFA\Service\EncryptionAdapterInterface;
-use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Security\RandomGenerator;
-use SilverStripe\ORM\FieldType\DBField;
 
 /**
  * Pending profile model for registered members
