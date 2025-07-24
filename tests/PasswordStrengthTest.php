@@ -12,7 +12,6 @@ use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\Member;
-use SilverStripe\Security\Validation\PasswordValidator;
 use SilverStripe\Security\Validation\RulesPasswordValidator;
 
 class PasswordStrengthTest extends SapphireTest

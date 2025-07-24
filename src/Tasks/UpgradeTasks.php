@@ -4,9 +4,7 @@ namespace NSWDPC\Authentication\Tasks;
 
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
-use SilverStripe\PolyExecution\PolyCommand;
 use SilverStripe\PolyExecution\PolyOutput;
-use SilverStripe\ORM\FieldType\DBDatetime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 

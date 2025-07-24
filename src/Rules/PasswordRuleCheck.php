@@ -8,7 +8,6 @@ use SilverStripe\Security\Member;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\Validation\PasswordValidator;
-use SilverStripe\ORM\ValidationResult;
 
 class PasswordRuleCheck
 {

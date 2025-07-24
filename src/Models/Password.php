@@ -11,8 +11,6 @@ use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\Validation\PasswordValidator;
 use SilverStripe\Security\Validation\RulesPasswordValidator;
-use SilverStripe\View\ArrayData;
-use SilverStripe\ORM\ArrayList;
 
 /**
  * Password model
@@ -27,7 +25,7 @@ class Password
 
         $validator = Injector::inst()->get(PasswordValidator::class);
 
-        if($validator instanceof RulesPasswordValidator) {
+        if ($validator instanceof RulesPasswordValidator) {
             // Min length
             $data = [];
             $minLength = $validator->getMinLength();

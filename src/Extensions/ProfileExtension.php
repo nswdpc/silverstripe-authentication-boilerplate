@@ -9,7 +9,6 @@ use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 use SilverStripe\Control\Controller;

@@ -18,7 +18,6 @@ use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Permission;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataList;
-use SilverStripe\ORM\SS_List;
 use OTPHP\TOTP;
 use ParagonIE\ConstantTime\Base32;
 use OTPHP\Factory as TOTPFactory;

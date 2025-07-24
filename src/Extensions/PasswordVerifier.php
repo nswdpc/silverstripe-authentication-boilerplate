@@ -4,7 +4,6 @@ namespace NSWDPC\Authentication\Extensions;
 
 use NSWDPC\Authentication\Rules\PasswordRuleCheck;
 use SilverStripe\Security\Validation\PasswordValidator;
-use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;
 use SilverStripe\Core\Extension;
 
