@@ -51,6 +51,7 @@ class PasswordRuleCheck
                 if($code === '') {
                     $code = 'PASSWORD_VERIFICATION_FAILED';
                 }
+
                 $validation_result->addError($exception->getMessage(), \SilverStripe\Core\Validation\ValidationResult::TYPE_ERROR, $code);
             } catch (\Exception) {
                 $validation_result->addError('The password could not be verified at the current time', \SilverStripe\Core\Validation\ValidationResult::TYPE_ERROR, 'PASSWORD_VERIFICATION_FAILED_GENERIC');

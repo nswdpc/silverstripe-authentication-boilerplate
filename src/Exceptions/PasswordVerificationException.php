@@ -16,6 +16,7 @@ class PasswordVerificationException extends \Exception
     public function setRule(AbstractPasswordRule $rule) {
         $this->rule = $rule;
     }
+
     public function getRule(): ?AbstractPasswordRule
     {
         return $this->rule;
