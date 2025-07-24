@@ -43,7 +43,7 @@ class Password
                 // Available character strength tests
                 $data['CharacterStrengthTests'] = \SilverStripe\Model\List\ArrayList::create();
                 $testNames = $validator->getTestNames();
-                if ($testNames !== []  && is_array($testNames)) {
+                if ($testNames !== []) {
 
                     foreach ($testNames as $name) {
                         match ($name) {

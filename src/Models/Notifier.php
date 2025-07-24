@@ -10,8 +10,8 @@ use SilverStripe\Security\Group;
 use SilverStripe\Security\Permission;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\SiteConfig\SiteConfig;
-use SilverStripe\View\ArrayData;
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\Model\ArrayData;
+use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBVarchar;
 use SilverStripe\Control\Email\Email;
@@ -373,7 +373,7 @@ class Notifier
 
         $request = null;
         $requestIP = '';
-        $controller = (Controller::has_curr() ? Controller::curr() : null);
+        $controller = Controller::curr();
         if ($controller) {
             $request = $controller->getRequest();
             $requestIP = DBField::create_field(

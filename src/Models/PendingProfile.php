@@ -445,7 +445,7 @@ class PendingProfile extends DataObject implements PermissionProvider
      */
     protected function generateRandomSecret(): string
     {
-        $generator = new RandomGenerator();
+        $generator = RandomGenerator::create();
         return $generator->randomToken('sha256');
     }
 
