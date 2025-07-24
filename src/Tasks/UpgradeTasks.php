@@ -43,7 +43,6 @@ class UpgradeTasks extends BuildTask
         if (method_exists($this, $method)) {
             $this->{$method}($input, $output);
         } else {
-            DB::alteration_message("", "error");
             $output->writeln("The upgrade does not exist. Provide an upgrade=name param");
         }
 
