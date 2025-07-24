@@ -6,7 +6,6 @@ This module provides a standard set of rules for defining access to Silverstripe
 - password handling and management
 - password checking via pwnedpasswords API
 - multi-factor authentication setup (MFA)
-- security reports
 - pending profiles
 
 See [composer.json](./composer.json) for details
