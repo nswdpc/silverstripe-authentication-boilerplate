@@ -8,11 +8,13 @@ use SilverStripe\Security\Member;
 
 /**
  * Checks a password for sequential characters
- * @author James <james.ellis@dpc.nsw.gov.au>
+ * @author James
  */
 class RepetitiveCharacterRule extends AbstractPasswordRule
 {
     use Configurable;
+
+    protected string $validationCode = "REPETITIVE_CHARACTER_RULE";
 
     /**
      * @config
@@ -47,7 +49,9 @@ class RepetitiveCharacterRule extends AbstractPasswordRule
         $result = preg_match($pattern, $password, $matches);
         if ($result > 0) {
             $match = $matches[0] ?? "";
-            throw new PasswordVerificationException(_t(self::class . ".REPETITIVE_CHARACTER_FAIL", "Repetitive characters are not allowed in the password"));
+            $exception = new PasswordVerificationException(_t(self::class . ".REPETITIVE_CHARACTER_FAIL", "Repetitive characters are not allowed in the password"));
+            $exception->setRule($this);
+            throw $exception;
         }
 
         return true;

@@ -8,11 +8,13 @@ use SilverStripe\Security\Member;
 
 /**
  * Checks a password for sequential characters
- * @author James <james.ellis@dpc.nsw.gov.au>
+ * @author James
  */
 class SequentialCharacterRule extends AbstractPasswordRule
 {
     use Configurable;
+
+    protected string $validationCode = "SEQUENTIAL_CHARACTER_RULE";
 
     /**
      * Alphabets to chunk up and check
@@ -67,7 +69,7 @@ class SequentialCharacterRule extends AbstractPasswordRule
                     if (mb_strlen($pattern) == $length) {
                         $count = mb_substr_count($password, $pattern);
                         if ($count > 0) {
-                            throw new PasswordVerificationException(
+                            $exception = new PasswordVerificationException(
                                 sprintf(
                                     _t(
                                         self::class . ".SEQUENTIAL_CHARACTER_FAIL",
@@ -76,6 +78,8 @@ class SequentialCharacterRule extends AbstractPasswordRule
                                     $pattern
                                 )
                             );
+                            $exception->setRule($this);
+                            throw $exception;
                         }
                     }
                 }

@@ -12,7 +12,15 @@ abstract class AbstractPasswordRule
 {
     use Configurable;
 
+    // the validation code used in ValidationResult messages
+    protected string $validationCode = '';
+
     abstract public function check(string $password, Member $member = null): bool;
+
+    public function getValidationCode(): string
+    {
+        return $this->validationCode;
+    }
 
     /**
      * By default, allow rule checks can run

@@ -15,6 +15,8 @@ class ContextualWordRule extends AbstractPasswordRule
 {
     use Configurable;
 
+    protected string $validationCode = "CONTEXTUAL_WORD_RULE";
+
     /**
      * @config
      */
@@ -105,12 +107,14 @@ class ContextualWordRule extends AbstractPasswordRule
 
         if (!$valid) {
             // at least one banned word detected
-            throw new PasswordVerificationException(
+            $exception = new PasswordVerificationException(
                 _t(
                     self::class . ".PASSWORD_STRENGTH_FAIL",
                     "The password provided contains disallowed words, please try a different password"
                 )
             );
+            $exception->setRule($this);
+            throw $exception;
         }
 
         return true;

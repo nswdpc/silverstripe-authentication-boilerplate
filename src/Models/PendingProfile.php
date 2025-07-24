@@ -30,7 +30,7 @@ use SilverStripe\Security\RandomGenerator;
  * When a member registers, they have a record created with relevant flags based on configuration
  * A model admin exists to allow certain administration members control over these pending profiles
  * When a member is verified, their record is deleted
- * @author James <james.ellis@dpc.nsw.gov.au>
+ * @author James
  * @property ?string $ProvisioningData
  * @property bool $RequireAdminApproval
  * @property bool $NotifiedRequireAdminApproval

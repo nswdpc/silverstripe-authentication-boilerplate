@@ -4,6 +4,7 @@ namespace NSWDPC\Authentication\Models;
 
 use NSWDPC\Authentication\Rules\AbstractPasswordRule;
 use NSWDPC\Authentication\Rules\PasswordRuleCheck;
+use NSWDPC\Authentication\Services\NISTPasswordValidator;
 use NSWDPC\Pwnage\Pwnage;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
@@ -25,14 +26,16 @@ class Password
 
         $validator = Injector::inst()->get(PasswordValidator::class);
 
-        if ($validator instanceof RulesPasswordValidator) {
+        if ($validator instanceof RulesPasswordValidator || $validator instanceof NISTPasswordValidator) {
             // Min length
             $data = [];
             $minLength = $validator->getMinLength();
             if ($minLength > 0) {
                 $data['MinLength'] =  sprintf(_t(self::class . '.MIN_LENGTH', 'The password must have a minimum length of %d characters'), $minLength);
             }
+        }
 
+        if ($validator instanceof RulesPasswordValidator) {
             // Min tests, if any
             $minTestScore = $validator->getMinTestScore();
             if ($minTestScore > 0) {
