@@ -13,7 +13,6 @@ use SilverStripe\Core\Extension;
  */
 class PasswordVerifier extends Extension
 {
-
     public function updateValidatePassword(string $password, Member $member, \SilverStripe\Core\Validation\ValidationResult $validationResult, PasswordValidator $passwordValidator)
     {
 

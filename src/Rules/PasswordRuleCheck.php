@@ -48,7 +48,7 @@ class PasswordRuleCheck
                 // throws a PasswordVerificationException if check fails
                 $rule = $exception->getRule();
                 $code = $rule->getValidationCode();
-                if($code === '') {
+                if ($code === '') {
                     $code = 'PASSWORD_VERIFICATION_FAILED';
                 }
 

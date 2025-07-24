@@ -14,7 +14,6 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Validation\EntropyPasswordValidator;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
-use Symfony\Component\Validator\Constraints\PasswordStrengthValidator;
 
 class PasswordStrengthTest extends SapphireTest
 {

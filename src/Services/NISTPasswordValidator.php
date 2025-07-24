@@ -27,7 +27,6 @@ use Symfony\Component\Validator\Constraints\PasswordStrength;
  */
 class NISTPasswordValidator extends EntropyPasswordValidator
 {
-
     private static int $password_strength = PasswordStrength::STRENGTH_STRONG;
 
     /**
