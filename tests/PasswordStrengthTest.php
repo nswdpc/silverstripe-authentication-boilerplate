@@ -12,7 +12,8 @@ use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\Member;
-use SilverStripe\Security\PasswordValidator;
+use SilverStripe\Security\Validation\PasswordValidator;
+use SilverStripe\Security\Validation\RulesPasswordValidator;
 
 class PasswordStrengthTest extends SapphireTest
 {
@@ -208,7 +209,7 @@ class PasswordStrengthTest extends SapphireTest
 
         $validator = Member::password_validator();
 
-        $this->assertInstanceOf(PasswordValidator::class, $validator, "Member password validator is an instance of PasswordValidator");
+        $this->assertInstanceOf(RulesPasswordValidator::class, $validator, "Member password validator is an instance of RulesPasswordValidator");
 
         // Bob wants to set his password to this... it should fail
         $repetitive_password = "abcd12345defgh";

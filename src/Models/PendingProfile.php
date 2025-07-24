@@ -163,7 +163,8 @@ class PendingProfile extends DataObject implements PermissionProvider
      * Returns link to edit this dataobject in the CMS
      * Refer: https://github.com/dnadesign/silverstripe-elemental/issues/718
      */
-    public function CMSEditLink()
+    #[\Override]
+    public function getCMSEditLink(): ?string
     {
         $model_admin = PendingProfileAdmin::singleton();
         $class = str_replace('\\', '-', self::class);
@@ -190,7 +191,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * Returns members who can approve profiles
      */
-    public static function getApprovers(): SS_List
+    public static function getApprovers(): \SilverStripe\Model\List\SS_List
     {
         return Permission::get_members_by_permission('PENDINGPROFILE_EDIT');
     }
@@ -406,7 +407,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         parent::onBeforeWrite();
 
         if (empty($this->MemberID)) {
-            throw \SilverStripe\ORM\ValidationException::create("Please select a user");
+            throw \SilverStripe\Core\Validation\ValidationException::create("Please select a user");
         }
 
         if ($this->exists()) {
@@ -415,7 +416,7 @@ class PendingProfile extends DataObject implements PermissionProvider
             if ($member) {
                 $profile = self::forMember($member);
                 if ($profile && $profile->ID != $this->ID) {
-                    throw \SilverStripe\ORM\ValidationException::create("The user selected already has a pending profile, please edit that profile or select a different user");
+                    throw \SilverStripe\Core\Validation\ValidationException::create("The user selected already has a pending profile, please edit that profile or select a different user");
                 }
             }
         }

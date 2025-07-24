@@ -9,7 +9,8 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Security\PasswordValidator;
+use SilverStripe\Security\Validation\PasswordValidator;
+use SilverStripe\Security\Validation\RulesPasswordValidator;
 use SilverStripe\View\ArrayData;
 use SilverStripe\ORM\ArrayList;
 
@@ -26,43 +27,46 @@ class Password
 
         $validator = Injector::inst()->get(PasswordValidator::class);
 
-        // Min length
-        $data = [];
-        $minLength = $validator->getMinLength();
-        if ($minLength > 0) {
-            $data['MinLength'] =  sprintf(_t(self::class . '.MIN_LENGTH', 'The password must have a minimum length of %d characters'), $minLength);
-        }
+        if($validator instanceof RulesPasswordValidator) {
+            // Min length
+            $data = [];
+            $minLength = $validator->getMinLength();
+            if ($minLength > 0) {
+                $data['MinLength'] =  sprintf(_t(self::class . '.MIN_LENGTH', 'The password must have a minimum length of %d characters'), $minLength);
+            }
 
-        // Min tests, if any
-        $minTestScore = $validator->getMinTestScore();
-        if ($minTestScore > 0) {
-            $data['MinTestScore'] =  sprintf(_t(self::class . '.MIN_TEST_SCORE', 'Your password must pass %d of the following test(s)'), $minTestScore);
+            // Min tests, if any
+            $minTestScore = $validator->getMinTestScore();
+            if ($minTestScore > 0) {
+                $data['MinTestScore'] =  sprintf(_t(self::class . '.MIN_TEST_SCORE', 'Your password must pass %d of the following test(s)'), $minTestScore);
 
-            // Available character strength tests
-            $data['CharacterStrengthTests'] = ArrayList::create();
-            $testNames = $validator->getTestNames();
-            if (!empty($testNames)  && is_array($testNames)) {
+                // Available character strength tests
+                $data['CharacterStrengthTests'] = \SilverStripe\Model\List\ArrayList::create();
+                $testNames = $validator->getTestNames();
+                if ($testNames !== []  && is_array($testNames)) {
 
-                foreach ($testNames as $name) {
-                    match ($name) {
-                        "lowercase" => $data['CharacterStrengthTests']->push([
-                            'Description' => _t(self::class . '.LOWERCASE_REQUIRED', 'Lowercase characters are required')
-                        ]),
-                        "uppercase" => $data['CharacterStrengthTests']->push([
-                            'Description' => _t(self::class . '.UPPERCASECASE_REQUIRED', 'Uppercase characters are required')
-                        ]),
-                        "digits" => $data['CharacterStrengthTests']->push([
-                            'Description' => _t(self::class . '.DIGITS_REQUIRED', 'Number characters are required')
-                        ]),
-                        "punctuation" => $data['CharacterStrengthTests']->push([
-                            'Description' => _t(self::class . '.PUNCTUATION_REQUIRED', 'Punctuation characters are required')
-                        ]),
-                        default => $data['CharacterStrengthTests']->push([
-                            'Description' => sprintf(_t(self::class . '.CHARACTER_RANGE_REQUIRED', 'Characters in the following range are required: %s'), $name)
-                        ]),
-                    };
+                    foreach ($testNames as $name) {
+                        match ($name) {
+                            "lowercase" => $data['CharacterStrengthTests']->push([
+                                'Description' => _t(self::class . '.LOWERCASE_REQUIRED', 'Lowercase characters are required')
+                            ]),
+                            "uppercase" => $data['CharacterStrengthTests']->push([
+                                'Description' => _t(self::class . '.UPPERCASECASE_REQUIRED', 'Uppercase characters are required')
+                            ]),
+                            "digits" => $data['CharacterStrengthTests']->push([
+                                'Description' => _t(self::class . '.DIGITS_REQUIRED', 'Number characters are required')
+                            ]),
+                            "punctuation" => $data['CharacterStrengthTests']->push([
+                                'Description' => _t(self::class . '.PUNCTUATION_REQUIRED', 'Punctuation characters are required')
+                            ]),
+                            default => $data['CharacterStrengthTests']->push([
+                                'Description' => sprintf(_t(self::class . '.CHARACTER_RANGE_REQUIRED', 'Characters in the following range are required: %s'), $name)
+                            ]),
+                        };
+                    }
                 }
             }
+
         }
 
         // Pwned password check
@@ -80,7 +84,7 @@ class Password
         // Password rule checks
         $rule_checks = Config::inst()->get(PasswordRuleCheck::class, 'checks');
         if (!empty($rule_checks) && is_array($rule_checks)) {
-            $data['RuleChecks'] = ArrayList::create();
+            $data['RuleChecks'] = \SilverStripe\Model\List\ArrayList::create();
             foreach ($rule_checks as $rule_check_class) {
                 $inst = Injector::inst()->create($rule_check_class);
                 if (!$inst instanceof AbstractPasswordRule || !$inst->canRun()) {
@@ -98,7 +102,7 @@ class Password
 
         $data['PasswordTitle'] = _t(self::class . '.PASSWORD_TITLE', 'The best passwords are a combination of words or characters that are memorable only to you. To help you choose the password we use the following rules.');
 
-        return ArrayData::create($data);
+        return \SilverStripe\Model\ArrayData::create($data);
     }
 
 }

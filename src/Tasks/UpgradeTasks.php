@@ -4,18 +4,23 @@ namespace NSWDPC\Authentication\Tasks;
 
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
+use SilverStripe\PolyExecution\PolyCommand;
+use SilverStripe\PolyExecution\PolyOutput;
+use SilverStripe\ORM\FieldType\DBDatetime;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 
 class UpgradeTasks extends BuildTask
 {
     /**
      * @inheritdoc
      */
-    protected $title = 'Auth Upgrade Tasks';
+    protected string $title = 'Auth Upgrade Tasks';
 
     /**
      * @inheritdoc
      */
-    protected $description = 'Handle upgrade changes to support deprecations / new features';
+    protected static string $description = 'Handle upgrade changes to support deprecations / new features';
 
     /**
      * @inheritdoc
@@ -32,26 +37,28 @@ class UpgradeTasks extends BuildTask
     /**
      * @inheritdoc
      */
-    #[\Override]
-    public function run($request)
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
-        $this->commit = $request->getVar('commit') == '1';
-        $upgrade = $request->getVar('upgrade');
+        $this->commit = $input->getOption('commit') == '1';
+        $upgrade = $input->getOption('upgrade');
         $method = "task{$upgrade}";
         if (method_exists($this, $method)) {
-            $this->{$method}($request);
+            $this->{$method}($input, $output);
         } else {
-            DB::alteration_message("The upgrade does not exist. Provide an upgrade=name param", "error");
+            DB::alteration_message("", "error");
+            $output->writeln("The upgrade does not exist. Provide an upgrade=name param");
         }
+
+        return Command::SUCCESS;
     }
 
-    private function taskRemoveIsPendingField()
+    private function taskRemoveIsPendingField(PolyOutput $output)
     {
         if ($this->commit) {
             DB::query('ALTER TABLE "Member" DROP COLUMN "IsPending"');
-            DB::alteration_message("Dropped column 'IsPending'", "change");
+            $output->writeln("Dropped column 'IsPending'");
         } else {
-            DB::alteration_message("Would drop column 'IsPending'", "info");
+            $output->writeln("Would drop column 'IsPending'");
         }
     }
 }

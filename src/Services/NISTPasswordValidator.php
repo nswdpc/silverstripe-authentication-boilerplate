@@ -2,14 +2,15 @@
 
 namespace NSWDPC\Authentication\Services;
 
-use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Core\Validation\ValidationResult;
 use SilverStripe\Security\Member;
-use SilverStripe\Security\PasswordValidator;
+use SilverStripe\Security\Validation\PasswordValidator;
+use SilverStripe\Security\Validation\RulesPasswordValidator;
 
 /**
  * Provide a basic password validator using NIST.gov guidelines:
  *
- * - Set and enforce an 8 character minimum length
+ * - Set and enforce a minimum 8 character minimum length
  * - Remove complexity checks
  * - Remove historical password checking
  *
@@ -25,68 +26,64 @@ use SilverStripe\Security\PasswordValidator;
  *
  * @author James
  */
-class NISTPasswordValidator extends PasswordValidator
+class NISTPasswordValidator extends RulesPasswordValidator
 {
     /**
      * @var int
      * When setting a minimum password length, this is used as the min value
      */
-    public const PASSWORD_MINIMUM_LENGTH = 8;
+    public const PASSWORD_MINIMUM_LENGTH = 12;
 
     /**
      * Composition rules, this must be null to override array
      * @inheritdoc
-     * @config
      */
-    private static $character_strength_tests;
+    private static array $character_strength_tests = [];
 
     /**
      * Memorised secrets should be at least 8 characters
      * @inheritdoc
-     * @config
      */
     private static int $min_length = 12;
 
     /**
      * Composition rules
      * @inheritdoc
-     * @config
      */
     private static int $min_test_score = 0;
 
     /**
      * Historical password count
      * @inheritdoc
-     * @config
      */
     private static int $historic_count = 0;
 
     /**
      * @inheritdoc
      */
-    protected $minLength = 12;
+    protected ?int $minLength = 12;
 
     /**
      * @inheritdoc
      */
-    protected $minScore = 0;
+    protected ?int $minScore = 0;
 
     /**
      * @inheritdoc
      */
-    protected $testNames = [];
+    protected ?array $testNames = [];
 
     /**
      * @inheritdoc
      */
-    protected $historicalPasswordCount = 0;
+    protected ?int $historicalPasswordCount = 0;
 
     /**
      * Override test complexity to none
      * @inheritdoc
      */
     #[\Override]
-    public function getTests()
+    public function getTests(): array
     {
         return [];
     }
@@ -96,7 +93,7 @@ class NISTPasswordValidator extends PasswordValidator
      * @inheritdoc
      */
     #[\Override]
-    public function setTestNames($testNames)
+    public function setTestNames(array $testNames): static
     {
         return $this;
     }
@@ -106,7 +103,7 @@ class NISTPasswordValidator extends PasswordValidator
      * @inheritdoc
      */
     #[\Override]
-    public function getTestNames()
+    public function getTestNames(): array
     {
         return [];
     }
@@ -117,7 +114,7 @@ class NISTPasswordValidator extends PasswordValidator
      * the length under that value
      */
     #[\Override]
-    public function getMinLength()
+    public function getMinLength(): int
     {
         $minLength = $this->minLength > 0 ? $this->minLength : $this->config()->get('min_length');
 
@@ -132,7 +129,7 @@ class NISTPasswordValidator extends PasswordValidator
      * @inheritdoc
      */
     #[\Override]
-    public function setMinLength($minLength)
+    public function setMinLength(int $minLength): static
     {
         if ($minLength < self::PASSWORD_MINIMUM_LENGTH) {
             $minLength = self::PASSWORD_MINIMUM_LENGTH;
@@ -145,7 +142,7 @@ class NISTPasswordValidator extends PasswordValidator
      * @inheritdoc
      */
     #[\Override]
-    public function setMinTestScore($minScore)
+    public function setMinTestScore($minScore): static
     {
         return $this;
     }
@@ -154,24 +151,19 @@ class NISTPasswordValidator extends PasswordValidator
      * @inheritdoc
      */
     #[\Override]
-    public function setHistoricCount($count)
+    public function setHistoricCount(int $count): static
     {
         return $this;
     }
 
-    /**
-     * @param string $password
-     * @param Member $member
-     * @return ValidationResult
-     */
     #[\Override]
-    public function validate($password, $member)
+    public function validate(string $password, Member $member): ValidationResult
     {
         $valid = ValidationResult::create();
         $minLength = $this->getMinLength();
         if ($minLength && strlen($password) < $minLength) {
             $error = _t(
-                'SilverStripe\Security\PasswordValidator.TOOSHORT',
+                RulesPasswordValidator::class . '.TOOSHORT',
                 'Password is too short, it must be {minimum} or more characters long',
                 ['minimum' => $minLength]
             );

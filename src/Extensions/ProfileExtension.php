@@ -19,9 +19,9 @@ use SilverStripe\Core\Config\Config;
  * Provides profile handling extension methods and fields
  * @property int $PendingProfileID
  * @method \NSWDPC\Authentication\Models\PendingProfile PendingProfile()
- * @extends \SilverStripe\ORM\DataExtension<(\SilverStripe\Security\Member & static)>
+ * @extends \SilverStripe\Core\Extension<\SilverStripe\Security\Member&static>
  */
-class ProfileExtension extends DataExtension
+class ProfileExtension extends \SilverStripe\Core\Extension
 {
     private array $changed_fields = [];
 
@@ -81,7 +81,6 @@ class ProfileExtension extends DataExtension
     /**
      * Update summary data for gridfield tables
      */
-    #[\Override]
     public function updateSummaryFields(&$fields)
     {
         $fields = array_merge($fields, [
@@ -92,7 +91,6 @@ class ProfileExtension extends DataExtension
     /**
      * Update CMS fields for the member
      */
-    #[\Override]
     public function updateCMSFields(FieldList $fields)
     {
 
@@ -101,7 +99,7 @@ class ProfileExtension extends DataExtension
             && $pendingProfile->exists()
         ) {
 
-            $link = $pendingProfile->CMSEditLink();
+            $link = $pendingProfile->getCMSEditLink();
             $value = _t(
                 self::class . ".MEMBER_HAS_PENDING_PROFILE",
                 "View this member's pending profile."
@@ -130,7 +128,6 @@ class ProfileExtension extends DataExtension
     /**
      * Take action prior to Member write()
      */
-    #[\Override]
     public function onBeforeWrite()
     {
         // Store field that were changed while writing
@@ -140,10 +137,8 @@ class ProfileExtension extends DataExtension
     /**
      * When the Member is deleted, delete any linked {@link PendingProfile}
      */
-    #[\Override]
     public function onBeforeDelete()
     {
-        parent::onBeforeDelete();
         if (($profile = PendingProfile::forMember($this->getOwner())) instanceof \NSWDPC\Authentication\Models\PendingProfile) {
             $profile->delete();
         }
@@ -283,7 +278,7 @@ class ProfileExtension extends DataExtension
         }
 
         $fields = $this->getOwner()->getFrontEndFields($params);
-        $what = \SilverStripe\ORM\ArrayList::create();
+        $what = \SilverStripe\Model\List\ArrayList::create();
         foreach ($fields as $field) {
             $title = $field->Title();
             $what->push([
