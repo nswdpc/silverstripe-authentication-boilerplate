@@ -81,7 +81,8 @@ class NISTPasswordValidator extends EntropyPasswordValidator
             $minLength = self::PASSWORD_MINIMUM_LENGTH;
         }
 
-        return parent::setMinLength($minLength);
+        $this->minLength = $minLength;
+        return $this;
     }
 
     #[\Override]
