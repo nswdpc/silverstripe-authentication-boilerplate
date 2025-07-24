@@ -43,27 +43,24 @@ class Password
                 // Available character strength tests
                 $data['CharacterStrengthTests'] = \SilverStripe\Model\List\ArrayList::create();
                 $testNames = $validator->getTestNames();
-                if ($testNames !== []) {
-
-                    foreach ($testNames as $name) {
-                        match ($name) {
-                            "lowercase" => $data['CharacterStrengthTests']->push([
-                                'Description' => _t(self::class . '.LOWERCASE_REQUIRED', 'Lowercase characters are required')
-                            ]),
-                            "uppercase" => $data['CharacterStrengthTests']->push([
-                                'Description' => _t(self::class . '.UPPERCASECASE_REQUIRED', 'Uppercase characters are required')
-                            ]),
-                            "digits" => $data['CharacterStrengthTests']->push([
-                                'Description' => _t(self::class . '.DIGITS_REQUIRED', 'Number characters are required')
-                            ]),
-                            "punctuation" => $data['CharacterStrengthTests']->push([
-                                'Description' => _t(self::class . '.PUNCTUATION_REQUIRED', 'Punctuation characters are required')
-                            ]),
-                            default => $data['CharacterStrengthTests']->push([
-                                'Description' => sprintf(_t(self::class . '.CHARACTER_RANGE_REQUIRED', 'Characters in the following range are required: %s'), $name)
-                            ]),
-                        };
-                    }
+                foreach ($testNames as $name) {
+                    match ($name) {
+                        "lowercase" => $data['CharacterStrengthTests']->push([
+                            'Description' => _t(self::class . '.LOWERCASE_REQUIRED', 'Lowercase characters are required')
+                        ]),
+                        "uppercase" => $data['CharacterStrengthTests']->push([
+                            'Description' => _t(self::class . '.UPPERCASECASE_REQUIRED', 'Uppercase characters are required')
+                        ]),
+                        "digits" => $data['CharacterStrengthTests']->push([
+                            'Description' => _t(self::class . '.DIGITS_REQUIRED', 'Number characters are required')
+                        ]),
+                        "punctuation" => $data['CharacterStrengthTests']->push([
+                            'Description' => _t(self::class . '.PUNCTUATION_REQUIRED', 'Punctuation characters are required')
+                        ]),
+                        default => $data['CharacterStrengthTests']->push([
+                            'Description' => sprintf(_t(self::class . '.CHARACTER_RANGE_REQUIRED', 'Characters in the following range are required: %s'), $name)
+                        ]),
+                    };
                 }
             }
 

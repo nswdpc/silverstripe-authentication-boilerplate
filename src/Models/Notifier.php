@@ -221,7 +221,7 @@ class Notifier
                 'Approver' => $approver,
                 'Member' => $member,
                 'SiteConfig' => $config,
-                'ApprovePendingProfileLink' => $profile->CMSEditLink()
+                'ApprovePendingProfileLink' => $profile->getCMSEditLink()
             ])->renderWith('NSWDPC/Authentication/Email/NotifyApprovers');
 
             $data = [];
@@ -374,7 +374,7 @@ class Notifier
         $request = null;
         $requestIP = '';
         $controller = Controller::curr();
-        if ($controller) {
+        if ($controller instanceof \SilverStripe\Control\Controller) {
             $request = $controller->getRequest();
             $requestIP = DBField::create_field(
                 DBVarchar::class,
