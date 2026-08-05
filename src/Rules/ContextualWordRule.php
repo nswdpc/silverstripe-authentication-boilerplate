@@ -89,7 +89,7 @@ class ContextualWordRule extends AbstractPasswordRule
      * @returns boolean
      */
     #[\Override]
-    public function check(string $password, Member $member = null): bool
+    public function check(string $password, ?Member $member = null): bool
     {
         $words = $this->getContextStrings($member);
         $valid = true;

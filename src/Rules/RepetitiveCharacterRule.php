@@ -37,7 +37,7 @@ class RepetitiveCharacterRule extends AbstractPasswordRule
      * @returns boolean
      */
     #[\Override]
-    public function check(string $password, Member $member = null): bool
+    public function check(string $password, ?Member $member = null): bool
     {
         $min = 2;
         $length = (int)static::config()->get('length') - 1;

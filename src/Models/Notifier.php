@@ -62,7 +62,7 @@ class Notifier
      * @param Member $to_member the member to notify (could be $member)
      * @param Group $to_group the group to notify
      */
-    public function sendChangeNotification(Member $member, ArrayList $what, Member $to_member = null, Group $to_group = null): bool
+    public function sendChangeNotification(Member $member, ArrayList $what, ?Member $to_member = null, ?Group $to_group = null): bool
     {
         $config = SiteConfig::current_site_config();
         $link = $this->getProfileChangeAlertLink();

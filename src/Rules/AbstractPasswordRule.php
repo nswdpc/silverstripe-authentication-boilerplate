@@ -15,7 +15,7 @@ abstract class AbstractPasswordRule
     // the validation code used in ValidationResult messages
     protected string $validationCode = '';
 
-    abstract public function check(string $password, Member $member = null): bool;
+    abstract public function check(string $password, ?Member $member = null): bool;
 
     public function getValidationCode(): string
     {
