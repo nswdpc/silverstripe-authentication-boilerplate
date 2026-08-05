@@ -26,9 +26,10 @@ class Password
 
         $validator = Injector::inst()->get(PasswordValidator::class);
 
+        $data = [];
+
         if ($validator instanceof RulesPasswordValidator || $validator instanceof NISTPasswordValidator) {
             // Min length
-            $data = [];
             $minLength = $validator->getMinLength();
             if ($minLength > 0) {
                 $data['MinLength'] =  sprintf(_t(self::class . '.MIN_LENGTH', 'The password must have a minimum length of %d characters'), $minLength);
