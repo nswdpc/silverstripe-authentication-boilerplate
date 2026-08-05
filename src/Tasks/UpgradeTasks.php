@@ -33,6 +33,7 @@ class UpgradeTasks extends BuildTask
 
     private bool $commit = false;
 
+    #[\Override]
     public function getOptions(): array
     {
         return [
@@ -66,7 +67,7 @@ class UpgradeTasks extends BuildTask
                 DB::query('ALTER TABLE "Member" DROP COLUMN "IsPending"');
                 $output->writeln("Dropped column 'IsPending'");
                 return true;
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
                 $output->writeln("Failed: this upgrade may have already taken place");
                 return false;
             }
