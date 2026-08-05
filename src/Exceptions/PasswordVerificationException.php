@@ -1,11 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NSWDPC\Authentication\Exceptions;
+
+use NSWDPC\Authentication\Rules\AbstractPasswordRule;
 
 /**
  * Custom exception when a password does not meet verification rules
- * @author James <james.ellis@dpc.nsw.gov.au>
+ * Use getRule() to return the rule triggering the exception
+ * @author James
  */
 class PasswordVerificationException extends \Exception
 {
+    protected ?AbstractPasswordRule $rule = null;
+
+    public function setRule(AbstractPasswordRule $rule)
+    {
+        $this->rule = $rule;
+    }
+
+    public function getRule(): ?AbstractPasswordRule
+    {
+        return $this->rule;
+    }
 }

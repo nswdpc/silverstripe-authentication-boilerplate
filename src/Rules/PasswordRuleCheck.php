@@ -7,8 +7,7 @@ use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Security\Member;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Security\PasswordValidator;
-use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Security\Validation\PasswordValidator;
 
 class PasswordRuleCheck
 {
@@ -29,7 +28,7 @@ class PasswordRuleCheck
     /**
      * Process all configured checks
      */
-    public function runChecks(string $password, Member $member, ValidationResult $validation_result, PasswordValidator $validator)
+    public function runChecks(string $password, Member $member, \SilverStripe\Core\Validation\ValidationResult $validation_result, PasswordValidator $validator)
     {
         $checks = $this->config()->get('checks');
         if (!is_array($checks)) {
@@ -47,9 +46,15 @@ class PasswordRuleCheck
                 $result = $inst->check($password, $member);
             } catch (PasswordVerificationException $exception) {
                 // throws a PasswordVerificationException if check fails
-                $validation_result->addError($exception->getMessage(), ValidationResult::TYPE_ERROR, 'PASSWORD_VERIFICATION_FAILED');
+                $rule = $exception->getRule();
+                $code = $rule->getValidationCode();
+                if ($code === '') {
+                    $code = 'PASSWORD_VERIFICATION_FAILED';
+                }
+
+                $validation_result->addError($exception->getMessage(), \SilverStripe\Core\Validation\ValidationResult::TYPE_ERROR, $code);
             } catch (\Exception) {
-                $validation_result->addError('The password could not be verified at the current time', ValidationResult::TYPE_ERROR, 'PASSWORD_VERIFICATION_FAILED_GENERIC');
+                $validation_result->addError('The password could not be verified at the current time', \SilverStripe\Core\Validation\ValidationResult::TYPE_ERROR, 'PASSWORD_VERIFICATION_FAILED_GENERIC');
             }
         }
 

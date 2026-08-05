@@ -4,14 +4,14 @@ namespace NSWDPC\Authentication\Models;
 
 use NSWDPC\Authentication\Rules\AbstractPasswordRule;
 use NSWDPC\Authentication\Rules\PasswordRuleCheck;
+use NSWDPC\Authentication\Services\NISTPasswordValidator;
 use NSWDPC\Pwnage\Pwnage;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Security\PasswordValidator;
-use SilverStripe\View\ArrayData;
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\Security\Validation\PasswordValidator;
+use SilverStripe\Security\Validation\RulesPasswordValidator;
 
 /**
  * Password model
@@ -24,25 +24,28 @@ class Password
     public function rules()
     {
 
+        /** @var \SilverStripe\Security\Validation\PasswordValidator $validator */
         $validator = Injector::inst()->get(PasswordValidator::class);
 
-        // Min length
         $data = [];
-        $minLength = $validator->getMinLength();
-        if ($minLength > 0) {
-            $data['MinLength'] =  sprintf(_t(self::class . '.MIN_LENGTH', 'The password must have a minimum length of %d characters'), $minLength);
+
+        if ($validator instanceof RulesPasswordValidator || $validator instanceof NISTPasswordValidator) {
+            // Min length
+            $minLength = $validator->getMinLength();
+            if ($minLength > 0) {
+                $data['MinLength'] =  sprintf(_t(self::class . '.MIN_LENGTH', 'The password must have a minimum length of %d characters'), $minLength);
+            }
         }
 
-        // Min tests, if any
-        $minTestScore = $validator->getMinTestScore();
-        if ($minTestScore > 0) {
-            $data['MinTestScore'] =  sprintf(_t(self::class . '.MIN_TEST_SCORE', 'Your password must pass %d of the following test(s)'), $minTestScore);
+        if ($validator instanceof RulesPasswordValidator) {
+            // Min tests, if any
+            $minTestScore = $validator->getMinTestScore();
+            if ($minTestScore > 0) {
+                $data['MinTestScore'] =  sprintf(_t(self::class . '.MIN_TEST_SCORE', 'Your password must pass %d of the following test(s)'), $minTestScore);
 
-            // Available character strength tests
-            $data['CharacterStrengthTests'] = ArrayList::create();
-            $testNames = $validator->getTestNames();
-            if (!empty($testNames)  && is_array($testNames)) {
-
+                // Available character strength tests
+                $data['CharacterStrengthTests'] = \SilverStripe\Model\List\ArrayList::create();
+                $testNames = $validator->getTestNames();
                 foreach ($testNames as $name) {
                     match ($name) {
                         "lowercase" => $data['CharacterStrengthTests']->push([
@@ -63,6 +66,7 @@ class Password
                     };
                 }
             }
+
         }
 
         // Pwned password check
@@ -80,7 +84,7 @@ class Password
         // Password rule checks
         $rule_checks = Config::inst()->get(PasswordRuleCheck::class, 'checks');
         if (!empty($rule_checks) && is_array($rule_checks)) {
-            $data['RuleChecks'] = ArrayList::create();
+            $data['RuleChecks'] = \SilverStripe\Model\List\ArrayList::create();
             foreach ($rule_checks as $rule_check_class) {
                 $inst = Injector::inst()->create($rule_check_class);
                 if (!$inst instanceof AbstractPasswordRule || !$inst->canRun()) {
@@ -98,7 +102,7 @@ class Password
 
         $data['PasswordTitle'] = _t(self::class . '.PASSWORD_TITLE', 'The best passwords are a combination of words or characters that are memorable only to you. To help you choose the password we use the following rules.');
 
-        return ArrayData::create($data);
+        return \SilverStripe\Model\ArrayData::create($data);
     }
 
 }

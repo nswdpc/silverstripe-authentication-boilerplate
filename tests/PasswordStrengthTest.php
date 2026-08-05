@@ -12,7 +12,8 @@ use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\Member;
-use SilverStripe\Security\PasswordValidator;
+use SilverStripe\Security\Validation\EntropyPasswordValidator;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 class PasswordStrengthTest extends SapphireTest
 {
@@ -22,6 +23,7 @@ class PasswordStrengthTest extends SapphireTest
     protected function setUp(): void
     {
         parent::setUp();
+        Config::modify()->set(EntropyPasswordValidator::class, 'password_strength', PasswordStrength::STRENGTH_VERY_WEAK);
         Member::set_password_validator(NISTPasswordValidator::create());
     }
 
@@ -208,18 +210,21 @@ class PasswordStrengthTest extends SapphireTest
 
         $validator = Member::password_validator();
 
-        $this->assertInstanceOf(PasswordValidator::class, $validator, "Member password validator is an instance of PasswordValidator");
+        $this->assertInstanceOf(NISTPasswordValidator::class, $validator, "Member password validator is an instance of NISTPasswordValidator");
 
         // Bob wants to set his password to this... it should fail
-        $repetitive_password = "abcd12345defgh";
+        $repetitive_password = "[]abcd12345defgh?:";
+
         $result = $member->changePassword($repetitive_password, true);
 
+        $this->assertArrayHasKey("SEQUENTIAL_CHARACTER_RULE", $result->getMessages());
         $this->assertFalse($result->isValid(), "{$repetitive_password} as a password is valid, it should not be");
 
         // Bob's friend tells him about password managers
         $managed_password = "f45f4fb2f09abb4e3bb6af2881f8598ee10210cd376f4e72665ba44988abfb4d";
         $result = $member->changePassword($managed_password, true);
 
+        $this->assertEmpty($result->getMessages());
         $this->assertTrue($result->isValid(), "{$managed_password} as a password is not valid, it should be");
 
     }

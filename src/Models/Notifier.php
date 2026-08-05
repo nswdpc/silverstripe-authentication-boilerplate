@@ -10,8 +10,8 @@ use SilverStripe\Security\Group;
 use SilverStripe\Security\Permission;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\SiteConfig\SiteConfig;
-use SilverStripe\View\ArrayData;
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\Model\ArrayData;
+use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBVarchar;
 use SilverStripe\Control\Email\Email;
@@ -62,7 +62,7 @@ class Notifier
      * @param Member $to_member the member to notify (could be $member)
      * @param Group $to_group the group to notify
      */
-    public function sendChangeNotification(Member $member, ArrayList $what, Member $to_member = null, Group $to_group = null): bool
+    public function sendChangeNotification(Member $member, ArrayList $what, ?Member $to_member = null, ?Group $to_group = null): bool
     {
         $config = SiteConfig::current_site_config();
         $link = $this->getProfileChangeAlertLink();
@@ -221,7 +221,7 @@ class Notifier
                 'Approver' => $approver,
                 'Member' => $member,
                 'SiteConfig' => $config,
-                'ApprovePendingProfileLink' => $profile->CMSEditLink()
+                'ApprovePendingProfileLink' => $profile->getCMSEditLink()
             ])->renderWith('NSWDPC/Authentication/Email/NotifyApprovers');
 
             $data = [];
@@ -373,8 +373,8 @@ class Notifier
 
         $request = null;
         $requestIP = '';
-        $controller = (Controller::has_curr() ? Controller::curr() : null);
-        if ($controller) {
+        $controller = Controller::curr();
+        if ($controller instanceof \SilverStripe\Control\Controller) {
             $request = $controller->getRequest();
             $requestIP = DBField::create_field(
                 DBVarchar::class,

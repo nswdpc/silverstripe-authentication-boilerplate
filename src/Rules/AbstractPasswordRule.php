@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NSWDPC\Authentication\Rules;
 
 use SilverStripe\Core\Config\Configurable;
@@ -12,7 +14,15 @@ abstract class AbstractPasswordRule
 {
     use Configurable;
 
-    abstract public function check(string $password, Member $member = null): bool;
+    // the validation code used in ValidationResult messages
+    protected string $validationCode = '';
+
+    abstract public function check(string $password, ?Member $member = null): bool;
+
+    public function getValidationCode(): string
+    {
+        return $this->validationCode;
+    }
 
     /**
      * By default, allow rule checks can run

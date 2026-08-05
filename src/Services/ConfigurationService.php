@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NSWDPC\Authentication\Services;
 
 use SilverStripe\Core\Config\Configurable;

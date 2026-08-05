@@ -13,6 +13,8 @@ class DictionaryWordRule extends AbstractPasswordRule
 {
     use Configurable;
 
+    protected string $validationCode = "DICTIONARY_WORD_RULE";
+
     /**
      * @config
      */
@@ -44,7 +46,7 @@ class DictionaryWordRule extends AbstractPasswordRule
      * @returns boolean
      */
     #[\Override]
-    public function check(string $password, Member $member = null): bool
+    public function check(string $password, ?Member $member = null): bool
     {
         $locale = $this->config()->get('locale');
         $broker = enchant_broker_init();
@@ -55,7 +57,9 @@ class DictionaryWordRule extends AbstractPasswordRule
             $suggestions = [];
             $check = enchant_dict_quick_check($dictionary, $password, $suggestions);
             if ($check) {
-                throw new PasswordVerificationException(_t(self::class . ".DICTIONARY_WORD_FAIL", "Dictionary words are not allowed in the password"));
+                $exception = new PasswordVerificationException(_t(self::class . ".DICTIONARY_WORD_FAIL", "Dictionary words are not allowed in the password"));
+                $exception->setRule($this);
+                throw $exception;
             }
         }
 

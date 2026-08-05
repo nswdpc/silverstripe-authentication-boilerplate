@@ -18,7 +18,6 @@ use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Permission;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataList;
-use SilverStripe\ORM\SS_List;
 use OTPHP\TOTP;
 use ParagonIE\ConstantTime\Base32;
 use OTPHP\Factory as TOTPFactory;
@@ -31,7 +30,7 @@ use SilverStripe\Security\RandomGenerator;
  * When a member registers, they have a record created with relevant flags based on configuration
  * A model admin exists to allow certain administration members control over these pending profiles
  * When a member is verified, their record is deleted
- * @author James <james.ellis@dpc.nsw.gov.au>
+ * @author James
  * @property ?string $ProvisioningData
  * @property bool $RequireAdminApproval
  * @property bool $NotifiedRequireAdminApproval
@@ -163,7 +162,8 @@ class PendingProfile extends DataObject implements PermissionProvider
      * Returns link to edit this dataobject in the CMS
      * Refer: https://github.com/dnadesign/silverstripe-elemental/issues/718
      */
-    public function CMSEditLink()
+    #[\Override]
+    public function getCMSEditLink(): ?string
     {
         $model_admin = PendingProfileAdmin::singleton();
         $class = str_replace('\\', '-', self::class);
@@ -190,7 +190,7 @@ class PendingProfile extends DataObject implements PermissionProvider
     /**
      * Returns members who can approve profiles
      */
-    public static function getApprovers(): SS_List
+    public static function getApprovers(): \SilverStripe\Model\List\SS_List
     {
         return Permission::get_members_by_permission('PENDINGPROFILE_EDIT');
     }
@@ -406,7 +406,7 @@ class PendingProfile extends DataObject implements PermissionProvider
         parent::onBeforeWrite();
 
         if (empty($this->MemberID)) {
-            throw \SilverStripe\ORM\ValidationException::create("Please select a user");
+            throw \SilverStripe\Core\Validation\ValidationException::create("Please select a user");
         }
 
         if ($this->exists()) {
@@ -415,7 +415,7 @@ class PendingProfile extends DataObject implements PermissionProvider
             if ($member) {
                 $profile = self::forMember($member);
                 if ($profile && $profile->ID != $this->ID) {
-                    throw \SilverStripe\ORM\ValidationException::create("The user selected already has a pending profile, please edit that profile or select a different user");
+                    throw \SilverStripe\Core\Validation\ValidationException::create("The user selected already has a pending profile, please edit that profile or select a different user");
                 }
             }
         }
@@ -444,7 +444,7 @@ class PendingProfile extends DataObject implements PermissionProvider
      */
     protected function generateRandomSecret(): string
     {
-        $generator = new RandomGenerator();
+        $generator = RandomGenerator::create();
         return $generator->randomToken('sha256');
     }
 
@@ -560,16 +560,14 @@ class PendingProfile extends DataObject implements PermissionProvider
             return $verified;
         } catch (VerificationFailureException $e) {
             // rethrow these exceptions
-            throw new VerificationFailureException($e->getMessage());
+            throw new VerificationFailureException($e->getMessage(), $e->getCode(), $e);
         } catch (\Exception $e) {
             // general exception
             Logger::log("Profile {#$this->ID} verifySelfApprovalCode error=" . $e->getMessage(), "NOTICE");
-            throw new VerificationFailureException(
-                _t(
-                    self::class . '.CANNOT_VERIFY_CODE_GENERAL_EXCEPTION',
-                    'Sorry, your account cannot be verified at the current time. Please try again later.'
-                )
-            );
+            throw new VerificationFailureException(_t(
+                self::class . '.CANNOT_VERIFY_CODE_GENERAL_EXCEPTION',
+                'Sorry, your account cannot be verified at the current time. Please try again later.'
+            ), $e->getCode(), $e);
         } finally {
             // update this profile record regardless of result
             $this->write();

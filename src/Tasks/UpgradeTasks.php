@@ -4,18 +4,22 @@ namespace NSWDPC\Authentication\Tasks;
 
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 class UpgradeTasks extends BuildTask
 {
     /**
      * @inheritdoc
      */
-    protected $title = 'Auth Upgrade Tasks';
+    protected string $title = 'Auth Upgrade Tasks';
 
     /**
      * @inheritdoc
      */
-    protected $description = 'Handle upgrade changes to support deprecations / new features';
+    protected static string $description = 'Handle upgrade changes to support deprecations / new features';
 
     /**
      * @inheritdoc
@@ -25,33 +29,51 @@ class UpgradeTasks extends BuildTask
     /**
      * @inheritdoc
      */
-    private static string $segment = 'AuthUpgradeTasks';
+    protected static string $commandName = 'AuthUpgradeTasks';
 
     private bool $commit = false;
+
+    #[\Override]
+    public function getOptions(): array
+    {
+        return [
+            new InputOption('commit', null, InputOption::VALUE_OPTIONAL, 'Specify --commit=1 to make the changes'),
+            new InputOption('upgrade', null, InputOption::VALUE_OPTIONAL, 'Specify the upgrade to take place')
+        ];
+    }
 
     /**
      * @inheritdoc
      */
-    #[\Override]
-    public function run($request)
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
-        $this->commit = $request->getVar('commit') == '1';
-        $upgrade = $request->getVar('upgrade');
+        $this->commit = $input->getOption('commit') == '1';
+        $upgrade = $input->getOption('upgrade');
         $method = "task{$upgrade}";
         if (method_exists($this, $method)) {
-            $this->{$method}($request);
+            $result = $this->{$method}($output);
+            return $result ? Command::SUCCESS : Command::FAILURE;
         } else {
-            DB::alteration_message("The upgrade does not exist. Provide an upgrade=name param", "error");
+            $output->writeln("The upgrade does not exist. Provide an upgrade=name param");
+            return Command::FAILURE;
         }
+
     }
 
-    private function taskRemoveIsPendingField()
+    private function taskRemoveIsPendingField(PolyOutput $output): bool
     {
         if ($this->commit) {
-            DB::query('ALTER TABLE "Member" DROP COLUMN "IsPending"');
-            DB::alteration_message("Dropped column 'IsPending'", "change");
+            try {
+                DB::query('ALTER TABLE "Member" DROP COLUMN "IsPending"');
+                $output->writeln("Dropped column 'IsPending'");
+                return true;
+            } catch (\Exception) {
+                $output->writeln("Failed: this upgrade may have already taken place");
+                return false;
+            }
         } else {
-            DB::alteration_message("Would drop column 'IsPending'", "info");
+            $output->writeln("Would drop column 'IsPending'");
+            return true;
         }
     }
 }

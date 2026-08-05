@@ -1,23 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NSWDPC\Authentication\Extensions;
 
 use NSWDPC\Authentication\Rules\PasswordRuleCheck;
-use SilverStripe\Security\PasswordValidator;
-use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Security\Validation\PasswordValidator;
 use SilverStripe\Security\Member;
 use SilverStripe\Core\Extension;
 
 /**
- * Extends {@link SilverStripe\Security\PasswordValidator} to provide verifiers of basic passwords
- * @extends \SilverStripe\Core\Extension<(\SilverStripe\Security\PasswordValidator & static)>
+ * Extends {@link \SilverStripe\Security\Validation\PasswordValidator} to provide verifiers of basic passwords
+ * @extends \SilverStripe\Core\Extension<never>
  */
 class PasswordVerifier extends Extension
 {
-    /**
-     * @return void
-     */
-    public function updateValidatePassword(string $password, Member $member, ValidationResult $validationResult, PasswordValidator $passwordValidator)
+    public function updateValidatePassword(string $password, Member $member, \SilverStripe\Core\Validation\ValidationResult $validationResult, PasswordValidator $passwordValidator)
     {
 
         if (!$validationResult->isValid()) {

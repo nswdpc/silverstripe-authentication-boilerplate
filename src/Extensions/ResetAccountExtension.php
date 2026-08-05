@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NSWDPC\Authentication\Extensions;
 
 use NSWDPC\Authentication\Models\Notifier;

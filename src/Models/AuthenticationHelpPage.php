@@ -69,7 +69,7 @@ class AuthenticationHelpPage extends \Page
         }
 
         // grab some content for writing
-        $data = \SilverStripe\View\ArrayData::create([
+        $data = \SilverStripe\Model\ArrayData::create([
             'MFARequired' => $this->MFARequired(),
             'MFAGracePeriodExpires' => $this->MFAGracePeriodExpires(),
         ]);
