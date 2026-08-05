@@ -24,6 +24,7 @@ class Password
     public function rules()
     {
 
+        /** @var \SilverStripe\Security\Validation\PasswordValidator $validator */
         $validator = Injector::inst()->get(PasswordValidator::class);
 
         $data = [];
