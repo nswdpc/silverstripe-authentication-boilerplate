@@ -560,16 +560,14 @@ class PendingProfile extends DataObject implements PermissionProvider
             return $verified;
         } catch (VerificationFailureException $e) {
             // rethrow these exceptions
-            throw new VerificationFailureException($e->getMessage());
+            throw new VerificationFailureException($e->getMessage(), $e->getCode(), $e);
         } catch (\Exception $e) {
             // general exception
             Logger::log("Profile {#$this->ID} verifySelfApprovalCode error=" . $e->getMessage(), "NOTICE");
-            throw new VerificationFailureException(
-                _t(
-                    self::class . '.CANNOT_VERIFY_CODE_GENERAL_EXCEPTION',
-                    'Sorry, your account cannot be verified at the current time. Please try again later.'
-                )
-            );
+            throw new VerificationFailureException(_t(
+                self::class . '.CANNOT_VERIFY_CODE_GENERAL_EXCEPTION',
+                'Sorry, your account cannot be verified at the current time. Please try again later.'
+            ), $e->getCode(), $e);
         } finally {
             // update this profile record regardless of result
             $this->write();
